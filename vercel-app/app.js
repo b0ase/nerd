@@ -13,7 +13,7 @@ const mockContent = [
     {
         id: 'bitcoin-future',
         title: '🎬 "Bitcoin\'s Future" Documentary',
-        creator: '@filmmaker',
+        creator: '$filmmaker',
         size: '2.1 GB',
         accessPrice: 0.10,
         currentReturns: 15,
@@ -23,7 +23,7 @@ const mockContent = [
     {
         id: 'decentralized-beats',
         title: '🎵 Electronic Album - "Decentralized Beats"',
-        creator: '@musicproducer',
+        creator: '$musicproducer',
         size: '156 MB',
         accessPrice: 0.05,
         currentReturns: 8,
@@ -33,7 +33,7 @@ const mockContent = [
     {
         id: 'p2p-course',
         title: '📚 "P2P Networks Explained" Course',
-        creator: '@educator',
+        creator: '$educator',
         size: '4.5 GB',
         accessPrice: 0.25,
         currentReturns: 22,
@@ -74,8 +74,8 @@ function initializeHandCash() {
         handCashConnect = {
             getRedirectionUrl: () => 'https://handcash.io/connect/demo',
             getAccountFromAuthToken: (token) => ({
-                handle: '@fresh',
-                displayName: 'Fresh',
+                handle: '$BOASE',
+                displayName: 'BOASE',
                 avatarUrl: '',
                 balance: { bsv: 15.25, usd: 1525.50 }
             }),
@@ -120,8 +120,8 @@ async function handleHandCashLogin() {
         
         // Mock user data
         currentUser = {
-            handle: '@fresh',
-            displayName: 'Fresh',
+            handle: '$BOASE',
+            displayName: 'BOASE',
             avatarUrl: '',
             balance: { bsv: 15.25, usd: 1525.50 },
             investments: [

@@ -17,9 +17,7 @@
     "handcash",
     "decentralized"
   ],
-  "dependencies": {
-    "@handcash/handcash-connect": "^2.0.0"
-  },
+  "dependencies": {},
   "devDependencies": {
     "serve": "^14.0.0"
   },

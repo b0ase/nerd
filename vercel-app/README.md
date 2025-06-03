@@ -1,25 +1,28 @@
-# 🚀 BitNet - Revolutionary Bitcoin-Addressed Content Delivery
+# 🚀 BACDS - Bitcoin-Addressed Content Delivery System
 
-**Live Demo**: [bitnet.fresh.dev](https://bitnet.fresh.dev) *(Coming Soon)*
+**Live Website**: [bacds.website](https://bacds.website) ✅
 
-BitNet transforms content delivery using Bitcoin addresses as network endpoints. This is the marketing website and web application for the BitNet ecosystem.
+BACDS transforms content delivery using Bitcoin addresses as network endpoints. This is the marketing website and web application for the BACDS ecosystem.
 
 ## ✨ Features
 
 ### 🌐 **Marketing Landing Page**
-- Beautiful, modern design showcasing BitNet's capabilities
-- Real-time statistics and compelling value propositions
+- Professional design showcasing BACDS capabilities
+- Real-time statistics and clear value propositions
 - Mobile-responsive with smooth animations
+- Live HandCash integration demo
 
 ### 🔗 **HandCash Integration**
 - **One-click login** with HandCash Connect
 - **Instant BSV payments** directly to creator @handles
 - **No complex wallet management** - use your existing HandCash account
+- **Demo mode** with @fresh account simulation
 
 ### 💰 **Content Marketplace**
 - **Discover and invest** in content from creators worldwide
 - **Early investor advantages** - higher returns for early supporters
 - **Real-time ROI tracking** with live earnings display
+- **Investment simulation** with BSV micro-transactions
 
 ### 📱 **Web-Based Demo**
 - **Interactive content investment** simulation
@@ -59,7 +62,7 @@ BitNet transforms content delivery using Bitcoin addresses as network endpoints.
 ## 🎯 Demo Features
 
 ### Mock HandCash Integration
-- **Demo login** as `@fresh` with $1,525.50 balance
+- **Demo login** as `$BOASE` with $1,525.50 balance
 - **Simulated payments** with transaction tracking
 - **Persistent session** using localStorage
 - **Investment simulation** with real-time updates
@@ -88,7 +91,7 @@ BitNet transforms content delivery using Bitcoin addresses as network endpoints.
 ### Visual Identity
 - **Dark theme** with Bitcoin-gold accents
 - **Glassmorphism** effects with subtle blur
-- **Gradient animations** for premium feel
+- **Clean, professional** aesthetic (no revolutionary hyperbole)
 - **Mobile-first** responsive design
 
 ### User Experience
@@ -116,7 +119,7 @@ BitNet transforms content delivery using Bitcoin addresses as network endpoints.
 
 ## 🌍 Integration with Desktop App
 
-This website serves as the **marketing front-end** for the [BitNet Desktop Application](../), providing:
+This website serves as the **marketing front-end** for the [BACDS Desktop Application](../), providing:
 
 - **Download links** for all platforms (macOS, Windows, Linux)
 - **Documentation** and setup guides
@@ -137,21 +140,22 @@ const handCashConnect = new HandCashConnect({
 ### Content Investment API
 ```javascript
 // Invest in content with real BSV payments
-await BitNet.investInContent('content-id');
+await BACDS.investInContent('content-id');
 ```
 
 ### Analytics Integration
 ```javascript
 // Track user actions for optimization
-BitNet.trackInvestment(contentId, amount);
+BACDS.trackInvestment(contentId, amount);
 ```
 
-## 📧 Contact & Support
+## 📞 Contact & Support
 
-- **Email**: [hello@bitnet.fresh.dev](mailto:hello@bitnet.fresh.dev)
+- **HandCash**: Send BSV payments or messages to [$BOASE](https://handcash.io/$BOASE)
 - **GitHub**: [b0ase/BACDS](https://github.com/b0ase/BACDS)
-- **HandCash**: [@fresh](https://handcash.io/@fresh)
+- **In-App**: Contact via BACDS desktop client messaging system
+- **Website**: Direct messages through [bacds.website](https://bacds.website)
 
 ---
 
-**BitNet** - *Revolutionizing content delivery with Bitcoin addresses* 🚀 
+**BACDS** - *Bitcoin-Addressed Content Delivery System* 🚀 
