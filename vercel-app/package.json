@@ -1,0 +1,29 @@
+{
+  "name": "bitnet-website",
+  "version": "1.0.0",
+  "description": "BitNet - Revolutionary Bitcoin-Addressed Content Delivery Network",
+  "main": "index.html",
+  "scripts": {
+    "dev": "serve .",
+    "build": "echo 'Static site - no build needed'",
+    "start": "serve ."
+  },
+  "keywords": [
+    "bitnet",
+    "bitcoin",
+    "p2p",
+    "content-delivery",
+    "bsv",
+    "handcash",
+    "decentralized"
+  ],
+  "dependencies": {
+    "@handcash/handcash-connect": "^2.0.0"
+  },
+  "devDependencies": {
+    "serve": "^14.0.0"
+  },
+  "author": "BitNet Team",
+  "license": "MIT",
+  "homepage": "https://bitnet.fresh.dev"
+} 

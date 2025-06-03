@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BitNet - Revolutionary Bitcoin-Addressed Content Delivery</title>
+    <meta name="description" content="BitNet transforms content delivery using Bitcoin addresses as network endpoints. Earn BSV by sharing content, invest in creators, and join the decentralized future.">
+    
+    <!-- Open Graph / Social Media -->
+    <meta property="og:title" content="BitNet - Revolutionary Bitcoin-Addressed Content Delivery">
+    <meta property="og:description" content="Earn BSV by sharing content, invest in creators, and join the decentralized future.">
+    <meta property="og:image" content="/og-image.png">
+    <meta property="og:url" content="https://bitnet.fresh.dev">
+    <meta property="og:type" content="website">
+    
+    <link rel="icon" href="/favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            backdrop-filter: blur(20px);
+            background: rgba(10, 10, 10, 0.8);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 1000;
+            padding: 1rem 0;
+        }
+
+        .nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #f59e0b, #eab308, #fbbf24);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: #d1d5db;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-link:hover {
+            color: #f59e0b;
+        }
+
+        .btn-handcash {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-handcash:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: radial-gradient(ellipse at center, rgba(245, 158, 11, 0.1) 0%, transparent 70%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 5vw, 4.5rem);
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #ffffff, #f59e0b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: #9ca3af;
+            margin-bottom: 2rem;
+            font-weight: 400;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 3rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #f59e0b, #eab308);
+            color: #000;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(245, 158, 11, 0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #fff;
+            padding: 1rem 2rem;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            cursor: pointer;
+            font-size: 1.1rem;
+        }
+
+        .btn-secondary:hover {
+            border-color: #f59e0b;
+            background: rgba(245, 158, 11, 0.1);
+        }
+
+        /* Stats Section */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-top: 4rem;
+        }
+
+        .stat {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #f59e0b;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #9ca3af;
+            font-weight: 500;
+        }
+
+        /* Sections */
+        .section {
+            padding: 6rem 0;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-left: 2rem;
+            padding-right: 2rem;
+        }
+
+        .section h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 3rem;
+            background: linear-gradient(135deg, #ffffff, #f59e0b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .feature {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2.5rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+        }
+
+        .feature:hover {
+            transform: translateY(-5px);
+            border-color: rgba(245, 158, 11, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #f59e0b;
+        }
+
+        .feature p {
+            color: #d1d5db;
+            line-height: 1.7;
+        }
+
+        /* Content Marketplace */
+        .marketplace {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 20px;
+            padding: 3rem;
+            margin: 3rem 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .content-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s;
+        }
+
+        .content-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(245, 158, 11, 0.5);
+        }
+
+        .content-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+
+        .content-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            color: #9ca3af;
+        }
+
+        .invest-btn {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+            transition: all 0.3s;
+        }
+
+        .invest-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        /* User Profile */
+        .user-profile {
+            display: none;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .profile-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #f59e0b, #eab308);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #000;
+        }
+
+        .profile-info h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .profile-info p {
+            color: #9ca3af;
+            font-size: 0.9rem;
+        }
+
+        /* Download Section */
+        .download-section {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(234, 179, 8, 0.05));
+            border-radius: 20px;
+            padding: 4rem;
+            text-align: center;
+            margin: 4rem 0;
+            border: 1px solid rgba(245, 158, 11, 0.2);
+        }
+
+        .download-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .download-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            padding: 1rem 2rem;
+            border-radius: 15px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .download-btn:hover {
+            background: rgba(245, 158, 11, 0.2);
+            border-color: #f59e0b;
+            transform: translateY(-2px);
+        }
+
+        /* Footer */
+        .footer {
+            padding: 4rem 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            color: #9ca3af;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav {
+                padding: 0 1rem;
+            }
+            
+            .nav-links {
+                gap: 1rem;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn-primary, .btn-secondary {
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            .download-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .download-btn {
+                width: 100%;
+                max-width: 250px;
+                justify-content: center;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        /* Loading States */
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .spinner {
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top: 2px solid #f59e0b;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 0.5rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <div class="logo">BitNet</div>
+            <div class="nav-links">
+                <a href="#features" class="nav-link">Features</a>
+                <a href="#marketplace" class="nav-link">Marketplace</a>
+                <a href="#download" class="nav-link">Download</a>
+                <button id="handcash-login" class="btn-handcash">
+                    🚀 Login with HandCash
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content fade-in-up">
+            <h1>Revolutionary Bitcoin-Addressed Content Delivery</h1>
+            <p class="hero-subtitle">
+                Earn BSV by sharing content, invest in creators, and join the decentralized future. 
+                BitNet transforms how content flows across the internet using Bitcoin addresses as network endpoints.
+            </p>
+            <div class="hero-buttons">
+                <a href="#download" class="btn-primary">Download BitNet</a>
+                <a href="#marketplace" class="btn-secondary">Explore Content</a>
+            </div>
+            
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-number">0.001¢</div>
+                    <div class="stat-label">Average Transaction Fee</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">Instant</div>
+                    <div class="stat-label">Payment Settlement</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">P2P</div>
+                    <div class="stat-label">Direct Delivery</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">100%</div>
+                    <div class="stat-label">Creator Revenue</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- User Profile (Hidden by default) -->
+    <div id="user-profile" class="user-profile">
+        <div class="profile-header">
+            <div class="profile-avatar" id="user-avatar"></div>
+            <div class="profile-info">
+                <h3 id="user-handle">@username</h3>
+                <p id="user-balance">Balance: Loading...</p>
+            </div>
+        </div>
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-number" id="user-investments">0</div>
+                <div class="stat-label">Content Investments</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number" id="user-earnings">$0.00</div>
+                <div class="stat-label">Total Earnings</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <section id="features" class="section">
+        <h2>How BitNet Works</h2>
+        <div class="features-grid">
+            <div class="feature">
+                <div class="feature-icon">🌐</div>
+                <h3>P2P Content Delivery</h3>
+                <p>Files are split into chunks and distributed across the network. Download from multiple peers simultaneously for faster speeds and better reliability.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">₿</div>
+                <h3>Bitcoin-Addressed Chunks</h3>
+                <p>Every content chunk gets its own Bitcoin address. Pay microfees to access content, with payments flowing directly to creators via HandCash.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🚀</div>
+                <h3>HandCash Integration</h3>
+                <p>Sign in with your @handle, make instant BSV payments, and earn directly to your HandCash wallet. No app-specific wallets or complex key management.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">💰</div>
+                <h3>Content Investment</h3>
+                <p>Invest in content you believe will be successful. Earn returns as more users access the content, creating a new creator economy.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🔒</div>
+                <h3>Secure & Private</h3>
+                <p>Cryptographic verification ensures content integrity. Your private keys stay in HandCash - BitNet never sees them.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">⚡</div>
+                <h3>Instant Settlements</h3>
+                <p>BSV's instant transactions mean creators get paid immediately when their content is accessed. No waiting periods or payment processors.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Content Marketplace -->
+    <section id="marketplace" class="section">
+        <h2>Content Marketplace</h2>
+        <div class="marketplace">
+            <p style="text-align: center; color: #9ca3af; margin-bottom: 2rem;">
+                Discover and invest in content from creators around the world. Early investors earn more as content gains popularity.
+            </p>
+            <div class="content-grid" id="content-grid">
+                <!-- Content will be populated dynamically -->
+                <div class="content-card">
+                    <div class="content-title">🎬 "Bitcoin's Future" Documentary</div>
+                    <div class="content-meta">
+                        <span>by @filmmaker</span>
+                        <span>2.1 GB</span>
+                    </div>
+                    <div class="content-meta">
+                        <span>💰 $0.10 to access</span>
+                        <span>📈 +15% returns</span>
+                    </div>
+                    <button class="invest-btn" onclick="investInContent('bitcoin-future')">
+                        💎 Invest $5 BSV
+                    </button>
+                </div>
+                
+                <div class="content-card">
+                    <div class="content-title">🎵 Electronic Album - "Decentralized Beats"</div>
+                    <div class="content-meta">
+                        <span>by @musicproducer</span>
+                        <span>156 MB</span>
+                    </div>
+                    <div class="content-meta">
+                        <span>💰 $0.05 to access</span>
+                        <span>📈 +8% returns</span>
+                    </div>
+                    <button class="invest-btn" onclick="investInContent('decentralized-beats')">
+                        💎 Invest $2 BSV
+                    </button>
+                </div>
+                
+                <div class="content-card">
+                    <div class="content-title">📚 "P2P Networks Explained" Course</div>
+                    <div class="content-meta">
+                        <span>by @educator</span>
+                        <span>4.5 GB</span>
+                    </div>
+                    <div class="content-meta">
+                        <span>💰 $0.25 to access</span>
+                        <span>📈 +22% returns</span>
+                    </div>
+                    <button class="invest-btn" onclick="investInContent('p2p-course')">
+                        💎 Invest $10 BSV
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Download Section -->
+    <section id="download" class="section">
+        <div class="download-section">
+            <h2 style="margin-bottom: 1rem;">Download BitNet Desktop</h2>
+            <p style="color: #d1d5db; margin-bottom: 2rem;">
+                Join the revolution with our desktop application. Start earning by sharing content and investing in creators.
+            </p>
+            <div class="download-buttons">
+                <a href="#" class="download-btn" onclick="downloadApp('mac')">
+                    🍎 Download for macOS
+                </a>
+                <a href="#" class="download-btn" onclick="downloadApp('windows')">
+                    🪟 Download for Windows
+                </a>
+                <a href="#" class="download-btn" onclick="downloadApp('linux')">
+                    🐧 Download for Linux
+                </a>
+            </div>
+            <p style="margin-top: 2rem; color: #9ca3af; font-size: 0.9rem;">
+                v1.0.0 • 45MB • Compatible with all major operating systems
+            </p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="section">
+            <p>&copy; 2025 BitNet. Revolutionizing content delivery with Bitcoin addresses.</p>
+            <p style="margin-top: 1rem;">
+                <a href="https://github.com/b0ase/BACDS" style="color: #f59e0b;">GitHub</a> • 
+                <a href="mailto:hello@bitnet.fresh.dev" style="color: #f59e0b;">Contact</a> • 
+                <a href="/docs" style="color: #f59e0b;">Documentation</a>
+            </p>
+        </div>
+    </footer>
+
+    <!-- HandCash Connect SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@handcash/handcash-connect@2.0.0/dist/handcash-connect.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html> 
