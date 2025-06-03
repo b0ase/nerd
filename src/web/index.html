@@ -249,6 +249,53 @@
             font-weight: 600;
             padding: 20px;
         }
+
+        .network-status {
+            margin-bottom: 20px;
+        }
+
+        .status-item {
+            margin-bottom: 10px;
+        }
+
+        .label {
+            font-weight: 600;
+        }
+
+        .value {
+            margin-left: 10px;
+        }
+
+        .action-buttons {
+            margin-bottom: 20px;
+        }
+
+        .network-results {
+            margin-bottom: 20px;
+        }
+
+        .chunk-request-section {
+            margin-top: 20px;
+        }
+
+        .form-row {
+            margin-bottom: 10px;
+        }
+
+        .btn-primary {
+            background: #f59e0b;
+            color: #000;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        .btn-primary:hover {
+            background: #eab308;
+        }
     </style>
 </head>
 <body>
@@ -333,6 +380,59 @@
                 </div>
                 
                 <div id="chunkingResults"></div>
+            </div>
+
+            <!-- P2P Network Panel -->
+            <div class="panel">
+                <h2>🌐 BitNet P2P Network</h2>
+                <div class="network-status">
+                    <div class="status-item">
+                        <span class="label">Node Status:</span>
+                        <span id="p2p-status" class="status">Connecting...</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="label">Connected Peers:</span>
+                        <span id="peer-count" class="value">0</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="label">DHT Entries:</span>
+                        <span id="dht-count" class="value">0</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="label">Node ID:</span>
+                        <span id="node-id" class="value">Unknown</span>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button onclick="refreshNetworkStatus()" class="btn-primary">🔄 Refresh Status</button>
+                    <button onclick="showPeerList()" class="btn-secondary">👥 View Peers</button>
+                    <button onclick="showDHTTable()" class="btn-secondary">🗂️ View DHT</button>
+                </div>
+                
+                <div class="network-results" id="network-results" style="display: none;">
+                    <h3 id="network-results-title">Network Information</h3>
+                    <div id="network-results-content"></div>
+                </div>
+                
+                <!-- Chunk Request Panel -->
+                <div class="chunk-request-section">
+                    <h3>📥 Request Chunk from Network</h3>
+                    <div class="form-row">
+                        <input type="text" id="chunk-hash-input" placeholder="Enter chunk hash..." />
+                        <button onclick="requestChunkFromNetwork()" class="btn-primary">🔍 Find & Download</button>
+                    </div>
+                    <div id="chunk-request-result" style="display: none;"></div>
+                </div>
+            </div>
+
+            <!-- BitStream Content Delivery -->
+            <div class="panel">
+                <h3>🌐 BitStream Content Delivery</h3>
+                <p style="color: #9ca3af; margin-bottom: 15px;">Content delivery and streaming capabilities</p>
+                <button class="btn btn-secondary" disabled>Stream Content <span class="roadmap-badge">ROADMAP</span></button>
+                <button class="btn btn-secondary" disabled>Upload Files <span class="roadmap-badge">ROADMAP</span></button>
+                <button class="btn btn-secondary" disabled>Gallery View <span class="roadmap-badge">ROADMAP</span></button>
             </div>
         </div>
 

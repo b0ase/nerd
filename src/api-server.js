@@ -4,6 +4,7 @@ const path = require('path');
 const fs = require('fs-extra');
 const crypto = require('crypto');
 const multer = require('multer');
+const BitNetP2PServer = require('./p2p-server');
 
 class BACDSAPIServer {
   constructor() {
@@ -396,6 +397,96 @@ class BACDSAPIServer {
       });
     });
 
+    // P2P Network endpoints
+    this.app.get('/api/bitnet/p2p/status', (req, res) => {
+      if (!this.p2pServer) {
+        return res.status(503).json({ error: 'P2P server not started' });
+      }
+      
+      const stats = this.p2pServer.getNetworkStats();
+      res.json({
+        status: 'running',
+        ...stats
+      });
+    });
+
+    this.app.get('/api/bitnet/p2p/peers', (req, res) => {
+      if (!this.p2pServer) {
+        return res.status(503).json({ error: 'P2P server not started' });
+      }
+      
+      const peers = Array.from(this.p2pServer.peers.values()).map(peer => ({
+        nodeId: peer.nodeId,
+        chunkCount: peer.chunks.size,
+        lastSeen: peer.lastSeen,
+        connected: peer.ws.readyState === 1 // WebSocket.OPEN
+      }));
+      
+      res.json({ peers });
+    });
+
+    this.app.get('/api/bitnet/p2p/dht', (req, res) => {
+      if (!this.p2pServer) {
+        return res.status(503).json({ error: 'P2P server not started' });
+      }
+      
+      const dht = {};
+      for (const [chunkHash, nodeSet] of this.p2pServer.dht.entries()) {
+        dht[chunkHash] = Array.from(nodeSet);
+      }
+      
+      res.json({ dht });
+    });
+
+    this.app.get('/api/bitnet/p2p/find-chunk/:chunkHash', (req, res) => {
+      if (!this.p2pServer) {
+        return res.status(503).json({ error: 'P2P server not started' });
+      }
+      
+      const { chunkHash } = req.params;
+      const peers = this.p2pServer.findChunkPeers(chunkHash);
+      
+      res.json({
+        chunkHash,
+        availablePeers: peers,
+        peerCount: peers.length
+      });
+    });
+
+    this.app.post('/api/bitnet/p2p/request-chunk', async (req, res) => {
+      if (!this.p2pServer) {
+        return res.status(503).json({ error: 'P2P server not started' });
+      }
+      
+      const { chunkHash } = req.body;
+      
+      if (!chunkHash) {
+        return res.status(400).json({ error: 'chunkHash required' });
+      }
+      
+      try {
+        const chunkData = await this.p2pServer.requestChunk(chunkHash);
+        
+        // Store received chunk locally
+        const chunkPath = path.join(__dirname, '..', 'chunks', `${chunkHash}.dat`);
+        await fs.writeFile(chunkPath, chunkData);
+        
+        res.json({
+          success: true,
+          chunkHash,
+          size: chunkData.length,
+          storedLocally: true
+        });
+        
+      } catch (error) {
+        console.error('❌ Failed to request chunk:', error);
+        res.status(500).json({
+          success: false,
+          error: error.message
+        });
+      }
+    });
+
     // Error handling
     this.app.use((error, req, res, next) => {
       console.error('API Error:', error);
@@ -425,7 +516,12 @@ class BACDSAPIServer {
           'GET /api/bitnet/manifest/:fileHash',
           'GET /api/bitnet/chunks/list',
           'GET /api/network/peers',
-          'POST /api/network/announce'
+          'POST /api/network/announce',
+          'GET /api/bitnet/p2p/status',
+          'GET /api/bitnet/p2p/peers',
+          'GET /api/bitnet/p2p/dht',
+          'GET /api/bitnet/p2p/find-chunk/:chunkHash',
+          'POST /api/bitnet/p2p/request-chunk'
         ]
       });
     });
@@ -638,13 +734,16 @@ class BACDSAPIServer {
 
   start() {
     return new Promise((resolve, reject) => {
-      this.server = this.app.listen(this.port, '127.0.0.1', (err) => {
+      this.server = this.app.listen(this.port, '127.0.0.1', async (err) => {
         if (err) {
           reject(err);
         } else {
           console.log(`🚀 BACDS API Server running on http://127.0.0.1:${this.port}`);
           console.log(`📊 API Status: http://127.0.0.1:${this.port}/api/status`);
           console.log(`🌐 Web UI: http://127.0.0.1:${this.port}/web`);
+          
+          // Start P2P server after API server is running
+          await this.startP2PServer();
           resolve();
         }
       });
@@ -662,6 +761,17 @@ class BACDSAPIServer {
         resolve();
       }
     });
+  }
+
+  async startP2PServer() {
+    try {
+      this.p2pServer = new BitNetP2PServer(6001, this.port);
+      await this.p2pServer.start();
+      console.log('🌐 BitNet P2P Server started and integrated with API');
+    } catch (error) {
+      console.error('❌ Failed to start P2P server:', error);
+      this.p2pServer = null;
+    }
   }
 }
 

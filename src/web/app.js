@@ -1,9 +1,15 @@
 const API_BASE = 'http://127.0.0.1:3001/api';
 
-// Check API status on load
+// Auto-refresh network status
+setInterval(refreshNetworkStatus, 10000); // Every 10 seconds
+
+// Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
     checkAPIStatus();
     setInterval(checkAPIStatus, 30000); // Check every 30 seconds
+    
+    // Initialize P2P network status
+    setTimeout(refreshNetworkStatus, 2000); // Give P2P server time to start
 });
 
 async function checkAPIStatus() {
@@ -382,4 +388,199 @@ function copyToClipboard(text) {
             event.target.textContent = '📋 Copy';
         }, 2000);
     });
-} 
+}
+
+// P2P Network Functions
+
+async function refreshNetworkStatus() {
+    try {
+        const response = await fetch('/api/bitnet/p2p/status');
+        if (response.ok) {
+            const status = await response.json();
+            
+            document.getElementById('p2p-status').textContent = status.status;
+            document.getElementById('peer-count').textContent = status.connectedPeers;
+            document.getElementById('dht-count').textContent = status.dhtEntries;
+            document.getElementById('node-id').textContent = status.nodeId.substring(0, 12) + '...';
+            
+            showSuccess(`Network status updated - ${status.connectedPeers} peers connected`);
+        } else {
+            const error = await response.json();
+            showError(`Failed to get network status: ${error.error}`);
+        }
+    } catch (error) {
+        showError(`Network error: ${error.message}`);
+    }
+}
+
+async function showPeerList() {
+    try {
+        const response = await fetch('/api/bitnet/p2p/peers');
+        if (response.ok) {
+            const data = await response.json();
+            const peers = data.peers;
+            
+            const resultsDiv = document.getElementById('network-results');
+            const titleDiv = document.getElementById('network-results-title');
+            const contentDiv = document.getElementById('network-results-content');
+            
+            titleDiv.textContent = `Connected Peers (${peers.length})`;
+            
+            if (peers.length === 0) {
+                contentDiv.innerHTML = '<p style="color: #9ca3af;">No peers connected yet. Ensure other BitNet nodes are running on your network.</p>';
+            } else {
+                const peerHTML = peers.map(peer => `
+                    <div class="peer-item" style="background: #1f2937; padding: 15px; margin: 10px 0; border-radius: 8px;">
+                        <div><strong>Node ID:</strong> ${peer.nodeId}</div>
+                        <div><strong>Chunks:</strong> ${peer.chunkCount}</div>
+                        <div><strong>Status:</strong> ${peer.connected ? '🟢 Connected' : '🔴 Disconnected'}</div>
+                        <div><strong>Last Seen:</strong> ${new Date(peer.lastSeen).toLocaleString()}</div>
+                    </div>
+                `).join('');
+                
+                contentDiv.innerHTML = peerHTML;
+            }
+            
+            resultsDiv.style.display = 'block';
+            showSuccess(`Found ${peers.length} peers`);
+        } else {
+            const error = await response.json();
+            showError(`Failed to get peer list: ${error.error}`);
+        }
+    } catch (error) {
+        showError(`Network error: ${error.message}`);
+    }
+}
+
+async function showDHTTable() {
+    try {
+        const response = await fetch('/api/bitnet/p2p/dht');
+        if (response.ok) {
+            const data = await response.json();
+            const dht = data.dht;
+            
+            const resultsDiv = document.getElementById('network-results');
+            const titleDiv = document.getElementById('network-results-title');
+            const contentDiv = document.getElementById('network-results-content');
+            
+            const chunkCount = Object.keys(dht).length;
+            titleDiv.textContent = `DHT Table (${chunkCount} chunks)`;
+            
+            if (chunkCount === 0) {
+                contentDiv.innerHTML = '<p style="color: #9ca3af;">No chunks registered in DHT yet.</p>';
+            } else {
+                const dhtHTML = Object.entries(dht).map(([chunkHash, nodeIds]) => `
+                    <div class="dht-item" style="background: #1f2937; padding: 15px; margin: 10px 0; border-radius: 8px;">
+                        <div><strong>Chunk:</strong> ${chunkHash.substring(0, 16)}...</div>
+                        <div><strong>Available on:</strong> ${nodeIds.length} node(s)</div>
+                        <div style="margin-top: 8px; font-size: 12px; color: #9ca3af;">
+                            Nodes: ${nodeIds.map(id => id.substring(0, 8)).join(', ')}
+                        </div>
+                        <button onclick="requestSpecificChunk('${chunkHash}')" style="margin-top: 8px; padding: 4px 8px; background: #059669; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                            📥 Request Chunk
+                        </button>
+                    </div>
+                `).join('');
+                
+                contentDiv.innerHTML = dhtHTML;
+            }
+            
+            resultsDiv.style.display = 'block';
+            showSuccess(`DHT table loaded with ${chunkCount} chunks`);
+        } else {
+            const error = await response.json();
+            showError(`Failed to get DHT table: ${error.error}`);
+        }
+    } catch (error) {
+        showError(`Network error: ${error.message}`);
+    }
+}
+
+async function requestChunkFromNetwork() {
+    const chunkHashInput = document.getElementById('chunk-hash-input');
+    const chunkHash = chunkHashInput.value.trim();
+    
+    if (!chunkHash) {
+        showError('Please enter a chunk hash');
+        return;
+    }
+    
+    await requestSpecificChunk(chunkHash);
+    chunkHashInput.value = '';
+}
+
+async function requestSpecificChunk(chunkHash) {
+    const resultDiv = document.getElementById('chunk-request-result');
+    
+    try {
+        // First, find which peers have this chunk
+        const findResponse = await fetch(`/api/bitnet/p2p/find-chunk/${chunkHash}`);
+        if (!findResponse.ok) {
+            throw new Error('Failed to find chunk in network');
+        }
+        
+        const findData = await findResponse.json();
+        
+        if (findData.peerCount === 0) {
+            resultDiv.innerHTML = `
+                <div style="background: #dc2626; color: white; padding: 10px; border-radius: 6px; margin-top: 10px;">
+                    ❌ Chunk not found in network
+                </div>
+            `;
+            resultDiv.style.display = 'block';
+            return;
+        }
+        
+        // Show found peers
+        resultDiv.innerHTML = `
+            <div style="background: #059669; color: white; padding: 10px; border-radius: 6px; margin-top: 10px;">
+                ✅ Found chunk on ${findData.peerCount} peer(s). Requesting download...
+            </div>
+        `;
+        resultDiv.style.display = 'block';
+        
+        // Request the chunk
+        const requestResponse = await fetch('/api/bitnet/p2p/request-chunk', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ chunkHash })
+        });
+        
+        if (requestResponse.ok) {
+            const requestData = await requestResponse.json();
+            
+            if (requestData.success) {
+                resultDiv.innerHTML = `
+                    <div style="background: #059669; color: white; padding: 10px; border-radius: 6px; margin-top: 10px;">
+                        ✅ Chunk downloaded successfully!<br>
+                        📦 Size: ${requestData.size} bytes<br>
+                        💾 Stored locally: ${requestData.storedLocally ? 'Yes' : 'No'}
+                    </div>
+                `;
+                
+                // Refresh local chunks list
+                setTimeout(listLocalChunks, 1000);
+            } else {
+                resultDiv.innerHTML = `
+                    <div style="background: #dc2626; color: white; padding: 10px; border-radius: 6px; margin-top: 10px;">
+                        ❌ Failed to download chunk: ${requestData.error}
+                    </div>
+                `;
+            }
+        } else {
+            throw new Error('Download request failed');
+        }
+        
+    } catch (error) {
+        resultDiv.innerHTML = `
+            <div style="background: #dc2626; color: white; padding: 10px; border-radius: 6px; margin-top: 10px;">
+                ❌ Error: ${error.message}
+            </div>
+        `;
+        resultDiv.style.display = 'block';
+    }
+}
+
+// ... existing code ... 

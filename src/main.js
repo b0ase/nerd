@@ -41,10 +41,32 @@ async function createWindow() {
 
 app.whenReady().then(createWindow);
 
-app.on('window-all-closed', async () => {
-  // Stop the API server when app closes
+app.on('before-quit', async (event) => {
   if (apiServer) {
-    await apiServer.stop();
+    console.log('🛑 Stopping BACDS API Server...');
+    try {
+      // Stop P2P server if it exists
+      if (apiServer.p2pServer) {
+        await apiServer.p2pServer.stop();
+      }
+      await apiServer.stop();
+      console.log('✅ BACDS API Server stopped gracefully');
+    } catch (error) {
+      console.error('❌ Error stopping API server:', error);
+    }
+  }
+});
+
+app.on('window-all-closed', async () => {
+  if (apiServer) {
+    try {
+      if (apiServer.p2pServer) {
+        await apiServer.p2pServer.stop();
+      }
+      await apiServer.stop();
+    } catch (error) {
+      console.error('❌ Error during cleanup:', error);
+    }
   }
   
   if (process.platform !== 'darwin') {
