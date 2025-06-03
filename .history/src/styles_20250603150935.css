@@ -1,0 +1,1017 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Courier New', 'Monaco', 'Consolas', monospace;
+    background: 
+        linear-gradient(45deg, #1a1a1a 25%, transparent 25%), 
+        linear-gradient(-45deg, #1a1a1a 25%, transparent 25%), 
+        linear-gradient(45deg, transparent 75%, #1a1a1a 75%), 
+        linear-gradient(-45deg, transparent 75%, #1a1a1a 75%),
+        radial-gradient(circle at 50% 50%, #0d0d0d 0%, #000000 100%);
+    background-size: 20px 20px, 20px 20px, 20px 20px, 20px 20px, 100% 100%;
+    background-position: 0 0, 0 10px, 10px -10px, -10px 0px, 0 0;
+    min-height: 100vh;
+    color: #FFD700;
+    overflow-x: hidden;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+    position: relative;
+}
+
+.container::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #FFD700 0%, #FFA500 50%, #FFD700 100%);
+    z-index: 1000;
+    box-shadow: 0 0 10px #FFD700;
+}
+
+.container::after {
+    content: '';
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #FFD700 0%, #FFA500 50%, #FFD700 100%);
+    z-index: 1000;
+    box-shadow: 0 0 10px #FFD700;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #FFD700;
+    position: relative;
+    padding: 20px 0;
+    border: 2px solid #FFD700;
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
+    clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));
+    box-shadow: 
+        inset 0 0 20px rgba(255, 215, 0, 0.3),
+        0 0 20px rgba(255, 215, 0, 0.5);
+}
+
+header h1 {
+    font-size: 2.8rem;
+    margin-bottom: 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    text-shadow: 
+        0 0 10px #FFD700,
+        0 0 20px #FFD700,
+        2px 2px 4px #000;
+    font-family: 'Impact', 'Arial Black', monospace;
+}
+
+header p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: bold;
+}
+
+main {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
+    border: 3px solid #FFD700;
+    border-radius: 0;
+    padding: 30px;
+    box-shadow: 
+        inset 0 0 30px rgba(255, 215, 0, 0.2),
+        0 0 30px rgba(255, 215, 0, 0.4),
+        0 10px 20px rgba(0, 0, 0, 0.8);
+    clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px));
+    position: relative;
+    backdrop-filter: blur(10px);
+}
+
+main::before {
+    content: 'CLASSIFIED';
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 0.7rem;
+    color: #FF4444;
+    font-weight: bold;
+    letter-spacing: 2px;
+    opacity: 0.7;
+    transform: rotate(-15deg);
+}
+
+/* HD Wallet Section */
+.hd-wallet-section {
+    margin-bottom: 25px;
+    padding: 20px;
+    background: linear-gradient(135deg, #0d0d0d 0%, #1a1a1a 100%);
+    border: 2px solid #FFD700;
+    clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+    box-shadow: 
+        inset 0 0 15px rgba(255, 215, 0, 0.1),
+        0 0 15px rgba(255, 215, 0, 0.3);
+    position: relative;
+}
+
+.hd-wallet-section::before {
+    content: '⚠ SECURE KEY MANAGEMENT ⚠';
+    position: absolute;
+    top: -12px;
+    left: 20px;
+    background: #1a1a1a;
+    color: #FFD700;
+    padding: 2px 10px;
+    font-size: 0.7rem;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.hd-wallet-section h3 {
+    margin-bottom: 15px;
+    color: #FFD700;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 1.2rem;
+    text-shadow: 0 0 10px #FFD700;
+}
+
+.wallet-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.wallet-controls > div:first-child {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.wallet-btn {
+    padding: 12px 20px;
+    border: 2px solid #FFD700;
+    border-radius: 0;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: bold;
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+    color: #FFD700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-family: 'Courier New', monospace;
+    clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+}
+
+.wallet-btn:hover {
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+    color: #000;
+    box-shadow: 
+        0 0 20px #FFD700,
+        inset 0 0 10px rgba(0, 0, 0, 0.3);
+    transform: translateY(-2px);
+}
+
+.import-section {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.master-key-input {
+    flex: 1;
+    min-width: 300px;
+    padding: 12px;
+    border: 2px solid #FFD700;
+    border-radius: 0;
+    font-family: 'Courier New', monospace;
+    font-size: 0.85rem;
+    background: #0d0d0d;
+    color: #FFD700;
+    clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px));
+}
+
+.master-key-input:focus {
+    outline: none;
+    box-shadow: 
+        0 0 15px #FFD700,
+        inset 0 0 10px rgba(255, 215, 0, 0.1);
+    background: #1a1a1a;
+}
+
+.master-key-display {
+    margin-top: 15px;
+    padding: 15px;
+    border-radius: 0;
+    font-family: 'Courier New', monospace;
+    font-size: 0.8rem;
+    word-break: break-all;
+    display: none;
+    border: 2px solid;
+    clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+}
+
+.master-key-display.success {
+    background: linear-gradient(135deg, #0d2818 0%, #1a4d2e 100%);
+    border-color: #4CAF50;
+    color: #4CAF50;
+    display: block;
+    box-shadow: 0 0 15px rgba(76, 175, 80, 0.3);
+}
+
+.master-key-display.warning {
+    background: linear-gradient(135deg, #2d2400 0%, #4d4000 100%);
+    border-color: #FFD700;
+    color: #FFD700;
+    display: block;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+}
+
+.master-key-display.error {
+    background: linear-gradient(135deg, #2d0d0d 0%, #4d1a1a 100%);
+    border-color: #FF4444;
+    color: #FF4444;
+    display: block;
+    box-shadow: 0 0 15px rgba(255, 68, 68, 0.3);
+}
+
+.upload-section {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+/* Drag and Drop Zone */
+.drop-zone {
+    position: relative;
+    border: 3px dashed #FFD700;
+    border-radius: 0;
+    padding: 30px 20px;
+    background: linear-gradient(135deg, #0d0d0d 0%, #1a1a1a 100%);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    margin-bottom: 20px;
+    clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px));
+    box-shadow: 
+        inset 0 0 20px rgba(255, 215, 0, 0.1),
+        0 0 20px rgba(255, 215, 0, 0.2);
+}
+
+.drop-zone:hover {
+    border-color: #FFA500;
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+    box-shadow: 
+        inset 0 0 25px rgba(255, 215, 0, 0.2),
+        0 0 25px rgba(255, 215, 0, 0.4);
+    transform: translateY(-2px);
+}
+
+.drop-zone.drag-over {
+    border-color: #FFD700;
+    background: linear-gradient(135deg, #2d2d00 0%, #4d4d00 100%);
+    border-style: solid;
+    transform: scale(1.02);
+    box-shadow: 
+        inset 0 0 30px rgba(255, 215, 0, 0.3),
+        0 0 30px rgba(255, 215, 0, 0.6);
+}
+
+.drop-zone-content {
+    transition: opacity 0.3s ease;
+}
+
+.drop-zone.drag-over .drop-zone-content {
+    opacity: 0.3;
+}
+
+.drop-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    border-radius: 0;
+}
+
+.drop-zone.drag-over .drop-overlay {
+    opacity: 1;
+}
+
+.drop-overlay-content {
+    text-align: center;
+    color: #FFD700;
+}
+
+.drop-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    display: block;
+    text-shadow: 0 0 10px #FFD700;
+}
+
+.drop-zone h3 {
+    font-size: 1.4rem;
+    margin-bottom: 10px;
+    color: #FFD700;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px #FFD700;
+}
+
+.drop-zone p {
+    color: #CCC;
+    margin-bottom: 20px;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.drop-overlay-content h3 {
+    color: #FFD700;
+    font-size: 1.6rem;
+    margin-top: 10px;
+    text-shadow: 0 0 15px #FFD700;
+}
+
+.button-group {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.primary-btn, .secondary-btn, .success-btn, .danger-btn {
+    padding: 15px 30px;
+    border: 2px solid;
+    border-radius: 0;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-family: 'Courier New', monospace;
+    clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+}
+
+.primary-btn {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+    color: #FFD700;
+    border-color: #FFD700;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+}
+
+.primary-btn:hover {
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+    color: #000;
+    box-shadow: 
+        0 0 25px #FFD700,
+        inset 0 0 10px rgba(0, 0, 0, 0.3);
+    transform: translateY(-2px);
+}
+
+.secondary-btn {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+    color: #CCC;
+    border-color: #666;
+    box-shadow: 0 0 10px rgba(102, 102, 102, 0.3);
+}
+
+.secondary-btn:hover {
+    background: linear-gradient(135deg, #666 0%, #888 100%);
+    color: #000;
+    border-color: #CCC;
+    box-shadow: 
+        0 0 20px #666,
+        inset 0 0 10px rgba(0, 0, 0, 0.3);
+    transform: translateY(-2px);
+}
+
+.success-btn {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+    color: #FFD700;
+    border-color: #FFD700;
+    width: 100%;
+    font-size: 1.2rem;
+    padding: 20px;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+    position: relative;
+}
+
+.success-btn::before {
+    content: '▶ EXECUTE OPERATION ◀';
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1a1a1a;
+    color: #FFD700;
+    padding: 2px 15px;
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+}
+
+.success-btn:hover {
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+    color: #000;
+    box-shadow: 
+        0 0 30px #FFD700,
+        inset 0 0 15px rgba(0, 0, 0, 0.3);
+    transform: translateY(-2px);
+}
+
+.success-btn:disabled {
+    background: #333;
+    color: #666;
+    border-color: #444;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.danger-btn {
+    background: linear-gradient(135deg, #2d0d0d 0%, #4d1a1a 100%);
+    color: #FF4444;
+    border-color: #FF4444;
+    padding: 8px 16px;
+    font-size: 0.8rem;
+    box-shadow: 0 0 15px rgba(255, 68, 68, 0.3);
+}
+
+.danger-btn:hover {
+    background: linear-gradient(135deg, #FF4444 0%, #CC3333 100%);
+    color: #000;
+    box-shadow: 
+        0 0 25px #FF4444,
+        inset 0 0 10px rgba(0, 0, 0, 0.3);
+    transform: translateY(-1px);
+}
+
+.hint {
+    margin-top: 10px;
+    color: #999;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-family: 'Courier New', monospace;
+}
+
+.file-list {
+    margin: 20px 0;
+}
+
+.file-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 15px;
+    margin: 10px 0;
+    background: linear-gradient(135deg, #0d0d0d 0%, #1a1a1a 100%);
+    border: 2px solid #FFD700;
+    clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+    min-height: 60px;
+    box-shadow: 
+        inset 0 0 10px rgba(255, 215, 0, 0.1),
+        0 0 10px rgba(255, 215, 0, 0.2);
+    position: relative;
+}
+
+.file-item::before {
+    content: '◤';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    color: #FFD700;
+    font-size: 0.8rem;
+    opacity: 0.5;
+}
+
+.file-info {
+    flex: 1;
+    min-width: 0;
+    margin-right: 15px;
+}
+
+.file-name {
+    font-weight: bold;
+    margin-bottom: 8px;
+    word-break: break-word;
+    hyphens: auto;
+    line-height: 1.4;
+    overflow-wrap: break-word;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    color: #FFD700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.file-path {
+    font-size: 0.75rem;
+    color: #999;
+    font-family: 'Courier New', monospace;
+    word-break: break-all;
+    line-height: 1.3;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    opacity: 0.8;
+}
+
+/* Show full path on hover */
+.file-item:hover .file-path {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+    color: #CCC;
+}
+
+.file-item:hover {
+    box-shadow: 
+        inset 0 0 15px rgba(255, 215, 0, 0.2),
+        0 0 15px rgba(255, 215, 0, 0.4);
+    border-color: #FFA500;
+}
+
+.remove-btn {
+    margin-left: 10px;
+    flex-shrink: 0;
+    align-self: flex-start;
+}
+
+/* Output Folder Section */
+.output-section {
+    margin: 25px 0;
+    text-align: center;
+    padding: 20px;
+    background: linear-gradient(135deg, #0d0d0d 0%, #1a1a1a 100%);
+    border: 2px solid #FFD700;
+    clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+    box-shadow: 
+        inset 0 0 20px rgba(255, 215, 0, 0.1),
+        0 0 20px rgba(255, 215, 0, 0.3);
+    position: relative;
+}
+
+.output-section::before {
+    content: '⚡ DEPLOYMENT ZONE ⚡';
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1a1a1a;
+    color: #FFD700;
+    padding: 2px 15px;
+    font-size: 0.7rem;
+    font-weight: bold;
+    letter-spacing: 2px;
+}
+
+.output-folder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.output-folder h4 {
+    color: #FFD700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: bold;
+    text-shadow: 0 0 10px #FFD700;
+}
+
+.selected-folder {
+    padding: 12px 16px;
+    background: linear-gradient(135deg, #0d2818 0%, #1a4d2e 100%);
+    border: 2px solid #4CAF50;
+    clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px));
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    color: #4CAF50;
+    word-break: break-all;
+    max-width: 100%;
+    box-shadow: 0 0 15px rgba(76, 175, 80, 0.3);
+}
+
+.selected-folder::before {
+    content: '📁 TARGET: ';
+}
+
+/* Danger Zone */
+.danger-zone {
+    margin-top: 20px;
+    padding: 20px;
+    background: linear-gradient(135deg, #2d0d0d 0%, #4d1a1a 100%);
+    border: 2px solid #FF4444;
+    clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+    box-shadow: 
+        inset 0 0 15px rgba(255, 68, 68, 0.1),
+        0 0 15px rgba(255, 68, 68, 0.3);
+    position: relative;
+}
+
+.danger-zone::before {
+    content: '☢ DANGER ZONE ☢';
+    position: absolute;
+    top: -12px;
+    left: 20px;
+    background: #1a1a1a;
+    color: #FF4444;
+    padding: 2px 15px;
+    font-size: 0.7rem;
+    font-weight: bold;
+    letter-spacing: 2px;
+}
+
+.danger-header h4 {
+    color: #FF4444;
+    margin-bottom: 5px;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: bold;
+    text-shadow: 0 0 10px #FF4444;
+}
+
+.danger-header p {
+    color: #CCC;
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    color: #FF4444;
+    font-weight: bold;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-family: 'Courier New', monospace;
+}
+
+.checkbox-container input {
+    margin-right: 10px;
+    transform: scale(1.2);
+    accent-color: #FF4444;
+}
+
+.folders-to-delete {
+    margin-top: 15px;
+    padding: 10px;
+    background: linear-gradient(135deg, #4d1a1a 0%, #2d0d0d 100%);
+    border: 1px solid #FF4444;
+    clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px));
+    font-size: 0.85rem;
+    color: #FF4444;
+    font-family: 'Courier New', monospace;
+    display: none;
+    box-shadow: 0 0 10px rgba(255, 68, 68, 0.2);
+}
+
+.folders-to-delete.show {
+    display: block;
+}
+
+.process-section {
+    margin: 25px 0;
+    text-align: center;
+    position: relative;
+}
+
+.results {
+    margin-top: 25px;
+}
+
+.result-item {
+    padding: 15px;
+    margin: 10px 0;
+    border: 2px solid;
+    clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    font-family: 'Courier New', monospace;
+    position: relative;
+}
+
+.result-success {
+    background: linear-gradient(135deg, #0d2818 0%, #1a4d2e 100%);
+    border-color: #4CAF50;
+    color: #4CAF50;
+    box-shadow: 0 0 15px rgba(76, 175, 80, 0.3);
+}
+
+.result-success::before {
+    content: '✓';
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    color: #4CAF50;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.result-error {
+    background: linear-gradient(135deg, #2d0d0d 0%, #4d1a1a 100%);
+    border-color: #FF4444;
+    color: #FF4444;
+    box-shadow: 0 0 15px rgba(255, 68, 68, 0.3);
+}
+
+.result-error::before {
+    content: '✗';
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    color: #FF4444;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.result-info {
+    flex: 1;
+}
+
+.result-title {
+    font-weight: bold;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.95rem;
+}
+
+.result-details {
+    font-size: 0.85rem;
+    opacity: 0.9;
+    font-family: 'Courier New', monospace;
+    word-break: break-word;
+    line-height: 1.4;
+}
+
+.bitcoin-address {
+    background: linear-gradient(135deg, #0d1a2d 0%, #1a334d 100%);
+    padding: 8px 12px;
+    border: 1px solid #2196F3;
+    clip-path: polygon(0 0, calc(100% - 4px) 0, 100% 4px, 100% 100%, 4px 100%, 0 calc(100% - 4px));
+    font-family: 'Courier New', monospace;
+    font-size: 0.8rem;
+    margin-top: 8px;
+    word-break: break-all;
+    line-height: 1.3;
+    color: #2196F3;
+    font-weight: bold;
+    box-shadow: 0 0 10px rgba(33, 150, 243, 0.3);
+}
+
+.derivation-info {
+    background: linear-gradient(135deg, #2d0d2d 0%, #4d1a4d 100%);
+    padding: 6px 10px;
+    border: 1px solid #9C27B0;
+    clip-path: polygon(0 0, calc(100% - 4px) 0, 100% 4px, 100% 100%, 4px 100%, 0 calc(100% - 4px));
+    font-family: 'Courier New', monospace;
+    font-size: 0.75rem;
+    margin-top: 6px;
+    color: #9C27B0;
+    font-weight: bold;
+    box-shadow: 0 0 10px rgba(156, 39, 176, 0.3);
+}
+
+.loading {
+    text-align: center;
+    padding: 20px;
+    color: #FFD700;
+    font-family: 'Courier New', monospace;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: bold;
+}
+
+.loading::after {
+    content: '';
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid #FFD700;
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: spin 1s linear infinite;
+    margin-left: 15px;
+    box-shadow: 0 0 10px #FFD700;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.empty-state {
+    text-align: center;
+    color: #666;
+    font-style: italic;
+    padding: 40px;
+    font-family: 'Courier New', monospace;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+/* File counter */
+.file-counter {
+    margin-top: 15px;
+    padding: 12px 16px;
+    background: linear-gradient(135deg, #0d1a2d 0%, #1a334d 100%);
+    border: 2px solid #2196F3;
+    clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+    color: #2196F3;
+    font-weight: bold;
+    text-align: center;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    box-shadow: 0 0 15px rgba(33, 150, 243, 0.3);
+    font-family: 'Courier New', monospace;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+/* Rebuild Section */
+.rebuild-section {
+    margin: 15px 0;
+    text-align: center;
+    padding: 15px;
+    background: linear-gradient(135deg, #2d1a00 0%, #4d3300 100%);
+    border: 2px solid #FF9800;
+    clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+    box-shadow: 0 0 15px rgba(255, 152, 0, 0.3);
+    position: relative;
+}
+
+.rebuild-section::before {
+    content: '🔧 MAINTENANCE ⚙';
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1a1a1a;
+    color: #FF9800;
+    padding: 2px 15px;
+    font-size: 0.7rem;
+    font-weight: bold;
+    letter-spacing: 2px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px 10px;
+    }
+    
+    header h1 {
+        font-size: 2.2rem;
+        letter-spacing: 2px;
+    }
+    
+    main {
+        padding: 20px;
+    }
+    
+    .button-group {
+        flex-direction: column;
+    }
+    
+    .import-section {
+        flex-direction: column;
+    }
+    
+    .master-key-input {
+        min-width: 100%;
+    }
+    
+    /* Better handling of long Bitcoin addresses on mobile */
+    .file-name {
+        font-size: 0.8rem;
+        letter-spacing: 0.5px;
+    }
+    
+    .file-path {
+        font-size: 0.7rem;
+    }
+    
+    .bitcoin-address {
+        font-size: 0.7rem;
+        padding: 6px 8px;
+    }
+    
+    .derivation-info {
+        font-size: 0.65rem;
+    }
+    
+    .file-item {
+        padding: 12px;
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .remove-btn {
+        margin-left: 0;
+        margin-top: 10px;
+        align-self: flex-end;
+    }
+    
+    .success-btn {
+        font-size: 1rem;
+        padding: 15px;
+    }
+    
+    .success-btn::before {
+        font-size: 0.6rem;
+        padding: 1px 10px;
+    }
+}
+
+/* Additional tactical elements */
+.folder-selection {
+    background: linear-gradient(135deg, #0d2818 0%, #1a4d2e 100%);
+    border: 2px solid #4CAF50;
+    clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+    padding: 12px;
+    margin-top: 10px;
+    box-shadow: 0 0 15px rgba(76, 175, 80, 0.3);
+}
+
+.folder-path {
+    font-family: 'Courier New', monospace;
+    background: rgba(0,0,0,0.3);
+    padding: 6px 8px;
+    border-radius: 0;
+    clip-path: polygon(0 0, calc(100% - 4px) 0, 100% 4px, 100% 100%, 4px 100%, 0 calc(100% - 4px));
+    display: inline-block;
+    margin: 4px 0;
+    word-break: break-all;
+    border: 1px solid #4CAF50;
+}
+
+/* Improved Danger Zone Styling */
+.danger-warning {
+    background: linear-gradient(135deg, #4d1a1a 0%, #2d0d0d 100%);
+    border: 2px solid #FF4444;
+    clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px));
+    padding: 10px;
+    margin-bottom: 10px;
+    box-shadow: 0 0 10px rgba(255, 68, 68, 0.3);
+}
+
+.folder-list {
+    background: rgba(0,0,0,0.3);
+    border: 1px solid #FF4444;
+    clip-path: polygon(0 0, calc(100% - 4px) 0, 100% 4px, 100% 100%, 4px 100%, 0 calc(100% - 4px));
+    padding: 8px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.85rem;
+    line-height: 1.4;
+}
+
+/* Master Key Found Display */
+.master-key-found {
+    background: linear-gradient(135deg, #0d1a2d 0%, #1a334d 100%);
+    border: 2px solid #2196F3;
+    clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+    padding: 12px;
+    margin-top: 10px;
+    animation: pulse-blue 2s ease-in-out;
+    box-shadow: 0 0 15px rgba(33, 150, 243, 0.4);
+}
+
+@keyframes pulse-blue {
+    0% { box-shadow: 0 0 0 0 rgba(33, 150, 243, 0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(33, 150, 243, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(33, 150, 243, 0); }
+} 

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JPEG Renamer - Bitcoin Addresses</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🖼️ JPEG Renamer</h1>
+            <p>Rename your JPEG files with random Bitcoin addresses</p>
+        </header>
+
+        <main>
+            <div class="upload-section">
+                <div id="dropZone" class="drop-zone">
+                    <div class="drop-zone-content">
+                        <div class="drop-icon">📁</div>
+                        <h3>Drag & Drop JPEG Files Here</h3>
+                        <p>Or click to select files (no limit!)</p>
+                        <button id="selectFiles" class="primary-btn">
+                            📁 Select JPEG Files
+                        </button>
+                    </div>
+                    <div class="drop-overlay">
+                        <div class="drop-overlay-content">
+                            <div class="drop-icon">⬇️</div>
+                            <h3>Drop your JPEG files here!</h3>
+                        </div>
+                    </div>
+                </div>
+                <p class="hint">Supported formats: .jpg, .jpeg • Files will be copied to a new folder</p>
+            </div>
+
+            <div id="fileList" class="file-list"></div>
+
+            <div id="outputSection" class="output-section" style="display: none;">
+                <div class="output-folder">
+                    <button id="selectOutputFolder" class="secondary-btn">
+                        📂 Choose Output Folder
+                    </button>
+                    <div id="selectedFolder" class="selected-folder"></div>
+                </div>
+            </div>
+
+            <div id="processSection" class="process-section" style="display: none;">
+                <button id="processFiles" class="success-btn">
+                    🔄 Copy & Rename Files
+                </button>
+            </div>
+
+            <div id="results" class="results"></div>
+        </main>
+    </div>
+
+    <script src="renderer.js"></script>
+</body>
+</html> 

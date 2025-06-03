@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JPEG Renamer - HD Bitcoin Addresses</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🖼️ JPEG Renamer HD</h1>
+            <p>Rename your JPEG files with HD Bitcoin addresses</p>
+        </header>
+
+        <main>
+            <!-- HD Wallet Section -->
+            <div class="hd-wallet-section">
+                <h3>🔑 HD Wallet Control</h3>
+                <div class="wallet-controls">
+                    <button id="generateMasterKey" class="wallet-btn">
+                        🎲 Generate New Master Key
+                    </button>
+                    <button id="showMasterKey" class="wallet-btn">
+                        👁️ Show Current Master Key
+                    </button>
+                    <div class="import-section">
+                        <input type="text" id="masterKeyInput" placeholder="Paste 64-character hex master key to import..." class="master-key-input">
+                        <button id="importMasterKey" class="wallet-btn">
+                            📥 Import Master Key
+                        </button>
+                    </div>
+                </div>
+                <div id="masterKeyDisplay" class="master-key-display"></div>
+            </div>
+
+            <!-- File/Folder Selection Section -->
+            <div class="upload-section">
+                <div id="dropZone" class="drop-zone">
+                    <div class="drop-zone-content">
+                        <div class="drop-icon">📁</div>
+                        <h3>Drag & Drop Files or Folders Here</h3>
+                        <p>Supports individual files or entire folder structures</p>
+                        <div class="button-group">
+                            <button id="selectFiles" class="primary-btn">
+                                📷 Select JPEG Files
+                            </button>
+                            <button id="selectFolders" class="secondary-btn">
+                                📂 Select Folders
+                            </button>
+                        </div>
+                    </div>
+                    <div class="drop-overlay">
+                        <div class="drop-overlay-content">
+                            <div class="drop-icon">⬇️</div>
+                            <h3>Drop your files or folders here!</h3>
+                        </div>
+                    </div>
+                </div>
+                <p class="hint">Supported formats: .jpg, .jpeg • Recursively scans all subfolders • Preserves originals unless deletion is enabled</p>
+            </div>
+
+            <div id="fileList" class="file-list"></div>
+
+            <div id="outputSection" class="output-section" style="display: none;">
+                <div class="output-folder">
+                    <h4>📤 Choose Destination for Renamed Files</h4>
+                    <button id="selectOutputFolder" class="secondary-btn">
+                        📂 Select Output Folder
+                    </button>
+                    <div id="selectedFolder" class="selected-folder"></div>
+                </div>
+                
+                <!-- Folder Deletion Option -->
+                <div class="danger-zone" id="dangerZone" style="display: none;">
+                    <div class="danger-header">
+                        <h4>⚠️ Source Folder Cleanup (Optional)</h4>
+                        <p><strong>Delete original source folders</strong> after successfully copying all files to output folder</p>
+                    </div>
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="deleteSourceFolders">
+                        <span class="checkmark"></span>
+                        Delete original source folders after copying files (⚠️ Cannot be undone!)
+                    </label>
+                    <div id="foldersToDelete" class="folders-to-delete"></div>
+                </div>
+            </div>
+
+            <div id="processSection" class="process-section" style="display: none;">
+                <button id="processFiles" class="success-btn">
+                    🔄 Copy & Rename with HD Addresses
+                </button>
+            </div>
+
+            <div id="results" class="results"></div>
+        </main>
+    </div>
+
+    <script src="renderer.js"></script>
+</body>
+</html> 

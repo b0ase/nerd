@@ -1,0 +1,43 @@
+{
+  "name": "jpeg-renamer",
+  "version": "1.0.0",
+  "description": "Desktop app to rename JPEG files with random public addresses",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "build": "electron-builder",
+    "dist": "electron-builder --publish=never"
+  },
+  "keywords": ["electron", "jpeg", "renamer", "desktop"],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^27.0.0",
+    "electron-builder": "^24.6.4"
+  },
+  "dependencies": {
+    "fs-extra": "^11.1.1",
+    "path": "^0.12.7"
+  },
+  "build": {
+    "appId": "com.example.jpeg-renamer",
+    "productName": "JPEG Renamer",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "src/**/*",
+      "package.json"
+    ],
+    "mac": {
+      "category": "public.app-category.utilities"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "linux": {
+      "target": "AppImage"
+    }
+  }
+} 
