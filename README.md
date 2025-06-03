@@ -6,6 +6,8 @@ A Bitcoin-Addressed Content Delivery System that serves as the foundation for de
 **Desktop Platform**: Full-featured content management system  
 **HandCash Integration**: Ready for real BSV payments  
 
+> **🤓 Coming Soon**: Evolution to **NERD** (Network Endpoint Redistribution Daemon) with **$NERD** token economy on 1Sat Ordinals! See [STRATEGIC_PLAN.md](STRATEGIC_PLAN.md) for details.
+
 ## 🌐 BACDS Ecosystem
 
 **BACDS** (Bitcoin-Addressed Content Delivery System) consists of:
@@ -19,6 +21,31 @@ A Bitcoin-Addressed Content Delivery System that serves as the foundation for de
 
 Traditional CDN: `User → DNS → CDN Server → Origin → Content`  
 **BACDS Network**: `User → Bitcoin Address → Direct Peer → Content + Payment`
+
+## 🤓 **NERD Evolution Preview**
+
+### **Upcoming: $NERD Token Economy**
+BACDS is evolving into **NERD** (Network Endpoint Redistribution Daemon) with native tokenomics:
+
+- **$NERD tokens** on 1Sat Ordinals marketplace
+- **Revenue sharing** for token holders from network fees
+- **Staking rewards** for running NERD daemon nodes
+- **Governance rights** for protocol decisions
+- **Premium features** for token holders
+
+**Value Proposition**: *"Only nerds will understand... and profit from it"* 🤓
+
+### **Token Utility**
+- 📈 **Dividends** from network transaction fees
+- ⚡ **Reduced fees** when accessing content
+- 🗳️ **Governance voting** on protocol upgrades
+- 🎯 **Staking rewards** for network participation
+
+### **Launch Strategy**
+1. **Phase 1** ✅: BACDS foundation (complete)
+2. **Phase 2** 🔄: NERD tokenomics design (current)
+3. **Phase 3** 🚀: $NERD token launch + rebrand
+4. **Phase 4** 💰: Full token economy implementation
 
 ## Features
 
@@ -211,11 +238,11 @@ See `API_DOCUMENTATION.md` for complete endpoint details.
 ## BACDS Vision
 
 **Phase 1** ✅: Desktop foundation with BACDS API and professional website  
-**Phase 2**: HandCash payment integration and content marketplace  
-**Phase 3**: P2P networking for direct peer-to-peer delivery  
-**Phase 4**: Full decentralized infrastructure with token economy  
+**Phase 2** 🔄: NERD tokenomics design and community building  
+**Phase 3** 🚀: $NERD token launch and platform rebrand  
+**Phase 4** 💰: Full token economy with revenue distribution  
 
-The ultimate goal: **Bitcoin addresses as network endpoints**, enabling direct machine-to-machine content delivery with built-in payment verification via HandCash.
+The ultimate goal: **Bitcoin addresses as network endpoints**, enabling direct machine-to-machine content delivery with built-in payment verification and token rewards.
 
 ## Development
 
@@ -238,19 +265,19 @@ bacds/
 │   ├── app.js               # HandCash integration
 │   └── vercel.json          # Deployment config
 ├── package.json             # Dependencies and scripts
-├── STRATEGIC_PLAN.md        # Complete development roadmap
+├── STRATEGIC_PLAN.md        # NERD evolution roadmap
 └── README.md               # This file
 ```
 
 ## Contributing
 
-Contributions welcome! This project is building the foundation for decentralized content delivery. Areas of focus:
+Contributions welcome! This project is building the foundation for decentralized content delivery with token incentives. Areas of focus:
 
-- HandCash payment integration improvements
+- $NERD tokenomics implementation
+- 1Sat Ordinals integration
 - P2P networking development
+- Community building and governance
 - UI/UX enhancements
-- Mobile app development
-- Documentation and tutorials
 
 ## 📞 Contact & Support
 
@@ -259,14 +286,14 @@ Contributions welcome! This project is building the foundation for decentralized
 - **Website**: Contact form at [bacds.website](https://bacds.website)
 - **In-App**: Direct messaging via BACDS desktop client
 
-For technical support or collaboration inquiries, reach out via HandCash $BOASE or submit issues on GitHub.
+For technical support, collaboration, or $NERD token inquiries, reach out via HandCash $BOASE or submit issues on GitHub.
 
 ## License
 
-MIT License - Open source foundation for the BACDS ecosystem.
+MIT License - Open source foundation for the BACDS/NERD ecosystem.
 
 ---
 
-**🚀 BACDS Platform**: Where Bitcoin addresses become network endpoints and content delivery meets cryptocurrency payments.
+**🚀 BACDS → NERD Evolution**: Where Bitcoin addresses become network endpoints, content delivery meets cryptocurrency payments, and nerds profit from decentralization.
 
-**Status**: Core platform complete ✅, Marketing website live ✅, HandCash integration ready ✅, P2P networking in development. 
+**Status**: Phase 1 complete ✅, Phase 2 tokenomics design ✅, Ready for $NERD token launch! 🤓💰
