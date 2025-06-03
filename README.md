@@ -1,6 +1,6 @@
 # 🚀 BACDS Desktop - BitNet Platform Foundation
 
-A revolutionary Bitcoin-Addressed Content Delivery System that evolved from a desktop JPEG renamer into the foundation for the **BitNet** decentralized content delivery network. This application demonstrates how Bitcoin addresses can serve as both payment endpoints AND network endpoints for peer-to-peer content delivery.
+A revolutionary Bitcoin-Addressed Content Delivery System that serves as the foundation for the **BitNet** decentralized content delivery network. This application demonstrates how Bitcoin addresses can serve as both payment endpoints AND network endpoints for peer-to-peer content delivery.
 
 ## 🌐 BitNet Ecosystem
 
@@ -18,24 +18,25 @@ Traditional CDN: `User → DNS → CDN Server → Origin → Content`
 ## Features
 
 - 🔒 **HD Bitcoin Wallet**: Deterministic Bitcoin address generation with master seed
-- 📁 **Content Management**: Rename files with Bitcoin addresses for network delivery
+- 📁 **Universal File Chunking**: Split any file type (videos, documents, images) into Bitcoin-addressed chunks
 - 🎨 **Modern UI**: Clean, professional interface with real-time feedback
 - 🌐 **BACDS API Server**: Express.js API with comprehensive endpoints
 - 💻 **BitStream MVP**: Full content delivery platform with web interface
 - 📊 **Payment Tracking**: Monitor Bitcoin payments to content addresses
 - 🖥️ **Cross-Platform**: Works on macOS, Windows, and Linux
+- 🎬 **Drag & Drop Support**: Simply drag videos, documents, or any files for instant chunking
 
 ## How It Works
 
-The app generates deterministic Bitcoin addresses for content delivery by:
+The app creates a decentralized content delivery network by:
 
 1. Creating or loading a master seed (HD wallet)
-2. Deriving Bitcoin addresses using deterministic key generation
-3. Mapping content to unique Bitcoin addresses
+2. Splitting files into 1MB chunks with unique Bitcoin addresses
+3. Generating payment URLs for each chunk
 4. Enabling payment-gated content access
 5. Providing foundation for peer-to-peer delivery on BitNet
 
-Each generated address is unique, follows Bitcoin mainnet format, and serves as both a payment endpoint and future network endpoint.
+Each chunk gets a unique Bitcoin address that serves as both a payment endpoint and future network endpoint for direct peer-to-peer delivery.
 
 ## Installation
 
@@ -146,9 +147,17 @@ The built applications will be in the `dist` folder.
 
 ## Example
 
-**Original filename:** `vacation_photo.jpg`  
-**New filename:** `1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa.jpg`  
-**Payment URL:** `bitcoin:1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa?amount=0.001&label=vacation_photo`
+**Original file:** `movie_trailer.mp4` (50MB)  
+**Chunked into:** 50 chunks with Bitcoin addresses  
+**Example chunk:** `1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa_chunk_0.dat`  
+**Payment URL:** `bitcoin:1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa?amount=0.00001&label=movie_chunk_0`
+
+**Supported File Types:**
+- 🎬 **Videos**: MP4, AVI, MOV, MKV, WebM
+- 📷 **Images**: JPEG, PNG, GIF, WebP
+- 📄 **Documents**: PDF, DOCX, TXT, MD
+- 🎵 **Audio**: MP3, WAV, FLAC
+- 💾 **Any file type** for chunking and BitNet delivery
 
 ## BACDS API Endpoints
 

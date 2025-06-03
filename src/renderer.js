@@ -158,9 +158,9 @@ async function handleDrop(e) {
                     
                     if (result.files && result.files.length > 0) {
                         await addFilesToList(result.files);
-                        showSuccess(`Found ${result.files.length} JPEG files in ${result.folders.length} folder(s) with nested subdirectories.`);
+                        showSuccess(`Found ${result.files.length} files in ${result.folders.length} folder(s) with nested subdirectories.`);
                     } else {
-                        showError('No JPEG files found in the selected folders.');
+                        showError('No files found in the selected folders.');
                     }
                 } else {
                     clearResults();
@@ -174,16 +174,17 @@ async function handleDrop(e) {
     
     // Process individual files
     for (const file of files) {
-        const extension = file.name.toLowerCase().split('.').pop();
-        if (['jpg', 'jpeg'].includes(extension)) {
-            droppedFiles.push(file.path || file.name);
+        // Check if it's a supported file type (all types supported)
+        const extension = path.extname(file.name).toLowerCase();
+        if (extension) {
+            droppedFiles.push(file.path);
         }
     }
     
     if (droppedFiles.length > 0) {
         await addFilesToList(droppedFiles);
     } else {
-        showError('No JPEG files found in the dropped items.');
+        showError('No supported files found in the dropped items.');
     }
 }
 
@@ -202,7 +203,7 @@ async function selectFiles() {
 
 async function selectFolders() {
     try {
-        showLoading('Scanning folders for JPEG files...');
+        showLoading('Scanning folders for files...');
         const result = await window.electronAPI.selectFolders();
         
         if (result.folders && result.folders.length > 0) {
@@ -210,9 +211,9 @@ async function selectFolders() {
             
             if (result.files && result.files.length > 0) {
                 await addFilesToList(result.files);
-                showSuccess(`Found ${result.files.length} JPEG files in ${result.folders.length} folder(s).`);
+                showSuccess(`Found ${result.files.length} files in ${result.folders.length} folder(s).`);
             } else {
-                showError('No JPEG files found in the selected folders.');
+                showError('No files found in the selected folders.');
             }
         }
     } catch (error) {
@@ -239,7 +240,7 @@ async function addFilesToList(newFilePaths) {
     updateWorkflowSteps();
     clearResults();
     
-    showSuccess(`Added ${uniqueFiles.length} JPEG file(s) to the list.`);
+    showSuccess(`Added ${uniqueFiles.length} file(s) to the list.`);
 }
 
 async function selectOutputFolder() {

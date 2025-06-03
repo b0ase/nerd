@@ -177,7 +177,7 @@ async function saveMasterKeyToOutputFolder(outputFolder) {
     masterKey: masterSeed.toString('hex'),
     created: existingData.created || new Date().toISOString(),
     version: "1.0",
-    description: "HD Master Key for JPEG Renamer - Keep this file safe!",
+    description: "HD Master Key for BACDS Desktop - BitNet Platform - Keep this file safe!",
     addresses: existingData.addresses || {},
     metadata: {
       totalAddresses: existingData.addresses ? Object.keys(existingData.addresses).length : 0,
@@ -212,7 +212,7 @@ async function saveAddressMapping(outputFolder, address, index, filename) {
         masterKey: masterSeed ? masterSeed.toString('hex') : '',
         created: new Date().toISOString(),
         version: "1.0",
-        description: "HD Master Key for JPEG Renamer - Keep this file safe!",
+        description: "HD Master Key for BACDS Desktop - BitNet Platform - Keep this file safe!",
         addresses: {},
         metadata: {
           totalAddresses: 0,
@@ -312,27 +312,24 @@ async function calculateFileHash(filePath) {
   return crypto.createHash('sha256').update(fileBuffer).digest('hex');
 }
 
-// Recursive function to find all JPEG files
-async function findJPEGFiles(dirPath, allFiles = []) {
+// Recursive function to find all files (not just JPEG)
+async function findAllFiles(dirPath, allFiles = []) {
   try {
-    const items = await fs.readdir(dirPath, { withFileTypes: true });
+    const items = await fs.readdir(dirPath);
     
     for (const item of items) {
-      const fullPath = path.join(dirPath, item.name);
+      const fullPath = path.join(dirPath, item);
+      const stat = await fs.stat(fullPath);
       
-      if (item.isDirectory()) {
-        // Recursively scan subdirectories
-        await findJPEGFiles(fullPath, allFiles);
-      } else if (item.isFile()) {
-        // Check if it's a JPEG file
-        const extension = path.extname(item.name).toLowerCase();
-        if (['.jpg', '.jpeg'].includes(extension)) {
-          allFiles.push(fullPath);
-        }
+      if (stat.isDirectory()) {
+        await findAllFiles(fullPath, allFiles);
+      } else if (stat.isFile()) {
+        // Accept all file types - no filtering
+        allFiles.push(fullPath);
       }
     }
   } catch (error) {
-    console.warn(`Could not read directory ${dirPath}:`, error.message);
+    console.error(`Error reading directory ${dirPath}:`, error);
   }
   
   return allFiles;
@@ -375,7 +372,11 @@ ipcMain.handle('select-files', async () => {
   const result = await dialog.showOpenDialog(mainWindow, {
     properties: ['openFile', 'multiSelections'],
     filters: [
-      { name: 'JPEG Images', extensions: ['jpg', 'jpeg', 'JPG', 'JPEG'] }
+      { name: 'All Files', extensions: ['*'] },
+      { name: 'Video Files', extensions: ['mp4', 'avi', 'mov', 'mkv', 'webm', 'flv', 'm4v'] },
+      { name: 'Image Files', extensions: ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'tiff'] },
+      { name: 'Document Files', extensions: ['pdf', 'doc', 'docx', 'txt', 'md', 'rtf'] },
+      { name: 'Audio Files', extensions: ['mp3', 'wav', 'flac', 'aac', 'ogg', 'm4a'] }
     ]
   });
   
@@ -390,10 +391,10 @@ ipcMain.handle('select-folders', async () => {
   
   if (result.canceled) return [];
   
-  // Find all JPEG files in selected folders
+  // Find all files in selected folders (not just JPEG)
   const allFiles = [];
   for (const folderPath of result.filePaths) {
-    const filesInFolder = await findJPEGFiles(folderPath);
+    const filesInFolder = await findAllFiles(folderPath);
     allFiles.push(...filesInFolder);
   }
   
@@ -450,8 +451,8 @@ ipcMain.handle('process-files', async (event, filePaths, outputFolder, shouldDel
   // Check existing files in output folder to detect duplicates
   try {
     const existingFiles = await fs.readdir(outputFolder);
-    // Clean format: just Bitcoin address + extension
-    const bitcoinAddressPattern = /^1[A-HJ-NP-Z0-9]{25,34}\.(jpg|jpeg)$/i;
+    // Clean format: Bitcoin address + any extension
+    const bitcoinAddressPattern = /^1[A-HJ-NP-Z0-9]{25,34}\.[a-zA-Z0-9]+$/i;
     
     for (const fileName of existingFiles) {
       if (bitcoinAddressPattern.test(fileName)) {
@@ -673,7 +674,7 @@ ipcMain.handle('rebuild-address-mapping', async (event, outputFolder) => {
     
     // Scan all Bitcoin address files
     const existingFiles = await fs.readdir(outputFolder);
-    const bitcoinAddressPattern = /^1[A-HJ-NP-Z0-9]{25,34}\.(jpg|jpeg)$/i;
+    const bitcoinAddressPattern = /^1[A-HJ-NP-Z0-9]{25,34}\.[a-zA-Z0-9]+$/i;
     let rebuiltCount = 0;
     let errorCount = 0;
     
@@ -720,7 +721,7 @@ async function generatePublicAddressMapping(outputFolder) {
         version: "1.0",
         description: "Public Bitcoin address mapping - safe to share",
         collection: {
-          name: "JPEG Collection", // Could be customizable
+          name: "BitNet Content Collection", // Could be customizable
           created: parsed.created,
           totalAddresses: parsed.metadata?.totalAddresses || 0,
           lastUpdated: new Date().toISOString()
