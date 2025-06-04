@@ -748,13 +748,13 @@ footer p {
     justify-content: space-between;
     align-items: center;
     padding: 1rem 1.5rem;
-    background: white;
+    background: var(--bg-primary);
     color: var(--text-primary);
     cursor: pointer;
     transition: all 0.3s ease;
     border: 1px solid var(--border);
     border-radius: 8px;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0;
     box-shadow: var(--shadow-sm);
 }
 
@@ -770,6 +770,9 @@ footer p {
     font-size: 1rem;
     font-weight: 600;
     color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .collapse-toggle {
@@ -798,14 +801,14 @@ footer p {
 }
 
 .section-content {
-    background: white;
+    background: var(--bg-primary);
     border: 1px solid var(--border);
     border-top: none;
     border-radius: 0 0 8px 8px;
     overflow: hidden;
     transition: max-height 0.3s ease, padding 0.3s ease;
     box-shadow: var(--shadow-sm);
-    margin-bottom: 0.5rem;
+    margin-bottom: 1rem;
 }
 
 .section-content.collapsed {
@@ -828,12 +831,14 @@ footer p {
 .mapping-section,
 .search-section,
 .earnings-section,
-.library-section {
+.library-section,
+.token-library-section,
+.token-management-section {
     background: transparent;
     border: none;
     box-shadow: none;
     padding: 0;
-    margin-bottom: 1rem;
+    margin-bottom: 0;
 }
 
 /* Search Section */

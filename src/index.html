@@ -10,8 +10,9 @@
     <div class="container">
         <header>
             <h1>BACDS</h1>
-            <p>Decentralized Content Network</p>
+            <p>Bitcoin Addressed Content Delivery System</p>
             <div class="security-badge">🌐 Connected to Network</div>
+            <button id="startNerdButton" class="btn primary">Start NERD</button>
         </header>
 
         <main class="two-column-grid">
@@ -128,127 +129,6 @@
                     </div>
                 </section>
 
-                <!-- Token Library -->
-                <section class="token-library-section collapsible-section">
-                    <div class="section-header" data-target="token-library-content">
-                        <h2>🏦 Token Library</h2>
-                        <span class="collapse-toggle">▶</span>
-                    </div>
-                    <div class="section-content collapsed" id="token-library-content">
-                        <!-- Token Balances -->
-                        <div class="token-balances">
-                            <div class="token-balance-item">
-                                <div class="token-icon">🤓</div>
-                                <div class="token-info">
-                                    <span class="token-name">$NERD</span>
-                                    <span class="token-balance" id="nerdBalance">0</span>
-                                </div>
-                                <div class="token-value">
-                                    <span class="token-usd-value" id="nerdUsdValue">$0.00</span>
-                                </div>
-                            </div>
-                            <div class="token-balance-item">
-                                <div class="token-icon">₿</div>
-                                <div class="token-info">
-                                    <span class="token-name">BSV</span>
-                                    <span class="token-balance" id="bsvBalance">0.00000000</span>
-                                </div>
-                                <div class="token-value">
-                                    <span class="token-usd-value" id="bsvUsdValue">$0.00</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Token Operations -->
-                        <div class="token-operations">
-                            <button id="stakeTokens" class="btn primary">Stake $NERD</button>
-                            <button id="unstakeTokens" class="btn secondary">Unstake</button>
-                            <button id="buyTokens" class="btn secondary">Buy $NERD</button>
-                            <button id="sellTokens" class="btn warning">Sell $NERD</button>
-                        </div>
-
-                        <!-- Staking Info -->
-                        <div class="staking-info" id="stakingInfo">
-                            <div class="staking-stat">
-                                <span class="staking-amount" id="stakedAmount">0</span>
-                                <span class="staking-label">Staked $NERD</span>
-                            </div>
-                            <div class="staking-stat">
-                                <span class="staking-amount" id="stakingRewards">0.00</span>
-                                <span class="staking-label">Pending Rewards</span>
-                            </div>
-                            <div class="staking-stat">
-                                <span class="staking-amount" id="stakingApy">0.0%</span>
-                                <span class="staking-label">Current APY</span>
-                            </div>
-                        </div>
-
-                        <!-- Token History -->
-                        <div class="token-history" id="tokenHistory">
-                            <h4>Recent Transactions</h4>
-                            <div class="history-list" id="tokenHistoryList">
-                                <div class="empty-state">No token transactions yet</div>
-                            </div>
-                        </div>
-
-                        <!-- Governance -->
-                        <div class="governance-section" id="governanceSection">
-                            <h4>🗳️ Governance</h4>
-                            <div class="governance-stats">
-                                <span class="governance-power" id="votingPower">0</span>
-                                <span class="governance-label">Voting Power</span>
-                            </div>
-                            <div class="governance-actions">
-                                <button id="viewProposals" class="btn secondary">View Proposals</button>
-                                <button id="submitProposal" class="btn secondary">Submit Proposal</button>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-            </div>
-
-            <!-- RIGHT COLUMN: 4 sections -->
-            <div class="grid-item">
-                <!-- Earnings -->
-                <section class="earnings-section collapsible-section">
-                    <div class="section-header" data-target="earnings-content">
-                        <h2>💰 Earnings</h2>
-                        <span class="collapse-toggle">▶</span>
-                    </div>
-                    <div class="section-content collapsed" id="earnings-content">
-                        <div class="earnings-summary">
-                            <div class="earning-stat">
-                                <span class="earning-amount" id="totalEarnings">$0.00</span>
-                                <span class="earning-label">Total Earnings</span>
-                            </div>
-                            <div class="earning-stat">
-                                <span class="earning-amount" id="monthlyEarnings">$0.00</span>
-                                <span class="earning-label">This Month</span>
-                            </div>
-                            <div class="earning-stat">
-                                <span class="earning-amount" id="activeListings">0</span>
-                                <span class="earning-label">Active Listings</span>
-                            </div>
-                        </div>
-                        
-                        <div class="pricing-controls">
-                            <h3>Set Content Pricing</h3>
-                            <div class="price-setting">
-                                <label>Default price for new content:</label>
-                                <div class="price-input-group">
-                                    <span class="currency-symbol">$</span>
-                                    <input type="number" id="defaultPrice" placeholder="0.00" step="0.01" min="0" class="price-input">
-                                    <button id="updatePricing" class="btn secondary">Update</button>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="earnings-history" id="earningsHistory">
-                            <div class="empty-state">No earnings yet. Share content to start earning!</div>
-                        </div>
-                    </div>
-                </section>
-
                 <!-- Token Management -->
                 <section class="token-management-section collapsible-section">
                     <div class="section-header" data-target="token-management-content">
@@ -348,6 +228,49 @@
                         </div>
                     </div>
                 </section>
+            </div>
+
+            <!-- RIGHT COLUMN: 4 sections -->
+            <div class="grid-item">
+                <!-- Earnings -->
+                <section class="earnings-section collapsible-section">
+                    <div class="section-header" data-target="earnings-content">
+                        <h2>💰 Earnings</h2>
+                        <span class="collapse-toggle">▶</span>
+                    </div>
+                    <div class="section-content collapsed" id="earnings-content">
+                        <div class="earnings-summary">
+                            <div class="earning-stat">
+                                <span class="earning-amount" id="totalEarnings">$0.00</span>
+                                <span class="earning-label">Total Earnings</span>
+                            </div>
+                            <div class="earning-stat">
+                                <span class="earning-amount" id="monthlyEarnings">$0.00</span>
+                                <span class="earning-label">This Month</span>
+                            </div>
+                            <div class="earning-stat">
+                                <span class="earning-amount" id="activeListings">0</span>
+                                <span class="earning-label">Active Listings</span>
+                            </div>
+                        </div>
+                        
+                        <div class="pricing-controls">
+                            <h3>Set Content Pricing</h3>
+                            <div class="price-setting">
+                                <label>Default price for new content:</label>
+                                <div class="price-input-group">
+                                    <span class="currency-symbol">$</span>
+                                    <input type="number" id="defaultPrice" placeholder="0.00" step="0.01" min="0" class="price-input">
+                                    <button id="updatePricing" class="btn secondary">Update</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="earnings-history" id="earningsHistory">
+                            <div class="empty-state">No earnings yet. Share content to start earning!</div>
+                        </div>
+                    </div>
+                </section>
 
                 <!-- Library -->
                 <section class="library-section collapsible-section">
@@ -435,6 +358,84 @@
                         
                         <!-- File Mapping List -->
                         <div class="mapping-list" id="mappingList"></div>
+                    </div>
+                </section>
+
+                <!-- Token Library -->
+                <section class="token-library-section collapsible-section">
+                    <div class="section-header" data-target="token-library-content">
+                        <h2>🏦 Token Library</h2>
+                        <span class="collapse-toggle">▶</span>
+                    </div>
+                    <div class="section-content collapsed" id="token-library-content">
+                        <!-- Token Balances -->
+                        <div class="token-balances">
+                            <div class="token-balance-item">
+                                <div class="token-icon">🤓</div>
+                                <div class="token-info">
+                                    <span class="token-name">$NERD</span>
+                                    <span class="token-balance" id="nerdBalance">0</span>
+                                </div>
+                                <div class="token-value">
+                                    <span class="token-usd-value" id="nerdUsdValue">$0.00</span>
+                                </div>
+                            </div>
+                            <div class="token-balance-item">
+                                <div class="token-icon">₿</div>
+                                <div class="token-info">
+                                    <span class="token-name">BSV</span>
+                                    <span class="token-balance" id="bsvBalance">0.00000000</span>
+                                </div>
+                                <div class="token-value">
+                                    <span class="token-usd-value" id="bsvUsdValue">$0.00</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Token Operations -->
+                        <div class="token-operations">
+                            <button id="stakeTokens" class="btn primary">Stake $NERD</button>
+                            <button id="unstakeTokens" class="btn secondary">Unstake</button>
+                            <button id="buyTokens" class="btn secondary">Buy $NERD</button>
+                            <button id="sellTokens" class="btn warning">Sell $NERD</button>
+                        </div>
+
+                        <!-- Staking Info -->
+                        <div class="staking-info" id="stakingInfo">
+                            <div class="staking-stat">
+                                <span class="staking-amount" id="stakedAmount">0</span>
+                                <span class="staking-label">Staked $NERD</span>
+                            </div>
+                            <div class="staking-stat">
+                                <span class="staking-amount" id="stakingRewards">0.00</span>
+                                <span class="staking-label">Pending Rewards</span>
+                            </div>
+                            <div class="staking-stat">
+                                <span class="staking-amount" id="stakingApy">0.0%</span>
+                                <span class="staking-label">Current APY</span>
+                            </div>
+                        </div>
+
+                        <!-- Token History -->
+                        <div class="token-history" id="tokenHistory">
+                            <h4>Recent Transactions</h4>
+                            <div class="history-list" id="tokenHistoryList">
+                                <div class="empty-state">No token transactions yet</div>
+                            </div>
+                        </div>
+
+                        <!-- Governance -->
+                        <div class="governance-section" id="governanceSection">
+                            <h4>🗳️ Governance</h4>
+                            <div class="governance-stats">
+                                <span class="governance-power" id="votingPower">0</span>
+                                <span class="governance-label">Voting Power</span>
+                            </div>
+                            <div class="governance-actions">
+                                <button id="viewProposals" class="btn secondary">View Proposals</button>
+                                <button id="submitProposal" class="btn secondary">Submit Proposal</button>
+                            </div>
+                        </div>
                     </div>
                 </section>
             </div>

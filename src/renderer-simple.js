@@ -98,6 +98,12 @@ class BACDSClient {
             dropZone.addEventListener('drop', (e) => this.handleFileDrop(e));
         }
         
+        // Add listener for the Start NERD button
+        const startNerdButton = document.getElementById('startNerdButton');
+        if (startNerdButton) {
+            startNerdButton.addEventListener('click', () => this.startNerdProcess());
+        }
+        
         this.loadWalletStatus();
         
         // Initialize empty states for all sections (RESTORED)
@@ -2249,6 +2255,12 @@ class BACDSClient {
         }).join('');
         
         historyList.innerHTML = historyHTML;
+    }
+
+    async startNerdProcess() {
+        console.log('Attempting to start NERD daemon...');
+        // TODO: Implement actual command execution here once the NERD daemon is built.
+        this.showMessage('⚠️ NERD daemon not yet built. Cannot start.', 'warning');
     }
 }
 

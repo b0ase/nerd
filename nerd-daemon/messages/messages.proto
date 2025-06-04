@@ -1,0 +1,134 @@
+syntax = "proto3";
+
+package nerd;
+
+// Go package option for code generation
+option go_package = "github.com/nerd-daemon/messages";
+
+// Message wrapper for wire protocol - all messages are wrapped in this
+message Message {
+  uint32 length = 1;     // Message length (excluding this field)
+  uint32 message_id = 2; // Message type identifier
+  bytes payload = 3;     // Serialized message payload
+}
+
+// Message type constants (will be used in Go code)
+// Standard BitTorrent message IDs:
+// 0 = choke, 1 = unchoke, 2 = interested, 3 = not_interested
+// 4 = have, 5 = bitfield, 6 = request, 7 = piece, 8 = cancel
+// 9 = port (DHT)
+// 100+ = NERD-specific messages
+
+// HandshakeMsg is the initial message exchanged between peers.
+// It includes the protocol string, reserved bytes, info hash, and peer ID.
+message HandshakeMsg {
+  bytes protocol_string = 1; // Should be "BitTorrent protocol" (19 bytes)
+  bytes reserved = 2;        // 8 reserved bytes (for extensions)
+  bytes info_hash = 3;       // 20-byte SHA1 hash of the torrent's info dictionary
+  bytes peer_id = 4;         // 20-byte peer ID
+}
+
+// KeepAliveMsg - sent to maintain connection (no payload)
+message KeepAliveMsg {
+  // Empty message - just a heartbeat
+}
+
+// ChokeMsg indicates that the sender is choking the receiver
+message ChokeMsg {
+  // No payload needed
+}
+
+// UnchokeMsg indicates that the sender is unchoking the receiver
+message UnchokeMsg {
+  // No payload needed
+}
+
+// InterestedMsg indicates that a peer is interested in downloading pieces.
+message InterestedMsg {
+  // No payload needed for this message type.
+}
+
+// NotInterestedMsg indicates that a peer is not interested in downloading
+message NotInterestedMsg {
+  // No payload needed
+}
+
+// HaveMsg indicates that a peer has a complete piece.
+message HaveMsg {
+  uint32 piece_index = 1; // The zero-based index of the piece the peer has
+}
+
+// BitfieldMsg represents which pieces a peer has (bitfield)
+message BitfieldMsg {
+  bytes bitfield = 1; // Bitfield representing owned pieces
+}
+
+// RequestMsg requests a specific block from a piece
+message RequestMsg {
+  uint32 piece_index = 1;  // Index of the piece
+  uint32 block_offset = 2; // Byte offset within the piece
+  uint32 block_length = 3; // Number of bytes requested
+}
+
+// PieceMsg delivers a block of data from a piece
+message PieceMsg {
+  uint32 piece_index = 1;  // Index of the piece
+  uint32 block_offset = 2; // Byte offset within the piece
+  bytes block_data = 3;    // The actual data block
+}
+
+// CancelMsg cancels a previous request
+message CancelMsg {
+  uint32 piece_index = 1;  // Index of the piece
+  uint32 block_offset = 2; // Byte offset within the piece
+  uint32 block_length = 3; // Number of bytes to cancel
+}
+
+// PortMsg announces the port for DHT node communication
+message PortMsg {
+  uint32 port = 1; // DHT listening port
+}
+
+// NERD-specific message types (message IDs 100+)
+
+// PaymentRequestMsg requests payment for content delivery
+message PaymentRequestMsg {
+  bytes bsv_address = 1;    // BSV address for payment
+  uint64 amount_satoshis = 2; // Amount in satoshis
+  bytes content_hash = 3;   // Hash of content being paid for
+  uint32 piece_index = 4;   // Specific piece being paid for
+}
+
+// PaymentProofMsg provides proof of BSV payment
+message PaymentProofMsg {
+  bytes transaction_id = 1; // BSV transaction ID
+  uint32 piece_index = 2;   // Piece this payment covers
+  bytes content_hash = 3;   // Content hash
+}
+
+// TokenBalanceMsg shares $NERD token balance information
+message TokenBalanceMsg {
+  uint64 nerd_balance = 1;     // $NERD token balance
+  bytes token_address = 2;     // Token wallet address
+  uint64 staked_amount = 3;    // Currently staked $NERD
+  uint32 quality_score = 4;    // Peer quality/reputation score
+}
+
+// QualityMetricsMsg shares peer performance data
+message QualityMetricsMsg {
+  uint64 uptime_seconds = 1;      // How long peer has been online
+  uint64 bytes_uploaded = 2;      // Total bytes uploaded
+  uint64 bytes_downloaded = 3;    // Total bytes downloaded
+  float upload_speed_mbps = 4;    // Average upload speed
+  float reliability_score = 5;    // Reliability metric (0-1)
+  repeated uint32 served_pieces = 6; // List of pieces this peer serves
+}
+
+// GeographicHintMsg provides routing optimization data
+message GeographicHintMsg {
+  string country_code = 1;  // ISO country code
+  string city = 2;          // City name
+  float latitude = 3;       // GPS latitude
+  float longitude = 4;      // GPS longitude
+  uint32 as_number = 5;     // Autonomous System number
+} 

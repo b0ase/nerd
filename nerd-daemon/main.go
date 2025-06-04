@@ -6,6 +6,8 @@ import (
 	"log"
 	"net"
 	"sync"
+
+	"github.com/nerd-daemon/messages" // Import the generated Protocol Buffer messages
 )
 
 // Global map to store active connections and a mutex for thread safety
@@ -34,32 +36,13 @@ func loadConfig() (*Config, error) {
 	return defaultConfig, nil
 }
 
-// --- Peer Message Structures ---
+// --- Networking Functions ---
 
-// HandshakeMsg is the initial message exchanged between peers.
-// It includes the protocol string, reserved bytes, info hash, and peer ID.
-type HandshakeMsg struct {
-	PstrLen  uint8    // Length of the protocol string (19 for BitTorrent)
-	Pstr     [19]byte // Protocol string ("BitTorrent protocol")
-	Reserved [8]byte  // Reserved bytes (used for extensions)
-	InfoHash [20]byte // The hash of the .torrent file's info section
-	PeerID   [20]byte // The peer's unique identifier
-}
-
-// InterestedMsg indicates that a peer is interested in downloading pieces.
-type InterestedMsg struct {
-	// No payload, just a message ID
-}
-
-// HaveMsg indicates that a peer has a complete piece.
-type HaveMsg struct {
-	PieceIndex uint32 // The zero-based index of the piece the peer has
-}
+// Note: Message structures are now imported from "github.com/nerd-daemon/messages" package
+// Available types: messages.HandshakeMsg, messages.InterestedMsg, messages.HaveMsg
 
 // TODO: Define other message types (KeepAlive, Choke, Unchoke, Request, Piece, Cancel)
 // TODO: Define NERD-specific message types (PaymentRequest, PaymentProof, TokenBalance, etc.)
-
-// --- Networking Functions ---
 
 // Placeholder function to handle incoming connections
 func handleConnection(conn net.Conn) {
@@ -81,23 +64,78 @@ func handleConnection(conn net.Conn) {
 
 	log.Printf("Handling connection from %s. Currently %d active connections.", conn.RemoteAddr(), len(activeConnections))
 
-	// Placeholder: Read loop to simulate handling data and detect errors
-	buffer := make([]byte, 1024) // Small buffer for reading
-	for {
-		// Set a read deadline (optional, but good practice for network services)
-		// conn.SetReadDeadline(time.Now().Add(60 * time.Second))
+	// Create wire protocol handler
+	wireProtocol := NewWireProtocol(conn)
 
-		n, err := conn.Read(buffer)
+	// Try to receive handshake (for incoming connections)
+	handshake, err := wireProtocol.ReceiveHandshake()
+	if err != nil {
+		log.Printf("Failed to receive handshake from %s: %v", conn.RemoteAddr(), err)
+		return
+	}
+
+	log.Printf("Received handshake from %s: protocol=%s, peer_id=%x",
+		conn.RemoteAddr(), string(handshake.ProtocolString), handshake.PeerId)
+
+	// Send our handshake response
+	var infoHash [20]byte                     // Placeholder - in real implementation this would be content-specific
+	copy(infoHash[:], "NERD_DAEMON_HASH____") // 20 byte placeholder
+
+	err = wireProtocol.SendHandshake(infoHash)
+	if err != nil {
+		log.Printf("Failed to send handshake to %s: %v", conn.RemoteAddr(), err)
+		return
+	}
+
+	// Send interested message to indicate we want to participate
+	err = wireProtocol.SendInterested()
+	if err != nil {
+		log.Printf("Failed to send interested message to %s: %v", conn.RemoteAddr(), err)
+		return
+	}
+
+	log.Printf("Handshake completed with %s", conn.RemoteAddr())
+
+	// Message handling loop
+	for {
+		msg, err := wireProtocol.ReceiveMessage()
 		if err != nil {
-			if err != io.EOF { // Ignore EOF errors on read, which indicate connection closed normally
-				log.Printf("Error reading from %s: %v", conn.RemoteAddr(), err)
+			if err != io.EOF {
+				log.Printf("Error receiving message from %s: %v", conn.RemoteAddr(), err)
 			}
-			return // Exit the handler function, triggering the defer to close
+			return
 		}
 
-		if n > 0 {
-			// TODO: Process received data (buffer[:n])
-			log.Printf("Received %d bytes from %s", n, conn.RemoteAddr())
+		// Parse the message payload
+		payload, err := ParseMessagePayload(msg.MessageId, msg.Payload)
+		if err != nil {
+			log.Printf("Failed to parse message payload from %s (type %d): %v",
+				conn.RemoteAddr(), msg.MessageId, err)
+			continue
+		}
+
+		// Handle different message types
+		switch msg.MessageId {
+		case 999: // Keep-alive (defined in protocol.go)
+			log.Printf("Received keep-alive from %s", conn.RemoteAddr())
+		case 2: // MsgTypeInterested
+			log.Printf("Peer %s is interested", conn.RemoteAddr())
+			// Send unchoke message
+			unchoke := &messages.UnchokeMsg{}
+			wireProtocol.SendMessage(1, unchoke) // MsgTypeUnchoke = 1
+		case 4: // MsgTypeHave
+			haveMsg := payload.(*messages.HaveMsg)
+			log.Printf("Peer %s has piece %d", conn.RemoteAddr(), haveMsg.PieceIndex)
+		case 100: // MsgTypePaymentRequest
+			paymentReq := payload.(*messages.PaymentRequestMsg)
+			log.Printf("Payment request from %s: %d satoshis for piece %d",
+				conn.RemoteAddr(), paymentReq.AmountSatoshis, paymentReq.PieceIndex)
+		case 102: // MsgTypeTokenBalance
+			tokenBalance := payload.(*messages.TokenBalanceMsg)
+			log.Printf("Token balance from %s: %d $NERD tokens, quality score: %d",
+				conn.RemoteAddr(), tokenBalance.NerdBalance, tokenBalance.QualityScore)
+		default:
+			log.Printf("Received message type %d from %s", msg.MessageId, conn.RemoteAddr())
 		}
 	}
 }
@@ -113,6 +151,22 @@ func dialPeer(addr string) {
 	}
 
 	log.Printf("Successfully connected to peer %s", addr)
+
+	// Create wire protocol handler for outgoing connection
+	wireProtocol := NewWireProtocol(conn)
+
+	// Send handshake first (for outgoing connections)
+	var infoHash [20]byte
+	copy(infoHash[:], "NERD_DAEMON_HASH____") // 20 byte placeholder
+
+	err = wireProtocol.SendHandshake(infoHash)
+	if err != nil {
+		log.Printf("Failed to send handshake to %s: %v", addr, err)
+		conn.Close()
+		return
+	}
+
+	log.Printf("Sent handshake to %s", addr)
 
 	// Hand off the established connection to the handler
 	go handleConnection(conn) // handleConnection will add to pool and manage lifecycle
