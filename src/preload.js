@@ -22,6 +22,10 @@ contextBridge.exposeInMainWorld('electronAPI', {
     // Project and file operations
     chooseDirectory: () => ipcRenderer.invoke('project:chooseDirectory'),
     createProject: (workingDir, projectName) => ipcRenderer.invoke('project:create', workingDir, projectName),
+    loadProject: () => ipcRenderer.invoke('project:load'),
+    upgradeProject: (projectPath) => ipcRenderer.invoke('project:upgrade', projectPath),
+    convertFolderToBACDS: (sourceFolder, destFolder, projectName) => ipcRenderer.invoke('project:convertFolderToBACDS', sourceFolder, destFolder, projectName),
+    deleteFolder: (folderPath) => ipcRenderer.invoke('project:deleteFolder', folderPath),
     storeFile: (projectPath, fileName, fileBuffer, address) => ipcRenderer.invoke('project:storeFile', projectPath, fileName, fileBuffer, address),
     
     // Utility operations

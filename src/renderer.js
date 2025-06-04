@@ -647,4 +647,266 @@ function clearResults() {
 }
 
 // Make removeFile function globally accessible
-window.removeFile = removeFile; 
+window.removeFile = removeFile;
+
+// Initialize collapsible sections
+const headers = document.querySelectorAll('.section-header');
+headers.forEach(header => {
+    header.addEventListener('click', () => {
+        const isExpanded = header.classList.contains('expanded');
+        const contentId = header.getAttribute('data-target');
+        const content = document.getElementById(contentId);
+        const toggle = header.querySelector('.collapse-toggle');
+        
+        if (isExpanded) {
+            header.classList.remove('expanded');
+            content.classList.add('collapsed');
+            toggle.textContent = '▶';
+        } else {
+            header.classList.add('expanded');
+            content.classList.remove('collapsed');
+            toggle.textContent = '▼';
+        }
+    });
+});
+
+// Library tabs functionality
+const libraryTabs = document.querySelectorAll('.library-tab');
+const libraryTabContents = document.querySelectorAll('.library-tab-content');
+
+libraryTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+        // Remove active class from all tabs and contents
+        libraryTabs.forEach(t => t.classList.remove('active'));
+        libraryTabContents.forEach(c => c.classList.remove('active'));
+        
+        // Add active class to clicked tab
+        tab.classList.add('active');
+        
+        // Show corresponding content
+        const targetTab = tab.getAttribute('data-tab');
+        const targetContent = document.getElementById(targetTab);
+        if (targetContent) {
+            targetContent.classList.add('active');
+        }
+        
+        // Update content based on tab
+        updateLibraryTab(targetTab);
+    });
+});
+
+// Initialize "My Content" tab with current project files
+updateLibraryTab('my-content');
+
+// Mock data for other tabs (to be replaced with real P2P functionality)
+updateLibraryTab('others-content');
+updateLibraryTab('commercial-content');
+
+// Update library tab content based on selected tab
+function updateLibraryTab(tabName) {
+    const totalFilesEl = document.getElementById('totalFiles');
+    const totalSizeEl = document.getElementById('totalSize');
+    const publicFilesEl = document.getElementById('publicFiles');
+
+    switch (tabName) {
+        case 'my-content':
+            updateMyContent();
+            // Update stats based on current project
+            if (currentProject) {
+                totalFilesEl.textContent = currentFiles.length;
+                const totalBytes = currentFiles.reduce((sum, file) => sum + (file.size || 0), 0);
+                totalSizeEl.textContent = formatFileSize(totalBytes);
+                publicFilesEl.textContent = currentFiles.filter(f => f.public).length;
+            } else {
+                totalFilesEl.textContent = '0';
+                totalSizeEl.textContent = '0 B';
+                publicFilesEl.textContent = '0';
+            }
+            break;
+            
+        case 'others-content':
+            updateOthersContent();
+            // Mock stats for others' content
+            totalFilesEl.textContent = '0';
+            totalSizeEl.textContent = '0 B';
+            publicFilesEl.textContent = '0';
+            break;
+            
+        case 'commercial-content':
+            updateCommercialContent();
+            // Mock stats for commercial content
+            totalFilesEl.textContent = '0';
+            totalSizeEl.textContent = '0 B';
+            publicFilesEl.textContent = '0';
+            break;
+    }
+}
+
+function updateMyContent() {
+    const grid = document.getElementById('myContentGrid');
+    
+    if (!currentProject || currentFiles.length === 0) {
+        grid.innerHTML = '<div class="empty-state">Your content library is empty. Add some files to get started!</div>';
+        return;
+    }
+
+    grid.innerHTML = currentFiles.map(file => {
+        const isImage = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'tiff'].includes(file.extension?.toLowerCase());
+        const thumbnailPath = file.thumbnailPath ? `file://${file.thumbnailPath}` : null;
+        
+        return `
+            <div class="library-item" data-file="${file.address}">
+                <div class="library-item-thumbnail">
+                    ${thumbnailPath ? 
+                        `<img src="${thumbnailPath}" alt="${file.originalName}" onerror="this.style.display='none'; this.parentNode.innerHTML='📄';">` :
+                        (isImage ? '🖼️' : getFileIcon(file.extension))
+                    }
+                </div>
+                <div class="library-item-info">
+                    <div class="library-item-title" title="${file.originalName}">${file.originalName}</div>
+                    <div class="library-item-meta">${formatFileSize(file.size)} • ${file.extension?.toUpperCase() || 'Unknown'}</div>
+                    <div class="library-item-actions">
+                        <button class="btn primary small" onclick="previewFile('${file.address}')">Preview</button>
+                        <button class="btn secondary small" onclick="shareFile('${file.address}')">Share</button>
+                        <button class="btn danger small" onclick="removeFile('${file.address}')">Remove</button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function updateOthersContent() {
+    const grid = document.getElementById('othersContentGrid');
+    
+    // Mock data for demonstration
+    const mockContent = [
+        { name: 'Sunset_Photo.jpg', type: 'Image', size: '2.4 MB', user: 'photographer123', icon: '🌅' },
+        { name: 'Jazz_Collection.mp3', type: 'Audio', size: '45.2 MB', user: 'musiclover', icon: '🎵' },
+        { name: 'Recipe_Book.pdf', type: 'Document', size: '8.1 MB', user: 'chef_maria', icon: '📚' }
+    ];
+
+    if (mockContent.length === 0) {
+        grid.innerHTML = '<div class="empty-state">No content from other users discovered yet. Search the network to find content!</div>';
+        return;
+    }
+
+    grid.innerHTML = mockContent.map(item => `
+        <div class="library-item">
+            <div class="library-item-thumbnail">${item.icon}</div>
+            <div class="library-item-info">
+                <div class="library-item-title">${item.name}</div>
+                <div class="library-item-meta">${item.size} • By ${item.user}</div>
+                <div class="library-item-actions">
+                    <button class="btn primary small">Download</button>
+                    <button class="btn secondary small">Preview</button>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function updateCommercialContent() {
+    const grid = document.getElementById('commercialContentGrid');
+    
+    // Mock data for demonstration
+    const mockCommercial = [
+        { name: 'Pro Photo Pack', type: 'Bundle', price: '0.001 BTC', seller: 'ProPhotos Inc', icon: '📸' },
+        { name: 'Premium Templates', type: 'Design', price: '0.0005 BTC', seller: 'DesignCorp', icon: '🎨' },
+        { name: 'Video Course', type: 'Education', price: '0.002 BTC', seller: 'LearnTech', icon: '🎓' }
+    ];
+
+    if (mockCommercial.length === 0) {
+        grid.innerHTML = '<div class="empty-state">No commercial content yet. Browse the marketplace to discover paid content!</div>';
+        return;
+    }
+
+    grid.innerHTML = mockCommercial.map(item => `
+        <div class="library-item">
+            <div class="library-item-thumbnail">${item.icon}</div>
+            <div class="library-item-info">
+                <div class="library-item-title">${item.name}</div>
+                <div class="library-item-meta">${item.price} • By ${item.seller}</div>
+                <div class="library-item-actions">
+                    <button class="btn primary small">Buy</button>
+                    <button class="btn secondary small">Preview</button>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function getFileIcon(extension) {
+    const icons = {
+        'jpg': '🖼️', 'jpeg': '🖼️', 'png': '🖼️', 'gif': '🖼️', 'webp': '🖼️',
+        'mp4': '🎬', 'avi': '🎬', 'mov': '🎬', 'mkv': '🎬',
+        'mp3': '🎵', 'wav': '🎵', 'flac': '🎵', 'aac': '🎵',
+        'pdf': '📄', 'doc': '📄', 'docx': '📄', 'txt': '📄',
+        'zip': '📦', 'rar': '📦', '7z': '📦'
+    };
+    return icons[extension?.toLowerCase()] || '📄';
+}
+
+// File action functions
+window.previewFile = function(address) {
+    showToast('Preview functionality coming soon!', 'info');
+};
+
+window.shareFile = function(address) {
+    showToast('Share functionality coming soon!', 'info');
+};
+
+function updateFileDisplay() {
+    console.log('📋 Updating file display...', currentFiles);
+    const fileList = document.getElementById('fileList');
+    
+    if (currentFiles.length === 0) {
+        fileList.innerHTML = '<div class="empty-state">No files added yet. Drop files above to add them to your project.</div>';
+        return;
+    }
+
+    fileList.innerHTML = currentFiles.map((file, index) => {
+        console.log(`📁 File ${index}:`, file);
+        const isImage = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'tiff'].includes(file.extension?.toLowerCase());
+        const thumbnailPath = file.thumbnailPath ? `file://${file.thumbnailPath}` : null;
+        
+        return `
+            <div class="file-item" data-address="${file.address}">
+                <div class="file-thumbnail">
+                    ${thumbnailPath ? 
+                        `<img src="${thumbnailPath}" alt="${file.originalName}" onerror="this.style.display='none'; this.parentNode.innerHTML='📄';">` :
+                        (isImage ? '🖼️' : '📄')
+                    }
+                </div>
+                <div class="file-info">
+                    <div class="file-name">${file.originalName}</div>
+                    <div class="file-address">${file.address}</div>
+                    <div class="file-chunk">${file.chunkName}</div>
+                    <div class="file-meta">${formatFileSize(file.size)} • Index: ${file.index || 'N/A'}</div>
+                    <button onclick="removeFile('${file.address}')" class="btn danger small" style="margin-top: 8px;">Remove</button>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    // Update the address mapping display as well
+    updateAddressDisplay();
+    
+    // Update library content if we're on the "My Content" tab
+    const activeTab = document.querySelector('.library-tab.active');
+    if (activeTab && activeTab.getAttribute('data-tab') === 'my-content') {
+        updateMyContent();
+        
+        // Update stats
+        const totalFilesEl = document.getElementById('totalFiles');
+        const totalSizeEl = document.getElementById('totalSize');
+        const publicFilesEl = document.getElementById('publicFiles');
+        
+        if (currentProject) {
+            totalFilesEl.textContent = currentFiles.length;
+            const totalBytes = currentFiles.reduce((sum, file) => sum + (file.size || 0), 0);
+            totalSizeEl.textContent = formatFileSize(totalBytes);
+            publicFilesEl.textContent = currentFiles.filter(f => f.public).length;
+        }
+    }
+} 

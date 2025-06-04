@@ -3,103 +3,268 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BACDS - Content Network</title>
+    <title>BACDS - P2P Content Network</title>
     <link rel="stylesheet" href="styles-simple.css">
 </head>
 <body>
     <div class="container">
         <header>
             <h1>BACDS</h1>
-            <p>Bitcoin-Addressed Content Delivery System</p>
-            <div class="security-badge">🔒 Secure Network</div>
+            <p>Decentralized Content Network</p>
+            <div class="security-badge">🌐 Connected to Network</div>
         </header>
 
-        <main>
-            <!-- Wallet Section -->
-            <section class="wallet-section">
-                <h2>💼 Wallet Management</h2>
-                <div class="wallet-status" id="walletStatus">
-                    <div class="loading">Loading wallet status...</div>
-                </div>
-                
-                <!-- Private Key Import Section -->
-                <div class="import-section" id="importSection" style="display: none;">
-                    <div class="import-header">⚠️ Import Private Key</div>
-                    <textarea 
-                        id="privateKeyInput" 
-                        class="private-key-input" 
-                        placeholder="Paste your private key or seed phrase here..."
-                        rows="4"></textarea>
-                    <div class="wallet-controls" style="margin-top: 15px;">
-                        <button id="importFromKey" class="btn danger">Import Key</button>
-                        <button id="cancelImport" class="btn secondary">Cancel</button>
+        <main class="two-column-grid">
+            <!-- LEFT COLUMN: 3 sections -->
+            <div class="grid-item">
+                <!-- Wallet Management -->
+                <section class="wallet-section collapsible-section">
+                    <div class="section-header" data-target="wallet-content">
+                        <h2>💼 Wallet Management</h2>
+                        <span class="collapse-toggle">▶</span>
                     </div>
-                </div>
-                
-                <div class="wallet-controls">
-                    <button id="generateWallet" class="btn primary">Create Wallet</button>
-                    <button id="loadWallet" class="btn secondary">Load Wallet</button>
-                    <button id="showImport" class="btn warning">Import Key</button>
-                </div>
-                
-                <div class="wallet-controls">
-                    <button id="backupWallet" class="btn success">Backup Wallet</button>
-                    <button id="restoreWallet" class="btn warning">Restore Wallet</button>
-                    <button id="deleteWallet" class="btn danger">Delete Wallet</button>
-                </div>
-            </section>
-
-            <!-- Address Generation -->
-            <section class="address-section">
-                <h2>🏷️ Content Addresses</h2>
-                <div class="address-controls">
-                    <button id="newAddress" class="btn primary">Generate Address</button>
-                    <button id="showAddresses" class="btn secondary">View All Addresses</button>
-                </div>
-                <div class="address-list" id="addressList"></div>
-            </section>
-
-            <!-- File Management -->
-            <section class="file-section">
-                <h2>📁 Content Management</h2>
-                
-                <!-- Project Setup -->
-                <div class="project-setup" id="projectSetup">
-                    <div class="setup-controls">
-                        <button id="chooseWorkingDir" class="btn secondary">Choose Working Directory</button>
-                        <input type="text" id="projectName" placeholder="Project name..." class="project-input">
-                        <button id="createProject" class="btn primary">Create Project</button>
-                    </div>
-                    <div class="project-status" id="projectStatus">
-                        <div class="empty-state">No project selected - choose a directory and name your content project</div>
-                    </div>
-                </div>
-                
-                <!-- File Upload (shown only when project is set) -->
-                <div class="file-upload-section" id="fileUploadSection" style="display: none;">
-                    <div class="file-drop-zone" id="fileDropZone">
-                        <div class="drop-content">
-                            <div class="drop-icon">📄</div>
-                            <p>Drop files here or click to browse</p>
-                            <p>Files will be stored as [address].chunk</p>
-                            <input type="file" id="fileInput" multiple style="display: none;">
+                    <div class="section-content collapsed" id="wallet-content">
+                        <div class="wallet-status" id="walletStatus">
+                            <div class="loading">Loading wallet status...</div>
+                        </div>
+                        
+                        <!-- Private Key Import Section (RESTORED) -->
+                        <div class="import-section" id="importSection" style="display: none;">
+                            <div class="import-header">⚠️ Import Private Key</div>
+                            <textarea 
+                                id="privateKeyInput" 
+                                class="private-key-input" 
+                                placeholder="Paste your private key or seed phrase here..."
+                                rows="4"></textarea>
+                            <div class="wallet-controls" style="margin-top: 15px;">
+                                <button id="importFromKey" class="btn danger">Import Key</button>
+                                <button id="cancelImport" class="btn secondary">Cancel</button>
+                            </div>
+                        </div>
+                        
+                        <div class="wallet-controls">
+                            <button id="generateWallet" class="btn primary">Create Wallet</button>
+                            <button id="loadWallet" class="btn secondary">Load Wallet</button>
+                            <button id="showImport" class="btn warning">Import Key</button>
+                        </div>
+                        
+                        <div class="wallet-controls">
+                            <button id="backupWallet" class="btn success">Backup Wallet</button>
+                            <button id="restoreWallet" class="btn warning">Restore Wallet</button>
+                            <button id="deleteWallet" class="btn danger">Delete Wallet</button>
                         </div>
                     </div>
-                    <div class="file-list" id="fileList"></div>
-                </div>
-            </section>
+                </section>
 
-            <!-- Address Mapping -->
-            <section class="mapping-section">
-                <h2>🔗 Content Address Mapping</h2>
-                <p>Files are automatically assigned unique Bitcoin-style addresses for content identification</p>
-                <div class="mapping-list" id="mappingList"></div>
-            </section>
+                <!-- Search Network -->
+                <section class="search-section collapsible-section">
+                    <div class="section-header expanded" data-target="search-content">
+                        <h2>🔍 Search Network</h2>
+                        <span class="collapse-toggle">▼</span>
+                    </div>
+                    <div class="section-content" id="search-content">
+                        <div class="search-bar">
+                            <input type="text" id="searchInput" placeholder="Search for movies, music, photos, documents..." class="search-input">
+                            <button id="searchButton" class="btn primary">Search</button>
+                        </div>
+                        
+                        <div class="search-filters">
+                            <select id="contentType" class="filter-select">
+                                <option value="all">All Content</option>
+                                <option value="video">Videos</option>
+                                <option value="audio">Music</option>
+                                <option value="image">Images</option>
+                                <option value="document">Documents</option>
+                            </select>
+                            
+                            <select id="sortBy" class="filter-select">
+                                <option value="relevance">Most Relevant</option>
+                                <option value="newest">Newest</option>
+                                <option value="popular">Most Popular</option>
+                                <option value="price_low">Price: Low to High</option>
+                                <option value="price_high">Price: High to Low</option>
+                            </select>
+                        </div>
+                        
+                        <div class="search-results" id="searchResults">
+                            <div class="empty-state">Enter search terms to find content on the network</div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Content Management -->
+                <section class="file-section collapsible-section">
+                    <div class="section-header" data-target="file-content">
+                        <h2>📁 Content Management</h2>
+                        <span class="collapse-toggle">▶</span>
+                    </div>
+                    <div class="section-content collapsed" id="file-content">
+                        <!-- Project Setup (RESTORED) -->
+                        <div class="project-setup" id="projectSetup">
+                            <div class="setup-controls">
+                                <input type="text" id="projectName" placeholder="Enter project name..." class="project-input">
+                                <button id="createProject" class="btn primary">Create Project</button>
+                                <button id="loadProject" class="btn secondary">Load Project</button>
+                                <button id="convertFolder" class="btn warning">Convert Folder to BACDS</button>
+                                <button id="upgradeProject" class="btn warning" style="display: none;">Upgrade to New Format</button>
+                            </div>
+                            <div class="project-status" id="projectStatus">
+                                <div class="empty-state">Enter a project name and click "Create Project" to choose location</div>
+                            </div>
+                        </div>
+                        
+                        <!-- File Upload (RESTORED) -->
+                        <div class="file-upload-section" id="fileUploadSection" style="display: none;">
+                            <div class="file-drop-zone" id="fileDropZone">
+                                <div class="drop-content">
+                                    <div class="drop-icon">📄</div>
+                                    <p>Drop files here or click to browse</p>
+                                    <p>Files will be stored as [address].extension</p>
+                                    <input type="file" id="fileInput" multiple style="display: none;">
+                                </div>
+                            </div>
+                            <div class="file-list" id="fileList"></div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- RIGHT COLUMN: 3 sections -->
+            <div class="grid-item">
+                <!-- Earnings -->
+                <section class="earnings-section collapsible-section">
+                    <div class="section-header" data-target="earnings-content">
+                        <h2>💰 Earnings</h2>
+                        <span class="collapse-toggle">▶</span>
+                    </div>
+                    <div class="section-content collapsed" id="earnings-content">
+                        <div class="earnings-summary">
+                            <div class="earning-stat">
+                                <span class="earning-amount" id="totalEarnings">$0.00</span>
+                                <span class="earning-label">Total Earnings</span>
+                            </div>
+                            <div class="earning-stat">
+                                <span class="earning-amount" id="monthlyEarnings">$0.00</span>
+                                <span class="earning-label">This Month</span>
+                            </div>
+                            <div class="earning-stat">
+                                <span class="earning-amount" id="activeListings">0</span>
+                                <span class="earning-label">Active Listings</span>
+                            </div>
+                        </div>
+                        
+                        <div class="pricing-controls">
+                            <h3>Set Content Pricing</h3>
+                            <div class="price-setting">
+                                <label>Default price for new content:</label>
+                                <div class="price-input-group">
+                                    <span class="currency-symbol">$</span>
+                                    <input type="number" id="defaultPrice" placeholder="0.00" step="0.01" min="0" class="price-input">
+                                    <button id="updatePricing" class="btn secondary">Update</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="earnings-history" id="earningsHistory">
+                            <div class="empty-state">No earnings yet. Share content to start earning!</div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Library -->
+                <section class="library-section collapsible-section">
+                    <div class="section-header expanded" data-target="library-content">
+                        <h2>📚 Library</h2>
+                        <span class="collapse-toggle">▼</span>
+                    </div>
+                    <div class="section-content" id="library-content">
+                        <!-- Library Stats -->
+                        <div class="library-stats" id="libraryStats">
+                            <div class="stat-item">
+                                <span class="stat-number" id="totalFiles">0</span>
+                                <span class="stat-label">Total Files</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number" id="totalSize">0 GB</span>
+                                <span class="stat-label">Storage Used</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number" id="publicFiles">0</span>
+                                <span class="stat-label">Shared Files</span>
+                            </div>
+                        </div>
+
+                        <!-- Library Tabs -->
+                        <div class="library-tabs">
+                            <button class="library-tab active" data-tab="my-content">My Content</button>
+                            <button class="library-tab" data-tab="others-content">Others' Content</button>
+                            <button class="library-tab" data-tab="commercial-content">Commercial Content</button>
+                        </div>
+
+                        <!-- My Content Tab -->
+                        <div class="library-tab-content active" id="my-content">
+                            <div class="library-controls">
+                                <button id="addContent" class="btn primary">Add Content</button>
+                                <button id="importFolder" class="btn secondary">Import Folder</button>
+                                <button id="createCollection" class="btn secondary">New Collection</button>
+                            </div>
+                            <div class="library-grid" id="myContentGrid">
+                                <div class="empty-state">Your content library is empty. Add some files to get started!</div>
+                            </div>
+                        </div>
+
+                        <!-- Others' Content Tab -->
+                        <div class="library-tab-content" id="others-content">
+                            <div class="library-controls">
+                                <button id="refreshOthers" class="btn primary">Refresh</button>
+                                <button id="downloadSelected" class="btn secondary">Download Selected</button>
+                            </div>
+                            <div class="library-grid" id="othersContentGrid">
+                                <div class="empty-state">No content from other users discovered yet. Search the network to find content!</div>
+                            </div>
+                        </div>
+
+                        <!-- Commercial Content Tab -->
+                        <div class="library-tab-content" id="commercial-content">
+                            <div class="library-controls">
+                                <button id="browseMarketplace" class="btn primary">Browse Marketplace</button>
+                                <button id="myPurchases" class="btn secondary">My Purchases</button>
+                            </div>
+                            <div class="library-grid" id="commercialContentGrid">
+                                <div class="empty-state">No commercial content yet. Browse the marketplace to discover paid content!</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Content Address Mapping -->
+                <section class="mapping-section collapsible-section">
+                    <div class="section-header" data-target="mapping-content">
+                        <h2>🔗 Content Address Mapping</h2>
+                        <span class="collapse-toggle">▶</span>
+                    </div>
+                    <div class="section-content collapsed" id="mapping-content">
+                        <p>Files are automatically assigned unique Bitcoin-style addresses for content identification</p>
+                        
+                        <!-- Address Generation Controls (integrated from Content Addresses) -->
+                        <div class="address-controls">
+                            <button id="newAddress" class="btn primary">Generate Address</button>
+                            <button id="showAddresses" class="btn secondary">View All Addresses</button>
+                        </div>
+                        
+                        <!-- Address List (integrated from Content Addresses) -->
+                        <div class="address-list" id="addressList"></div>
+                        
+                        <!-- File Mapping List -->
+                        <div class="mapping-list" id="mappingList"></div>
+                    </div>
+                </section>
+            </div>
         </main>
 
         <footer>
-            <p>BACDS - Bitcoin-Addressed Content Delivery</p>
-            <p>Decentralized content addressing using HD wallet technology</p>
+            <p>BACDS - Decentralized Content Network</p>
+            <p>Share, discover, and monetize content on the blockchain</p>
         </footer>
     </div>
 
