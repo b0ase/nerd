@@ -3,122 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BACDS Desktop - BitNet Platform</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>BACDS - Content Network</title>
+    <link rel="stylesheet" href="styles-simple.css">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>🚀 BACDS Desktop - BitNet Platform</h1>
-            <p>Split any file into Bitcoin-addressed chunks for decentralized delivery</p>
-            <div class="status-bar">
-                <span class="status-item">🔒 Wallet: <span id="wallet-status">Not loaded</span></span>
-                <span class="status-item">📊 API: <span id="api-status">Connecting...</span></span>
-            </div>
+            <h1>BACDS</h1>
+            <p>Bitcoin-Addressed Content Delivery System</p>
+            <div class="security-badge">🔒 Secure Network</div>
         </header>
 
-        <div class="main-content">
-            <div class="left-panel">
-                <div class="panel">
-                    <h3>🔑 Master Key Management</h3>
-                    <button class="btn primary" onclick="generateNewMasterKey()">Generate New Master Key</button>
-                    <button class="btn secondary" onclick="loadMasterKey()">Load Existing Master Key</button>
-                    <button class="btn secondary" onclick="showCurrentKey()">Show Current Key</button>
-                    <div id="master-key-display"></div>
-                </div>
-
-                <div class="panel">
-                    <h3>📁 File Chunking & BitNet Preparation</h3>
-                    <div class="upload-section">
-                        <button class="btn primary" onclick="selectFiles()">
-                            📂 Select Files
-                        </button>
-                        <div class="drop-zone" id="drop-zone">
-                            <div class="drop-content">
-                                <div class="drop-icon">📁</div>
-                                <p><strong>Drag & Drop Files Here</strong></p>
-                                <p class="hint">All file types supported • Videos, documents, images, audio • Drag files OR folders (scans recursively) • Files are chunked for BitNet delivery</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="file-list-container">
-                        <div class="list-header">
-                            <span>Selected Files for Chunking</span>
-                            <button class="btn small secondary" onclick="clearFileList()">Clear All</button>
-                        </div>
-                        <div class="file-list" id="file-list">
-                            <div class="empty-state">
-                                <p>No files selected yet</p>
-                                <p class="hint">Select files or drag them into the drop zone above</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="outputSection" class="output-section" style="display: none;">
-                <div class="output-folder">
-                    <h4>📤 Choose Destination for Renamed Files</h4>
-                    <button id="selectOutputFolder" class="secondary-btn">
-                        📂 Select Output Folder
-                    </button>
-                    <div id="selectedFolder" class="selected-folder"></div>
+        <main>
+            <!-- Wallet Section -->
+            <section class="wallet-section">
+                <h2>💼 Wallet Management</h2>
+                <div class="wallet-status" id="walletStatus">
+                    <div class="loading">Loading wallet status...</div>
                 </div>
                 
-                <!-- Rebuild Mapping Option -->
-                <div class="rebuild-section" id="rebuildSection" style="display: none;">
-                    <button id="rebuildMapping" class="secondary-btn">
-                        🔧 Rebuild Address Mapping
-                    </button>
-                    <p class="hint">Rebuild derivation index mapping for existing Bitcoin address files</p>
+                <!-- Private Key Import Section -->
+                <div class="import-section" id="importSection" style="display: none;">
+                    <div class="import-header">⚠️ Import Private Key</div>
+                    <textarea 
+                        id="privateKeyInput" 
+                        class="private-key-input" 
+                        placeholder="Paste your private key or seed phrase here..."
+                        rows="4"></textarea>
+                    <div class="wallet-controls" style="margin-top: 15px;">
+                        <button id="importFromKey" class="btn danger">Import Key</button>
+                        <button id="cancelImport" class="btn secondary">Cancel</button>
+                    </div>
                 </div>
                 
-                <!-- Folder Deletion Option -->
-                <div class="danger-zone" id="dangerZone" style="display: none;">
-                    <div class="danger-header">
-                        <h4>⚠️ Source Folder Cleanup (Optional)</h4>
-                        <p><strong>Delete original source folders</strong> after successfully copying all files to output folder</p>
+                <div class="wallet-controls">
+                    <button id="generateWallet" class="btn primary">Create Wallet</button>
+                    <button id="loadWallet" class="btn secondary">Load Wallet</button>
+                    <button id="showImport" class="btn warning">Import Key</button>
+                </div>
+                
+                <div class="wallet-controls">
+                    <button id="backupWallet" class="btn success">Backup Wallet</button>
+                    <button id="restoreWallet" class="btn warning">Restore Wallet</button>
+                    <button id="deleteWallet" class="btn danger">Delete Wallet</button>
+                </div>
+            </section>
+
+            <!-- Address Generation -->
+            <section class="address-section">
+                <h2>🏷️ Content Addresses</h2>
+                <div class="address-controls">
+                    <button id="newAddress" class="btn primary">Generate Address</button>
+                    <button id="showAddresses" class="btn secondary">View All Addresses</button>
+                </div>
+                <div class="address-list" id="addressList"></div>
+            </section>
+
+            <!-- File Management -->
+            <section class="file-section">
+                <h2>📁 Content Management</h2>
+                
+                <!-- Project Setup -->
+                <div class="project-setup" id="projectSetup">
+                    <div class="setup-controls">
+                        <button id="chooseWorkingDir" class="btn secondary">Choose Working Directory</button>
+                        <input type="text" id="projectName" placeholder="Project name..." class="project-input">
+                        <button id="createProject" class="btn primary">Create Project</button>
                     </div>
-                    <label class="checkbox-container">
-                        <input type="checkbox" id="deleteSourceFolders">
-                        <span class="checkmark"></span>
-                        Delete original source folders after copying files (⚠️ Cannot be undone!)
-                    </label>
-                    <div id="foldersToDelete" class="folders-to-delete"></div>
+                    <div class="project-status" id="projectStatus">
+                        <div class="empty-state">No project selected - choose a directory and name your content project</div>
+                    </div>
                 </div>
-            </div>
-
-            <div id="processSection" class="process-section" style="display: none;">
-                <button id="processFiles" class="success-btn">
-                    🔄 Copy & Rename with HD Addresses
-                </button>
-            </div>
-
-            <div id="results" class="results"></div>
-
-            <div id="fileList" class="file-list"></div>
-        </div>
-
-        <div class="processing-panel" id="processing-panel">
-            <h3>🔧 BitNet File Processing</h3>
-            <div class="progress-container">
-                <div class="progress-bar">
-                    <div class="progress-fill" id="progress-fill"></div>
+                
+                <!-- File Upload (shown only when project is set) -->
+                <div class="file-upload-section" id="fileUploadSection" style="display: none;">
+                    <div class="file-drop-zone" id="fileDropZone">
+                        <div class="drop-content">
+                            <div class="drop-icon">📄</div>
+                            <p>Drop files here or click to browse</p>
+                            <p>Files will be stored as [address].chunk</p>
+                            <input type="file" id="fileInput" multiple style="display: none;">
+                        </div>
+                    </div>
+                    <div class="file-list" id="fileList"></div>
                 </div>
-                <div class="progress-text" id="progress-text">Ready to process files</div>
-            </div>
-            <div class="processing-actions">
-                <button class="btn primary" onclick="startProcessing()" id="start-btn">
-                    🚀 Start Chunking for BitNet
-                </button>
-                <button class="btn danger" onclick="cancelProcessing()" id="cancel-btn" style="display: none;">
-                    ❌ Cancel
-                </button>
-            </div>
-        </div>
+            </section>
+
+            <!-- Address Mapping -->
+            <section class="mapping-section">
+                <h2>🔗 Content Address Mapping</h2>
+                <p>Files are automatically assigned unique Bitcoin-style addresses for content identification</p>
+                <div class="mapping-list" id="mappingList"></div>
+            </section>
+        </main>
+
+        <footer>
+            <p>BACDS - Bitcoin-Addressed Content Delivery</p>
+            <p>Decentralized content addressing using HD wallet technology</p>
+        </footer>
     </div>
 
-    <script src="renderer.js"></script>
+    <script src="renderer-simple.js"></script>
 </body>
 </html> 

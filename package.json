@@ -4,12 +4,15 @@
   "description": "Bitcoin-Addressed Content Delivery System (BACDS) - Revolutionary decentralized content delivery using Bitcoin addresses as network endpoints. Foundation for BitStream and BitNet Infrastructure products on the BitNet network.",
   "main": "src/main.js",
   "scripts": {
-    "start": "electron .",
-    "dev": "electron . --dev",
+    "start": "npm run kill-electron && sleep 2 && electron .",
+    "dev": "npm run kill-electron && sleep 2 && electron . --dev",
     "api": "node src/api-server.js",
     "test-api": "curl -s http://127.0.0.1:3001/api/status",
     "build": "electron-builder",
-    "dist": "electron-builder --publish=never"
+    "dist": "electron-builder --publish=never",
+    "clean-start": "npm run kill-electron && sleep 3 && npm start",
+    "clean-dev": "npm run kill-electron && sleep 3 && npm run dev",
+    "kill-electron": "pkill -9 -f 'node.*electron.*jpeg-renamer' || true; pkill -9 -f 'Electron.*jpeg-renamer' || true; pkill -9 -f 'bacds.*Electron' || true; sleep 1"
   },
   "keywords": [
     "bitcoin",

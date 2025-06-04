@@ -1,13 +1,29 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
+// Expose protected methods that allow the renderer process to use
+// the ipcRenderer without exposing the entire object
 contextBridge.exposeInMainWorld('electronAPI', {
-  selectFiles: () => ipcRenderer.invoke('select-files'),
-  selectFolders: () => ipcRenderer.invoke('select-folders'),
-  selectOutputFolder: () => ipcRenderer.invoke('select-output-folder'),
-  processFiles: (filePaths, outputFolder, shouldDeleteSourceFolders, sourceFolders) => 
-    ipcRenderer.invoke('process-files', filePaths, outputFolder, shouldDeleteSourceFolders, sourceFolders),
-  generateNewMasterKey: () => ipcRenderer.invoke('generate-new-master-key'),
-  importMasterKey: (hexKey) => ipcRenderer.invoke('import-master-key', hexKey),
-  getMasterKey: () => ipcRenderer.invoke('get-master-key'),
-  rebuildAddressMapping: (outputFolder) => ipcRenderer.invoke('rebuild-address-mapping', outputFolder)
+    // Wallet operations
+    generateWallet: () => ipcRenderer.invoke('wallet:generate'),
+    loadWallet: () => ipcRenderer.invoke('wallet:load'),
+    getWalletStatus: () => ipcRenderer.invoke('wallet:status'),
+    getMasterSeed: () => ipcRenderer.invoke('wallet:getMasterSeed'),
+    createBackup: () => ipcRenderer.invoke('wallet:createBackup'),
+    deleteWallet: () => ipcRenderer.invoke('wallet:delete'),
+    restoreWallet: (backupData) => ipcRenderer.invoke('wallet:restore', backupData),
+    importPrivateKey: (privateKey) => ipcRenderer.invoke('wallet:importPrivateKey', privateKey),
+    
+    // Address operations
+    generateAddress: (index) => ipcRenderer.invoke('address:generate', index),
+    generateNewAddress: () => ipcRenderer.invoke('address:generateNew'),
+    getAllAddresses: () => ipcRenderer.invoke('address:getAll'),
+    getAddress: (index) => ipcRenderer.invoke('address:get', index),
+    
+    // Project and file operations
+    chooseDirectory: () => ipcRenderer.invoke('project:chooseDirectory'),
+    createProject: (workingDir, projectName) => ipcRenderer.invoke('project:create', workingDir, projectName),
+    storeFile: (projectPath, fileName, fileBuffer, address) => ipcRenderer.invoke('project:storeFile', projectPath, fileName, fileBuffer, address),
+    
+    // Utility operations
+    getDataDir: () => ipcRenderer.invoke('util:getDataDir')
 }); 
