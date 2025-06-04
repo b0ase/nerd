@@ -6,6 +6,7 @@ class BACDSClient {
         this.addresses = [];
         this.files = [];
         this.currentProject = null;  // { path, name, workingDir }
+        this.collections = [];
         this.init();
     }
 
@@ -22,6 +23,32 @@ class BACDSClient {
         
         // Earnings listeners (NEW)
         document.getElementById('updatePricing').addEventListener('click', () => this.updateDefaultPricing());
+        
+        // Library listeners (NEW)
+        document.getElementById('addContent').addEventListener('click', () => this.addContent());
+        document.getElementById('importFolder').addEventListener('click', () => this.importFolder());
+        document.getElementById('createCollection').addEventListener('click', () => this.createCollection());
+        
+        // Additional library button listeners
+        const refreshOthersBtn = document.getElementById('refreshOthers');
+        if (refreshOthersBtn) {
+            refreshOthersBtn.addEventListener('click', () => this.refreshOthersContent());
+        }
+        
+        const downloadSelectedBtn = document.getElementById('downloadSelected');
+        if (downloadSelectedBtn) {
+            downloadSelectedBtn.addEventListener('click', () => this.downloadSelectedContent());
+        }
+        
+        const browseMarketplaceBtn = document.getElementById('browseMarketplace');
+        if (browseMarketplaceBtn) {
+            browseMarketplaceBtn.addEventListener('click', () => this.browseMarketplace());
+        }
+        
+        const myPurchasesBtn = document.getElementById('myPurchases');
+        if (myPurchasesBtn) {
+            myPurchasesBtn.addEventListener('click', () => this.showMyPurchases());
+        }
         
         // Wallet listeners (RESTORED)
         document.getElementById('generateWallet').addEventListener('click', () => this.generateWallet());
@@ -61,6 +88,9 @@ class BACDSClient {
 
         // Library tab listeners (NEW)
         this.initializeLibraryTabs();
+        
+        // Load existing collections from localStorage
+        this.loadCollections();
     }
 
     async loadWalletStatus() {
@@ -1215,8 +1245,10 @@ class BACDSClient {
                 console.log('🔐 Auto-creating wallet for seamless experience...');
                 await this.generateWallet();
             }
+            return true;
         } catch (error) {
             console.error('Error ensuring wallet exists:', error);
+            return false;
         }
     }
 
@@ -1276,22 +1308,67 @@ class BACDSClient {
     }
 
     async addContent() {
+        // First, expand the Content Management section if collapsed
+        const contentSection = document.querySelector('[data-target="file-content"]');
+        const contentSectionContent = document.getElementById('file-content');
+        
+        if (contentSection && contentSectionContent.classList.contains('collapsed')) {
+            contentSection.click(); // Trigger the expand
+        }
+        
+        // Show the file upload section if hidden
+        const fileUploadSection = document.getElementById('fileUploadSection');
+        if (fileUploadSection) {
+            fileUploadSection.style.display = 'block';
+        }
+        
         // Show file drop zone
         const dropZone = document.getElementById('fileDropZone');
-        dropZone.style.display = 'block';
-        dropZone.scrollIntoView({ behavior: 'smooth' });
-        this.showMessage('📁 Click the area above or drag files to add to your library', 'info');
+        if (dropZone) {
+            dropZone.style.display = 'block';
+            dropZone.scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        this.showMessage('📁 Content Management opened - drag files to upload or create a project first', 'info');
     }
 
     async importFolder() {
         try {
+            // Check if we have a wallet first
+            if (!await this.ensureWalletExists()) {
+                return;
+            }
+            
             this.showMessage('📁 Select folder to import...', 'info');
+            
+            // Use the chooseDirectory API
             const result = await window.electronAPI.chooseDirectory();
             
-            if (result.success) {
+            if (result.success && result.path) {
+                this.showMessage('🔄 Importing folder contents...', 'info');
+                
+                // First, expand the Content Management section if collapsed
+                const contentSection = document.querySelector('[data-target="file-content"]');
+                const contentSectionContent = document.getElementById('file-content');
+                
+                if (contentSection && contentSectionContent.classList.contains('collapsed')) {
+                    contentSection.click(); // Trigger the expand
+                }
+                
                 // Use the existing convertFolder functionality
                 await this.convertFolder();
+                
+                this.showMessage(`✅ Successfully imported folder: ${result.path}`, 'success');
+                
+                // Update library statistics
+                this.updateLibraryStats();
+                this.updateLibraryTab('my-content');
+                
+            } else if (result.path) {
+                this.showMessage('❌ Failed to import folder', 'error');
             }
+            // If result.path is undefined, user cancelled - don't show error
+            
         } catch (error) {
             console.error('Import folder error:', error);
             this.showMessage('❌ Failed to import folder', 'error');
@@ -1299,15 +1376,62 @@ class BACDSClient {
     }
 
     async createCollection() {
-        const collectionName = await this.showCustomInput(
-            'Enter a name for your new collection:',
-            'Create Collection',
-            'My Collection'
-        );
-        
-        if (collectionName) {
-            // TODO: Implement collection creation
-            this.showMessage(`✅ Collection "${collectionName}" created`, 'success');
+        try {
+            // Check if we have a wallet first
+            if (!await this.ensureWalletExists()) {
+                return;
+            }
+            
+            const collectionName = await this.showCustomInput(
+                'Enter a name for your new collection:',
+                'Create Collection',
+                'My Collection'
+            );
+            
+            if (collectionName && collectionName.trim()) {
+                const cleanName = collectionName.trim();
+                
+                // Create collection metadata
+                const collection = {
+                    id: Date.now().toString(),
+                    name: cleanName,
+                    created: new Date().toISOString(),
+                    description: '',
+                    files: [],
+                    public: false,
+                    tags: []
+                };
+                
+                // Initialize collections array if it doesn't exist
+                if (!this.collections) {
+                    this.collections = [];
+                }
+                
+                // Add to collections
+                this.collections.push(collection);
+                
+                // Save to localStorage for persistence
+                try {
+                    localStorage.setItem('bacds_collections', JSON.stringify(this.collections));
+                } catch (error) {
+                    console.warn('Failed to save collections to localStorage:', error);
+                }
+                
+                this.showMessage(`✅ Collection "${cleanName}" created successfully`, 'success');
+                
+                // Update library display
+                this.updateLibraryTab('my-content');
+                
+                console.log('📚 Collection created:', collection);
+                
+            } else if (collectionName !== null) {
+                this.showMessage('❌ Collection name cannot be empty', 'error');
+            }
+            // If collectionName is null, user cancelled - don't show error
+            
+        } catch (error) {
+            console.error('Create collection error:', error);
+            this.showMessage('❌ Failed to create collection', 'error');
         }
     }
 
@@ -1448,36 +1572,69 @@ class BACDSClient {
     }
 
     updateMyContentGrid(gridElement) {
-        if (this.files.length === 0) {
-            gridElement.innerHTML = '<div class="empty-state">Your content library is empty. Add some files to get started!</div>';
+        const hasFiles = this.files.length > 0;
+        const hasCollections = this.collections && this.collections.length > 0;
+        
+        if (!hasFiles && !hasCollections) {
+            gridElement.innerHTML = '<div class="empty-state">Your content library is empty. Add some files or create collections to get started!</div>';
             return;
         }
 
-        gridElement.innerHTML = this.files.map(file => {
-            let thumbnailHtml = '';
-            if (file.isImage && file.thumbnailPath) {
-                thumbnailHtml = `<img src="file://${file.thumbnailPath}" alt="${file.name}" class="library-thumbnail">`;
-            } else if (file.isImage) {
-                thumbnailHtml = `<div class="library-thumbnail">🖼️</div>`;
-            } else {
-                thumbnailHtml = `<div class="library-thumbnail">📄</div>`;
-            }
-            
-            return `
-                <div class="library-item">
-                    ${thumbnailHtml}
-                    <div class="library-item-info">
-                        <div class="library-item-name">${file.name}</div>
-                        <div class="library-item-meta">${this.formatBytes(file.size)} • ${new Date(file.stored).toLocaleDateString()}</div>
-                        <div class="library-item-actions">
-                            <button class="btn small secondary">Preview</button>
-                            <button class="btn small primary">Share</button>
-                            <button class="btn small danger">Remove</button>
+        let html = '';
+        
+        // Display collections first
+        if (hasCollections) {
+            html += this.collections.map(collection => {
+                const fileCount = collection.files ? collection.files.length : 0;
+                const createdDate = new Date(collection.created).toLocaleDateString();
+                
+                return `
+                    <div class="library-item collection-item">
+                        <div class="library-item-thumbnail">📁</div>
+                        <div class="library-item-info">
+                            <div class="library-item-title">${collection.name}</div>
+                            <div class="library-item-meta">${fileCount} files • Created ${createdDate}</div>
+                            <div class="library-item-actions">
+                                <button class="btn small primary" onclick="window.bacdsClient.openCollection('${collection.id}')">Open</button>
+                                <button class="btn small secondary" onclick="window.bacdsClient.editCollection('${collection.id}')">Edit</button>
+                                <button class="btn small danger" onclick="window.bacdsClient.deleteCollection('${collection.id}')">Delete</button>
+                            </div>
                         </div>
                     </div>
-                </div>
-            `;
-        }).join('');
+                `;
+            }).join('');
+        }
+        
+        // Display files
+        if (hasFiles) {
+            html += this.files.map(file => {
+                let thumbnailHtml = '';
+                if (file.isImage && file.thumbnailPath) {
+                    thumbnailHtml = `<img src="file://${file.thumbnailPath}" alt="${file.name}" class="library-item-thumbnail">`;
+                } else if (file.isImage) {
+                    thumbnailHtml = `<div class="library-item-thumbnail">🖼️</div>`;
+                } else {
+                    thumbnailHtml = `<div class="library-item-thumbnail">📄</div>`;
+                }
+                
+                return `
+                    <div class="library-item">
+                        ${thumbnailHtml}
+                        <div class="library-item-info">
+                            <div class="library-item-title">${file.name}</div>
+                            <div class="library-item-meta">${this.formatBytes(file.size)} • ${new Date(file.stored).toLocaleDateString()}</div>
+                            <div class="library-item-actions">
+                                <button class="btn small secondary" onclick="window.bacdsClient.previewFile('${file.address}')">Preview</button>
+                                <button class="btn small primary" onclick="window.bacdsClient.shareFile('${file.address}')">Share</button>
+                                <button class="btn small danger" onclick="window.bacdsClient.removeFile('${file.address}')">Remove</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        gridElement.innerHTML = html;
     }
 
     updateOthersContentGrid(gridElement) {
@@ -1580,6 +1737,147 @@ class BACDSClient {
         this.updateLibraryStats();
         this.updateLibraryTab('my-content'); // Refresh the active library tab
     }
+
+    loadCollections() {
+        try {
+            const saved = localStorage.getItem('bacds_collections');
+            if (saved) {
+                this.collections = JSON.parse(saved);
+                console.log('📚 Loaded collections:', this.collections.length);
+            } else {
+                this.collections = [];
+            }
+        } catch (error) {
+            console.warn('Failed to load collections from localStorage:', error);
+            this.collections = [];
+        }
+    }
+
+    // Collection Management Functions
+    async openCollection(collectionId) {
+        const collection = this.collections.find(c => c.id === collectionId);
+        if (collection) {
+            this.showMessage(`📁 Opening collection: ${collection.name}`, 'info');
+            // TODO: Implement collection view
+            console.log('Opening collection:', collection);
+        }
+    }
+    
+    async editCollection(collectionId) {
+        const collection = this.collections.find(c => c.id === collectionId);
+        if (collection) {
+            const newName = await this.showCustomInput(
+                'Edit collection name:',
+                'Edit Collection',
+                collection.name
+            );
+            
+            if (newName && newName.trim() && newName.trim() !== collection.name) {
+                collection.name = newName.trim();
+                collection.modified = new Date().toISOString();
+                
+                // Save changes
+                try {
+                    localStorage.setItem('bacds_collections', JSON.stringify(this.collections));
+                    this.showMessage(`✅ Collection renamed to "${collection.name}"`, 'success');
+                    this.updateLibraryTab('my-content');
+                } catch (error) {
+                    this.showMessage('❌ Failed to save collection changes', 'error');
+                }
+            }
+        }
+    }
+    
+    async deleteCollection(collectionId) {
+        const collection = this.collections.find(c => c.id === collectionId);
+        if (collection) {
+            const confirmed = await this.showCustomConfirm(
+                `Are you sure you want to delete the collection "${collection.name}"? This action cannot be undone.`,
+                'Delete Collection'
+            );
+            
+            if (confirmed) {
+                this.collections = this.collections.filter(c => c.id !== collectionId);
+                
+                // Save changes
+                try {
+                    localStorage.setItem('bacds_collections', JSON.stringify(this.collections));
+                    this.showMessage(`✅ Collection "${collection.name}" deleted`, 'success');
+                    this.updateLibraryTab('my-content');
+                } catch (error) {
+                    this.showMessage('❌ Failed to delete collection', 'error');
+                }
+            }
+        }
+    }
+    
+    // File Action Functions
+    async previewFile(fileAddress) {
+        const file = this.files.find(f => f.address === fileAddress);
+        if (file) {
+            if (file.isImage && file.thumbnailPath) {
+                // For images, show a preview
+                this.showMessage(`🖼️ Previewing: ${file.name}`, 'info');
+                // TODO: Implement image preview modal
+            } else {
+                this.showMessage(`👁️ Preview functionality coming soon for: ${file.name}`, 'info');
+            }
+        }
+    }
+    
+    async shareFile(fileAddress) {
+        const file = this.files.find(f => f.address === fileAddress);
+        if (file) {
+            this.showMessage(`🔗 Sharing: ${file.name}`, 'info');
+            // TODO: Implement file sharing functionality
+        }
+    }
+    
+    async removeFile(fileAddress) {
+        const file = this.files.find(f => f.address === fileAddress);
+        if (file) {
+            const confirmed = await this.showCustomConfirm(
+                `Are you sure you want to remove "${file.name}" from your library? This action cannot be undone.`,
+                'Remove File'
+            );
+            
+            if (confirmed) {
+                // Remove from files array
+                this.files = this.files.filter(f => f.address !== fileAddress);
+                
+                this.showMessage(`✅ File "${file.name}" removed from library`, 'success');
+                
+                // Update displays
+                this.updateFileList();
+                this.updateLibraryTab('my-content');
+                this.updateLibraryStats();
+                this.updateMappingList();
+            }
+        }
+    }
+
+    // Additional Library Functions
+    async refreshOthersContent() {
+        this.showMessage('🔄 Refreshing network content...', 'info');
+        // TODO: Implement network content refresh
+        this.updateLibraryTab('others-content');
+    }
+    
+    async downloadSelectedContent() {
+        this.showMessage('📥 Download functionality coming soon...', 'info');
+        // TODO: Implement download selected content
+    }
+    
+    async browseMarketplace() {
+        this.showMessage('🛒 Opening marketplace...', 'info');
+        // TODO: Implement marketplace browsing
+        this.updateLibraryTab('commercial-content');
+    }
+    
+    async showMyPurchases() {
+        this.showMessage('💳 Loading your purchases...', 'info');
+        // TODO: Implement purchases view
+    }
 }
 
 // Global function for copying to clipboard
@@ -1596,14 +1894,15 @@ function copyToClipboard(text) {
     });
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
-    console.log('🎨 BACDS UI loaded - initializing components');
+// Initialize when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('🌟 DOM loaded, initializing BACDS...');
+    
+    // Create global instance for onclick handlers
+    window.bacdsClient = new BACDSClient();
     
     // Initialize collapsible sections
     initializeCollapsibleSections();
-    
-    const app = new BACDSClient();
-    app.init();
 });
 
 // Collapsible sections functionality

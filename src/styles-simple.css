@@ -1362,4 +1362,22 @@ footer p {
         grid-template-columns: 1fr;
         gap: 1rem;
     }
+}
+
+/* Library collection items */
+.collection-item {
+    border-left: 3px solid var(--primary);
+    background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+}
+
+.collection-item .library-item-thumbnail {
+    background: var(--primary);
+    color: white;
+    font-size: 1.5rem;
+}
+
+.collection-item:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-left-color: var(--primary-dark);
 } 
