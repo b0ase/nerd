@@ -1,646 +1,259 @@
-# 🤓 NERD Strategic Plan - Network Endpoint Redistribution Daemon
+# 🌐 NERD Strategic Plan - Network Endpoint Redistribution Daemon
+**BitTorrent + BitcoinSV Hybrid | Content Delivery That Scales Like Akamai**
 
 **Current Status**: BACDS foundation complete ✅  
-**Next Phase**: NERD rebrand + $NERD token economy 🚀  
-**Vision**: Bitcoin-addressed content delivery with native token rewards
+**Next Phase**: BitTorrent-inspired P2P + BSV token economy 🚀  
+**Vision**: Decentralized content delivery network with native payment incentives
 
 ---
 
-## 🎯 **NERD Evolution Strategy**
+## 🎯 **Core Architecture: BitTorrent + BSV Payments**
+
+### **What We're Building**
+We are creating **our own version of BitTorrent** enhanced with **BitcoinSV micropayments** for content delivery. This hybrid approach combines:
+
+- **BitTorrent's proven P2P efficiency** 
+- **BSV's micropayment capabilities**
+- **Akamai-like scaling** through distributed caching
+- **$NERD token economy** for network incentives
+
+### **BitTorrent Protocol Integration**
+
+#### **1. Network Infrastructure** 
+```
+NERD Network Architecture
+├── TCP/IP Foundation ✅
+├── Distributed Hash Table (DHT) 🔄
+├── NERD Tracker Servers 🔄  
+├── Peer Exchange (PEX) 🔄
+└── BSV Payment Layer 🔄
+```
+
+#### **2. Core BitTorrent Features Enhanced**
+- **Swarming**: Files divided into BSV-payable chunks
+- **Piece Selection**: Rarest-first + highest-paid-first algorithms
+- **Seeders/Leechers**: Incentivized with $NERD token rewards
+- **Encryption**: Enhanced with BSV identity layer
+
+#### **3. Payment-Enhanced P2P**
+- **Pay-per-chunk**: Micropayments for each file piece
+- **Seeder rewards**: Earn BSV + $NERD for hosting content  
+- **Bandwidth markets**: Dynamic pricing for fast delivery
+- **Quality incentives**: Better seeders earn more
+
+---
+
+## 🏗️ **Technical Implementation Roadmap**
 
 ### **Phase 1** ✅ - Foundation (COMPLETE)
-- **BACDS.website** live and functional
-- **HandCash integration** working ($BOASE contact)
-- **Desktop application** with content chunking
-- **Professional branding** established
+- **BACDS Desktop App** with basic content management
+- **HandCash Integration** for BSV payments
+- **Content Chunking** foundation established
+- **Two-column UI** optimized for functionality
 
-### **Phase 2** 🔄 - NERD Preparation (CURRENT)
-- **$NERD tokenomics** design and planning
-- **1Sat Ordinals** integration research
-- **Revenue sharing** architecture planning
-- **Community building** around NERD brand
+### **Phase 2** 🔄 - BitTorrent Integration (CURRENT)
+- **[ ] Token Library Section** - Manage $NERD tokens and BSV
+- **[ ] Token Management Section** - Issue tokens for content publication
+- **[ ] DHT Implementation** - Decentralized peer discovery
+- **[ ] Tracker Network** - NERD-specific content coordination
+- **[ ] Peer Exchange Protocol** - Enhanced peer sharing
 
-### **Phase 3** 🚀 - NERD Launch (UPCOMING)
-- **Rebrand** from BACDS to NERD
-- **$NERD token** launch on 1Sat Ordinals
-- **nerd.website** domain acquisition and deployment
-- **Token staking** implementation
+### **Phase 3** 🚀 - P2P Payment Layer (UPCOMING)
+- **[ ] Micropayment Channels** - Fast BSV transactions
+- **[ ] Chunk-based Billing** - Pay only for received pieces
+- **[ ] Seeder Rewards System** - Automatic $NERD distribution
+- **[ ] Content Marketplace** - Tokenized content trading
 
-### **Phase 4** 💰 - Token Economy (FUTURE)
-- **Revenue distribution** to $NERD holders
-- **Network governance** via token voting
-- **Premium features** for token holders
-- **Ecosystem expansion** with developer tools
-
----
-
-## 💰 **$NERD Token Economics**
-
-### **Core Value Proposition**
-**"Only nerds will understand... and profit from it"** 🤓
-
-### **Token Utility**
-1. **📈 Revenue Sharing**
-   - Network transaction fees (0.001¢ × millions = significant)
-   - Content creator earnings (small % to network)
-   - Investment returns from marketplace
-
-2. **⚡ Network Benefits**
-   - Reduced content access fees
-   - Premium NERD client features
-   - Early access to trending content
-
-3. **🗳️ Governance Rights**
-   - Protocol upgrade decisions
-   - Fee structure modifications
-   - Content moderation policies
-
-4. **🎯 Staking Rewards**
-   - Passive holding rewards
-   - Active node operation bonuses
-   - Content hosting incentives
-
-### **1Sat Ordinals Integration**
-- **Low barrier entry**: 1 sat tokens accessible to everyone
-- **Bitcoin native**: Aligns with network philosophy
-- **Viral potential**: Collectible aspect drives adoption
-- **Scalable distribution**: Mint millions as network grows
+### **Phase 4** 💰 - Network Scaling (FUTURE)
+- **[ ] CDN-like Caching** - Geographic content distribution
+- **[ ] Bandwidth Markets** - Dynamic peer pricing
+- **[ ] Enterprise APIs** - Large-scale content delivery
+- **[ ] Global Node Network** - Akamai-competitive infrastructure
 
 ---
 
-## 🌐 **NERD Brand Strategy**
+## 💰 **$NERD Token Economics + BitTorrent Incentives**
 
-### **Target Audience**
-- **Crypto nerds** who appreciate technical humor
-- **Bitcoin maximalists** aligned with ordinals
-- **Content creators** seeking fair revenue
-- **P2P enthusiasts** wanting decentralization
+### **Token Utility in P2P Network**
 
-### **Brand Positioning**
-- **Self-aware technical humor**: "NERD" as badge of honor
-- **Legitimate infrastructure**: Real utility backing the meme
-- **Community-driven**: Token holders as stakeholders
-- **Bitcoin-aligned**: Native ordinals integration
+#### **1. Content Publishing Tokens**
+- **Issue $NERD tokens** when creating new content
+- **Token-backed content** gets priority in network
+- **Creator earnings** split between BSV and $NERD
 
-### **Marketing Hooks**
-- **"Be proud to be a NERD"** - ownership pride
-- **"Only nerds profit"** - exclusivity appeal
-- **"Network by nerds, for nerds"** - community identity
-- **"Daemon that pays dividends"** - technical + financial
+#### **2. Network Participation Rewards**
+- **Seeding rewards**: Earn $NERD for hosting popular content
+- **Bandwidth sharing**: Get paid in BSV for fast uploads  
+- **Node operation**: Run tracker/DHT nodes for $NERD income
+- **Quality bonuses**: High-uptime seeders earn multipliers
+
+#### **3. Access and Priority**
+- **Fast access**: Pay $NERD for priority downloads
+- **Exclusive content**: Token-gated premium materials
+- **Ad-free experience**: $NERD holders skip content ads
+- **API access**: Developers pay $NERD for network usage
+
+### **BitTorrent-Inspired Revenue Streams**
+1. **Per-chunk micropayments** (0.0001¢ × billions = significant)
+2. **Seeder hosting fees** (content creators pay seeders)
+3. **Priority bandwidth** (fast lane for $NERD payments)
+4. **Content marketplace** commission (1-2% of token trades)
 
 ---
 
-## 🏗️ **Technical Architecture Evolution**
+## 🌐 **Network Architecture: BitTorrent + BSV**
 
-### **Current: BACDS Foundation**
+### **Distributed Hash Table (DHT) Enhancement**
 ```
-BACDS (Bitcoin-Addressed Content Delivery System)
-├── Desktop App ✅
-├── HandCash Integration ✅
-├── Content Chunking ✅
-└── Web Interface ✅
+NERD DHT Features
+├── Content Discovery (standard BitTorrent)
+├── Peer Quality Metrics (seeder reliability)
+├── Payment History Tracking (trustworthy peers)
+├── $NERD Token Balance Verification
+└── Geographic Optimization (CDN-like routing)
 ```
 
-### **Future: NERD Ecosystem**
+### **Enhanced Tracker Protocol**
+- **Traditional tracking**: Which peers have which pieces
+- **Payment tracking**: Which peers accept BSV/tokens  
+- **Quality metrics**: Upload speed, reliability, uptime
+- **Geographic data**: Route to closest high-quality peers
+
+### **Peer Exchange (PEX) + Payments**
+- **Peer sharing**: Standard BitTorrent peer discovery
+- **Payment preferences**: Which currencies each peer accepts
+- **Quality signals**: Share performance data between peers
+- **Trust networks**: Build reputation-based peer groups
+
+---
+
+## 🔧 **New UI Sections Required**
+
+### **Token Library Section**
 ```
-NERD (Network Endpoint Redistribution Daemon)
-├── NERD Desktop Client
-├── $NERD Token Integration
-├── Revenue Distribution System
-├── Governance Platform
-└── Developer APIs
+Token Library Features
+├── $NERD Token Balance & History
+├── BSV Wallet Integration  
+├── Token Rewards Dashboard
+├── Staking Interface
+├── Governance Voting
+└── Token Marketplace Access
 ```
 
-### **Token Integration Points**
-- **Client wallet**: Built-in $NERD token management
-- **Fee payments**: Use tokens for reduced costs
-- **Staking interface**: Simple stake/unstake controls
-- **Governance voting**: In-app proposal system
-
----
-
-## 📊 **Revenue Model**
-
-### **Network Revenue Sources**
-1. **Transaction fees** (0.001¢ per micro-payment)
-2. **Content marketplace** commission (1-2%)
-3. **Premium features** subscription
-4. **Enterprise licensing** for large deployments
-
-### **Token Holder Benefits**
-- **70%** of network revenue → token holders (staking rewards)
-- **20%** → development fund
-- **10%** → operational costs
-
-### **Revenue Distribution Mechanics**
-- **Monthly distributions** in BSV to token holders
-- **Proportional to holdings** and staking participation
-- **Bonus multipliers** for long-term stakers
-- **Governance participation** bonuses
-
----
-
-## 🎮 **Gamification Elements**
-
-### **NERD Levels**
-- **Script Kiddie** (1-100 tokens)
-- **Code Monkey** (101-1,000 tokens)
-- **Senior Developer** (1,001-10,000 tokens)
-- **Tech Lead** (10,001-100,000 tokens)
-- **CTO** (100,001+ tokens)
-
-### **Achievement System**
-- **Early Adopter** - bought tokens in first week
-- **Diamond Hands** - held through volatility
-- **Node Operator** - runs NERD daemon
-- **Content Creator** - published successful content
-
----
-
-## 🚀 **Launch Strategy**
-
-### **Pre-Launch (Current Phase)**
-- [ ] Finalize tokenomics whitepaper
-- [ ] Design $NERD token artwork/metadata
-- [ ] Secure nerd.website domain
-- [ ] Build community anticipation
-
-### **Launch Week**
-- [ ] Mint $NERD tokens on 1Sat Ordinals
-- [ ] Deploy nerd.website
-- [ ] Announce rebrand with marketing blitz
-- [ ] Airdrop to early BACDS users
-
-### **Post-Launch**
-- [ ] Implement staking rewards
-- [ ] Add governance features
-- [ ] Expand to other Bitcoin layers
-- [ ] Developer ecosystem growth
-
----
-
-## 💡 **Risk Mitigation**
-
-### **Technical Risks**
-- **Ordinals scaling**: Monitor Bitcoin congestion
-- **Token distribution**: Fair launch mechanism
-- **Smart contract security**: Audit token logic
-
-### **Market Risks**
-- **Meme fatigue**: Strong utility backing
-- **Regulatory concerns**: Utility token classification
-- **Competition**: First-mover advantage in space
-
-### **Operational Risks**
-- **Community management**: Active engagement required
-- **Development velocity**: Maintain shipping pace
-- **Revenue generation**: Prove economic model
-
----
-
-## 🎯 **Success Metrics**
-
-### **Phase 2 Targets**
-- [ ] **Tokenomics design** complete
-- [ ] **Community of 1,000** engaged users
-- [ ] **nerd.website** domain secured
-- [ ] **1Sat integration** tested
-
-### **Phase 3 Targets**
-- [ ] **10,000 $NERD tokens** distributed
-- [ ] **$10,000 revenue** generated
-- [ ] **100 active nodes** running
-- [ ] **Media coverage** in crypto press
-
-### **Phase 4 Targets**
-- [ ] **$100,000 revenue** distributed to holders
-- [ ] **1,000,000 tokens** in circulation
-- [ ] **Governance proposals** implemented
-- [ ] **Developer ecosystem** thriving
-
----
-
-**Status**: Ready to enter Phase 2 - NERD preparation and tokenomics implementation! 🤓🚀
-
-**Next Actions**: 
-1. Design $NERD token mechanics
-2. Research 1Sat Ordinals integration
-3. Plan community building strategy
-4. Prepare nerd.website deployment
-
-## 🎯 PROJECT VISION
-
-**Core Concept:** Revolutionary decentralized content delivery network using Bitcoin addresses as network endpoints, enabling peer-to-peer content delivery where users serve content directly from their devices to other users, with Bitcoin addresses linked to IPv6 addresses for secure machine-to-machine communication on the **BitNet** network.
-
-**Product Ecosystem:**
-- **BitStream** - Primary content delivery and streaming product
-- **BitNet Infrastructure** - Advanced peer-to-peer networking and decentralized computing product
-- **Future Products** - Built on the BACDS foundation
-
-**Unique Value Proposition:**
-- Bitcoin addresses as both payment endpoints AND network endpoints
-- Decentralized content delivery without traditional CDNs
-- Air-gapped private key security with public address mapping
-- BitNet infrastructure for direct machine-to-machine content delivery
-
----
-
-## 📋 DEVELOPMENT LOG
-
-### **Session 1: June 3, 2025 (15:31 GMT - Present)**
-
-#### **15:31 GMT - Project Foundation Established**
-- **Accomplished:** Desktop application with HD Bitcoin wallet functionality (now BACDS foundation)
-- **Features Built:**
-  - HD Bitcoin address generation from master seed
-  - Universal file chunking with Bitcoin addresses
-  - Duplicate detection via content hashing
-  - Master key persistence and loading
-  - Address derivation index tracking
-
-#### **15:45 GMT - UI/UX Overhaul**
-- **Problem:** Military-style UI was unreadable and confusing
-- **Solution:** Complete redesign with clean, professional dark theme
-- **Result:** Readable interface that clearly shows app functionality
-
-#### **16:00 GMT - Architecture Simplification**
-- **Problem:** Separate JSON files for master key and address mapping
-- **Decision:** Combined into single `master-key.json` for simplicity
-- **Benefit:** Easier backup, atomic operations, reduced complexity
-
-#### **16:15 GMT - Dual-File System Implementation**
-- **Innovation:** Added public address mapping generation
-- **Files Created:**
-  - `master-key.json` (private, contains master seed + full mapping)
-  - `public-addresses.json` (shareable, addresses only, no private key)
-- **Future-Proofing:** Added placeholders for BitNet endpoints and IPv6 integration
-
-#### **16:35 GMT - Product Naming & Brand Architecture**
-- **Decision:** BACDS as core platform
-- **Products:** BitStream (delivery) and BitNet Infrastructure (networking)
-- **Benefit:** Clear product hierarchy and market positioning
-
-#### **16:45 GMT - Naming Correction & Clarity**
-- **Realization:** BACDS (Bitcoin-Addressed Content Delivery System) was perfect from the start
-- **Action:** Reverted from BitCDN naming back to descriptive BACDS
-- **Reason:** "Bitcoin-Addressed Content Delivery System" clearly explains the innovation
-- **Product Structure:** BACDS foundation → BitStream & BitNet Infrastructure products
-
-#### **17:00 GMT - Major API Development Milestone** 
-- **MASSIVE PROGRESS:** Built complete BACDS API Server with Express.js
-- **API Endpoints Created:**
-  - `/api/status` - System status and info
-  - `/api/master-key/*` - Complete master key management
-  - `/api/address/*` - Bitcoin address generation (single & batch)
-  - `/api/files/analyze` - File upload and analysis
-  - `/api/network/*` - Future BitNet infrastructure placeholders
-- **Web Interface:** Professional web UI at `http://127.0.0.1:3001/web`
-- **Integration:** API server auto-starts with desktop app
-- **Features:** CORS, file uploads, error handling, comprehensive endpoints
-- **Foundation Ready:** BitStream and BitNet Infrastructure can now build on this API
-
-#### **18:30 GMT - BitStream MVP Completion**
-- **BREAKTHROUGH:** Complete BitStream content delivery platform launched
-- **Features Implemented:**
-  - Professional web UI with tabs (Gallery, Upload, Analytics, Settings)
-  - Drag-and-drop file upload system
-  - Automatic Bitcoin address generation for each content piece
-  - Payment tracking with Bitcoin payment URLs
-  - Content management with pricing and access controls
-  - Statistics dashboard (content, earnings, views, streams)
-  - Full BACDS API integration
-  - Local storage persistence and share functionality
-- **Status:** BitStream MVP fully functional and ready for users
-
-#### **19:00 GMT - Network Naming Evolution**
-- **Decision:** Evolved from "FogNet" to **"BitNet"** as the network name
-- **Rationale:** Cleaner, more approachable, better for mainstream adoption
-- **Final Architecture:** BitNet (network) → BACDS (foundation) → BitStream + BitNet Infrastructure (products)
-
-#### **19:15 GMT - Phase 2 Kickoff: BitNet Infrastructure Development** 🚀
-- **VISION CLARIFIED:** BitTorrent-like P2P network with Bitcoin payment integration
-- **Architecture Confirmed:**
-  - Desktop clients act as network nodes
-  - Files split into encrypted chunks distributed across nodes
-  - Parallel download from multiple nodes with local reconstruction
-  - Bitcoin addresses as both payment AND network endpoints
-  - Payment verification before chunk serving
-- **Technical Stack Planning:**
-  - WebRTC for browser-to-browser connections
-  - Direct TCP/UDP for desktop node communication
-  - DHT (Distributed Hash Table) for peer/chunk discovery
-  - Reed-Solomon coding for redundancy
-  - Lightning Network for instant micropayments
-- **Status:** Ready to begin P2P protocol development on BACDS foundation
-
-#### **19:45 GMT - Week 5 Development: File Chunking System Implementation** 🔧
-- **BREAKTHROUGH:** Complete file chunking system implemented and working!
-- **Features Built:**
-  - ✅ File chunking algorithm (1MB chunks with Bitcoin addresses)
-  - ✅ Chunk addressing using HD wallet derivation
-  - ✅ Content manifests (JSON mapping for reconstruction)
-  - ✅ Local chunk storage with hash verification
-  - ✅ Web interface for chunking operations
-  - ✅ Payment URL generation for each chunk
-- **API Endpoints Added:**
-  - `POST /api/bitnet/chunk-file` - Upload and chunk files
-  - `GET /api/bitnet/chunk/:chunkHash` - Retrieve specific chunks
-  - `GET /api/bitnet/manifest/:fileHash` - Get file reconstruction manifest
-  - `GET /api/bitnet/chunks/list` - List all local chunks
-- **Testing Ready:** Upload any file → split into Bitcoin-addressed chunks → view manifest
-- **Status:** Week 5 core objectives COMPLETE! Ready for Week 6 P2P protocol
-
-#### **20:15 GMT - Week 6 P2P Protocol COMPLETE**
-- **Accomplished:** Complete P2P networking layer for BitNet chunk distribution
-- **Features Built:**
-  - WebSocket-based P2P server (port 6001) with automatic peer discovery
-  - UDP broadcast discovery service (port 6002) for local network nodes
-  - Distributed Hash Table (DHT) mapping chunks to peer availability
-  - Chunk request/response protocol with timeout handling
-  - P2P web interface with network monitoring and chunk requests
-  - Integrated P2P server lifecycle with API server
-  - Graceful shutdown handling for P2P connections
-  - Multi-peer chunk retrieval with parallel requests
-
----
-
-## 🏗️ TECHNICAL ARCHITECTURE
-
-### **Current Stack**
-- **Desktop App:** Electron (Node.js + HTML/CSS/JS)
-- **Crypto:** Bitcoin address generation (BIP32-inspired HD wallets)
-- **Storage:** Local JSON files with atomic operations
-- **Platform:** Cross-platform desktop (macOS, Windows, Linux)
-
-### **Future Stack (Planned)**
+### **Token Management Section**  
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                    BitNet ECOSYSTEM                         │
-├─────────────────────────────────────────────────────────────┤
-│  Product Layer                                              │
-│  ├── BitStream (Content Delivery & Streaming) ✅           │
-│  ├── BitNet Infrastructure (P2P Networking)                │
-│  └── Future Products (Built on API)                        │
-├─────────────────────────────────────────────────────────────┤
-│  Frontend Layer                                             │
-│  ├── Desktop App (Electron) ✅                             │
-│  ├── Web UI (React/Next.js) ✅                             │
-│  └── Mobile Apps (React Native)                            │
-├─────────────────────────────────────────────────────────────┤
-│  BACDS API Layer ✅                                        │
-│  ├── Local API (Express.js on desktop)                     │
-│  ├── Cloud API (Node.js + Docker)                          │
-│  ├── Content Management System                             │
-│  └── P2P Protocol (Custom over IPv6)                       │
-├─────────────────────────────────────────────────────────────┤
-│  BitNet Infrastructure Layer                               │
-│  ├── Bitcoin Address → IPv6 Mapping                        │
-│  ├── DHT for Peer Discovery                                │
-│  ├── Direct Machine-to-Machine Delivery                    │
-│  └── Payment Verification                                   │
-├─────────────────────────────────────────────────────────────┤
-│  Storage Layer                                              │
-│  ├── Local Storage (User Devices)                          │
-│  ├── IPFS Integration                                       │
-│  └── Optional Cloud Backup                                 │
-└─────────────────────────────────────────────────────────────┘
+Token Management Features
+├── Issue Tokens for New Content
+├── Set Content Pricing (BSV + $NERD)
+├── Seeder Reward Configuration
+├── Revenue Sharing Setup
+├── Content Monetization Analytics
+└── Token Distribution History
 ```
 
 ---
 
-## 🚀 DEVELOPMENT ROADMAP
+## 🚀 **Scaling Strategy: Akamai-Like Growth**
 
-### **Phase 1: Foundation (Weeks 1-4) ✅ COMPLETE**
-- ✅ **Desktop App Core** (Complete)
-- ✅ **Dual-File System** (Complete)
-- ✅ **Local API Server** (Complete)
-- ✅ **BitStream MVP** (Complete)
-- 🔧 **Executable Packaging** (Electron Builder)
+### **Geographic Distribution**
+- **Regional nodes**: High-performance seeders in major cities
+- **Edge caching**: Popular content cached closer to users
+- **Smart routing**: Route requests to optimal peers/caches
+- **Load balancing**: Distribute traffic across healthy nodes
 
-### **Phase 2: BitNet Infrastructure (Weeks 5-8)**
-**Development Priority Order:**
+### **Performance Optimization**
+- **Chunk prioritization**: Most needed pieces served first
+- **Bandwidth aggregation**: Multiple peers for single download
+- **Quality of Service**: Premium lanes for paying users
+- **Adaptive bitrates**: Different quality levels for different speeds
 
-#### **Week 5: File Chunking & Distribution System**
-- 🔧 **File Chunking Algorithm** - Split files into encrypted chunks (1MB each)
-- 🔧 **Chunk Addressing** - Generate Bitcoin address per chunk using derivation
-- 🔧 **Content Manifests** - JSON mapping of chunks to reconstruct files
-- 🔧 **Local Chunk Storage** - Store and index chunks on local node
-- 🔧 **Chunk Verification** - Hash verification for chunk integrity
-
-#### **Week 6: Basic P2P Protocol**
-- ✅ **WebSocket P2P Server** - Node-to-node communication via WebSocket
-- ✅ **Node Discovery** - UDP broadcast/multicast peer discovery on local network
-- ✅ **Chunk Request Protocol** - Request/response system for chunks between peers
-- ✅ **Node Registration** - Automatic chunk registration and availability broadcasting
-- ✅ **Basic DHT** - Distributed hash table mapping chunks to peer nodes
-- ✅ **P2P Web Interface** - Network status, peer list, DHT viewer, chunk requests
-- **API Endpoints Added:**
-  - `GET /api/bitnet/p2p/status` - P2P network status and statistics
-  - `GET /api/bitnet/p2p/peers` - Connected peer list
-  - `GET /api/bitnet/p2p/dht` - DHT table with chunk-to-peer mappings
-  - `GET /api/bitnet/p2p/find-chunk/:hash` - Find peers that have specific chunk
-  - `POST /api/bitnet/p2p/request-chunk` - Download chunk from network peers
-- **Testing Ready:** Multi-node chunk distribution and retrieval
-- **Status:** Week 6 core objectives COMPLETE! Ready for Week 7 payment integration
-
-#### **Week 7: Payment Integration & Verification**
-- 🔧 **Payment Verification** - Check Bitcoin payment before serving chunks
-- 🔧 **Micropayment URLs** - Generate payment URLs for chunk access
-- 🔧 **Payment Caching** - Cache verified payments to avoid re-checking
-- 🔧 **Node Incentives** - Basic reward system for hosting chunks
-- 🔧 **Payment-Gated Serving** - Only serve chunks after payment verification
-
-#### **Week 8: Parallel Download & Reconstruction**
-- 🔧 **Multi-Source Download** - Download chunks from multiple nodes simultaneously
-- 🔧 **Download Prioritization** - Smart chunk ordering for faster playback
-- 🔧 **File Reconstruction** - Reassemble chunks into original files
-- 🔧 **Progress Tracking** - Real-time download progress and speed metrics
-- 🔧 **Error Recovery** - Handle failed chunk downloads and node timeouts
-
-**Phase 2 Success Criteria:**
-- ✅ Upload file → split into chunks → distribute to network
-- ✅ Request file → find chunks → download in parallel → reconstruct
-- ✅ Payment verification working for chunk access
-- ✅ Basic 2-3 node network demonstrating the full cycle
-
-### **Phase 3: Cloud Platform (Weeks 9-12)**
-- 🔧 **Cloud API Deployment**
-- 🔧 **User Account System**
-- 🔧 **Collection Galleries**
-- 🔧 **CDN Integration (Traditional + BitNet)**
-- 🔧 **Developer API Documentation**
-
-### **Phase 4: Ecosystem (Weeks 13-16)**
-- 🔧 **Token Design & Implementation**
-- 🔧 **Marketplace Features**
-- 🔧 **Community Platform**
-- 🔧 **Partnership Integrations**
-- 🔧 **Go-to-Market Strategy**
+### **Economic Incentives**
+- **High-traffic rewards**: Bonus $NERD for serving popular content
+- **Geographic bonuses**: Extra rewards for underserved regions  
+- **Uptime incentives**: Long-running seeders earn multipliers
+- **Quality bonuses**: Fast, reliable peers earn premium rates
 
 ---
 
-## 💡 INNOVATION: BITNET ARCHITECTURE
+## 📊 **Market Positioning: BitTorrent 2.0**
 
-### **Bitcoin Address as Network Endpoint Concept**
-
-```
-Traditional CDN:
-User → DNS → CDN Edge Server → Origin Server → Content
-
-BitNet P2P Network:
-User → Bitcoin Address → IPv6 Resolution → Direct Peer → Content
-     → Payment Verification → Access Granted
-```
-
-### **Technical Implementation Ideas**
-
-1. **Address-to-IP Mapping:**
-   ```javascript
-   // Deterministic IPv6 from Bitcoin address
-   function bitcoinToIPv6(bitcoinAddress) {
-     // Hash Bitcoin address to create IPv6 suffix
-     // Use DHT to map to actual device IP
-     // Enable direct peer-to-peer communication
-   }
-   ```
-
-2. **Peer Discovery Protocol:**
-   - DHT (Distributed Hash Table) using Bitcoin addresses as keys
-   - IPv6 multicast for local network discovery
-   - Tor integration for privacy-preserving connections
-
-3. **Payment-Gated Access:**
-   - Verify Bitcoin payment to address before content delivery
-   - Micropayments for pay-per-view content
-   - Subscription models via recurring payments
-
----
-
-## 📊 MARKET OPPORTUNITY
+### **Competitive Advantages**
+- **Proven protocol**: BitTorrent works at massive scale
+- **Payment integration**: Native micropayments solve seeder incentives
+- **Token economy**: Network effects through $NERD rewards
+- **Creator benefits**: Fair revenue sharing vs. traditional CDNs
 
 ### **Target Markets**
-1. **Digital Artists & Creators**
-   - Direct monetization without platform fees
-   - Copyright protection through cryptographic addresses
-   - Global reach without geographic restrictions
+1. **Content creators**: Better revenue than YouTube/Twitch
+2. **Enterprise CDN**: Cost-effective Akamai alternative  
+3. **Crypto community**: P2P + payments alignment
+4. **Privacy advocates**: Decentralized content delivery
 
-2. **Enterprise Content Delivery**
-   - Cost-effective alternative to traditional CDNs
-   - Enhanced security through cryptographic verification
-   - Reduced bandwidth costs via peer-to-peer delivery
-
-3. **Decentralized Web Movement**
-   - Web3 content delivery infrastructure
-   - Integration with existing DeFi and NFT ecosystems
-   - Developer-friendly APIs and tools
-
-### **Revenue Streams**
-1. **SaaS Subscriptions** (BitStream Pro, Enterprise plans)
-2. **Transaction Fees** (Small percentage of BitNet payments)
-3. **Token Economy** (BACDS utility token for network operations)
-4. **Enterprise Licensing** (White-label BitNet infrastructure)
+### **Revenue Potential**
+- **Massive scale**: BitTorrent handles petabytes daily
+- **Micropayment volume**: Billions of tiny transactions
+- **Token appreciation**: Network growth drives $NERD value
+- **Enterprise contracts**: Large-scale content delivery deals
 
 ---
 
-## 🎯 COMPETITIVE ADVANTAGES
+## 🎮 **Implementation Priority**
 
-### **Technical Moats**
-1. **Bitcoin Address Network Innovation:** First-to-market with Bitcoin addresses as network endpoints
-2. **Air-Gapped Security:** Private keys never touch the network
-3. **True Decentralization:** No central servers required for operation
-4. **Payment Integration:** Built-in micropayments without third-party processors
+### **Immediate (Next 2 Weeks)**
+1. **Add Token Library UI section** to existing interface
+2. **Add Token Management UI section** for content creators
+3. **Design $NERD token contract** on 1Sat Ordinals
+4. **Plan DHT integration** into current architecture
 
-### **Business Moats**
-1. **Network Effects:** More users = more content = more value
-2. **Developer Ecosystem:** API-first approach enables third-party innovation
-3. **Brand Recognition:** "BitNet" positions us as the Bitcoin content network
-4. **Patent Potential:** Novel approach to combining payments and networking
+### **Short Term (1-2 Months)**  
+1. **Implement basic DHT** for peer discovery
+2. **Add tracker protocol** for content coordination
+3. **Build seeder reward system** for $NERD distribution  
+4. **Create content tokenization** workflow
 
----
+### **Medium Term (3-6 Months)**
+1. **Launch $NERD token** with initial distribution
+2. **Deploy tracker network** across multiple regions
+3. **Implement micropayment channels** for chunk trading
+4. **Build content marketplace** for tokenized media
 
-## 📈 SUCCESS METRICS
-
-### **Phase 1 KPIs** ✅
-- ✅ Desktop app functionality complete
-- ✅ API server operational
-- ✅ BitStream MVP launched
-- ✅ Basic payment URL generation
-
-### **Phase 2 KPIs**
-- 🎯 First P2P content delivery
-- 🎯 IPv6 integration working
-- 🎯 Payment verification system
-- 🎯 10+ beta users testing BitNet
-
-### **Phase 3 KPIs**
-- 🎯 Cloud platform launched
-- 🎯 100+ content creators
-- 🎯 $1K+ monthly revenue
-- 🎯 Developer API adoption
-
-### **Phase 4 KPIs**
-- 🎯 10K+ active users
-- 🎯 $10K+ monthly revenue
-- 🎯 Partnership announcements
-- 🎯 Series A funding round
+### **Long Term (6-12 Months)**
+1. **Scale to CDN-level performance** with global nodes
+2. **Enterprise API launch** for large-scale adoption
+3. **Advanced token economics** with complex incentive structures
+4. **Compete directly with Akamai** in specific market segments
 
 ---
 
-## 🚀 IMMEDIATE NEXT STEPS
+## 🔍 **Technical Deep Dive: Integration Points**
 
-### **Priority 1: Distribution & Packaging**
-1. Package desktop app for distribution (Electron Builder)
-2. Create proper installers for macOS, Windows, Linux
-3. Set up GitHub releases and auto-updates
+### **BitTorrent Protocol Extensions**
+```
+Standard BitTorrent Message Types:
+├── handshake, unchoke, interested, have, bitfield
+├── request, piece, cancel
+└── port (DHT)
 
-### **Priority 2: BitNet Infrastructure Development**
-1. Research IPv6 integration approaches
-2. Design Bitcoin address to IPv6 mapping protocol
-3. Build peer discovery mechanism
-4. Implement direct P2P file transfer
+NERD Protocol Extensions:
+├── payment_request (BSV address + amount)
+├── payment_proof (transaction ID)  
+├── token_balance ($NERD holdings verification)
+├── quality_metrics (speed, uptime, reliability)
+└── geographic_hint (optimal routing data)
+```
 
-### **Priority 3: Marketing & Community**
-1. Create demo videos showing BitStream functionality
-2. Write technical blog posts about Bitcoin-addressed networking
-3. Engage with Bitcoin and Web3 developer communities
-4. Launch social media presence for BitNet brand
+### **Token Integration Architecture**
+```
+Content Publishing Flow:
+1. Creator uploads content → chunked into pieces
+2. Issue $NERD tokens → tied to content hash
+3. Set pricing → BSV per chunk + $NERD rewards
+4. Publish to network → tracker announces availability
+5. Seeders opt-in → start earning rewards for hosting
+6. Users download → pay per chunk + tip seeders
+7. Revenue sharing → split between creator/seeders/network
+```
 
 ---
 
-**Current Status:** BACDS foundation complete with desktop app, API server, web interface, BitStream MVP, **Week 5 file chunking system COMPLETE**, and **Week 6 P2P protocol COMPLETE** - Files can now be chunked and distributed across a peer-to-peer network with automatic discovery and retrieval. Ready for Week 7 payment integration or continue with packaging for distribution. Project successfully evolved from desktop application concept to comprehensive BitNet ecosystem with working P2P chunk distribution.
-
-## 💼 BILLABLE HOURS LOG
-
-| Date | Time (GMT) | Duration | Activity | Notes |
-|------|------------|----------|----------|--------|
-| 2025-06-03 | 15:31-16:30 | 1h | Desktop app development | Core Bitcoin wallet functionality |
-| 2025-06-03 | 16:30-Present | Ongoing | Strategic planning & dual-file system | Architecture design & documentation |
-
-**Total Billable Hours:** 1+ hours (ongoing)  
-**Hourly Rate:** TBD  
-**Current Value Created:** Desktop app + strategic foundation  
-
-## 📝 RISK ANALYSIS
-
-### **Technical Risks**
-- IPv6 adoption limitations
-- NAT traversal complexity
-- Scalability of DHT networks
-- Bitcoin transaction fees
-
-### **Market Risks**
-- Regulatory changes affecting Bitcoin
-- Competition from established CDNs
-- User adoption of decentralized systems
-- Technical complexity for average users
-
-### **Mitigation Strategies**
-- Hybrid approach (traditional + fog computing)
-- Progressive decentralization
-- Strong UX focus
-- Regulatory compliance planning
-
-*This document is living and will be updated as the project evolves. All major decisions, bugs, solutions, and progress will be logged here.*
-
-**Last Updated:** June 3, 2025 16:30 GMT  
-**Next Review:** Daily updates during active development 
+**This strategic plan positions NERD as BitTorrent 2.0 with native payments, scaling to compete with traditional CDNs while rewarding all network participants fairly through the $NERD token economy.** 
