@@ -29,6 +29,27 @@ class BACDSClient {
         document.getElementById('importFolder').addEventListener('click', () => this.importFolder());
         document.getElementById('createCollection').addEventListener('click', () => this.createCollection());
         
+        // Token Library listeners (NEW)
+        document.getElementById('stakeTokens').addEventListener('click', () => this.stakeTokens());
+        document.getElementById('unstakeTokens').addEventListener('click', () => this.unstakeTokens());
+        document.getElementById('buyTokens').addEventListener('click', () => this.buyTokens());
+        document.getElementById('sellTokens').addEventListener('click', () => this.sellTokens());
+        document.getElementById('viewProposals').addEventListener('click', () => this.viewGovernanceProposals());
+        document.getElementById('submitProposal').addEventListener('click', () => this.submitGovernanceProposal());
+        
+        // Token Management listeners (NEW)
+        document.getElementById('issueTokens').addEventListener('click', () => this.issueContentTokens());
+        document.getElementById('updateRevenue').addEventListener('click', () => this.updateRevenueSharing());
+        document.getElementById('updateSeederRewards').addEventListener('click', () => this.updateSeederRewards());
+        
+        // Revenue sharing sliders
+        const creatorSlider = document.getElementById('creatorSlider');
+        const seederSlider = document.getElementById('seederSlider');
+        if (creatorSlider && seederSlider) {
+            creatorSlider.addEventListener('input', () => this.updateRevenueSliders());
+            seederSlider.addEventListener('input', () => this.updateRevenueSliders());
+        }
+        
         // Additional library button listeners
         const refreshOthersBtn = document.getElementById('refreshOthers');
         if (refreshOthersBtn) {
@@ -91,6 +112,9 @@ class BACDSClient {
         
         // Load existing collections from localStorage
         this.loadCollections();
+        
+        // Initialize token data
+        this.initializeTokenData();
     }
 
     async loadWalletStatus() {
@@ -1877,6 +1901,354 @@ class BACDSClient {
     async showMyPurchases() {
         this.showMessage('💳 Loading your purchases...', 'info');
         // TODO: Implement purchases view
+    }
+
+    // Token-related initialization
+    initializeTokenData() {
+        this.tokenData = {
+            nerdBalance: 0,
+            bsvBalance: 0.00000000,
+            stakedAmount: 0,
+            stakingRewards: 0.00,
+            stakingApy: 5.5,
+            votingPower: 0,
+            revenueSharing: {
+                creator: 70,
+                seeder: 25,
+                network: 5
+            },
+            seederRewards: {
+                baseReward: 0.01,
+                qualityMultiplier: 1.0
+            },
+            tokenHistory: [],
+            distributionHistory: []
+        };
+        
+        // Load from localStorage if exists
+        const savedTokenData = localStorage.getItem('bacds_token_data');
+        if (savedTokenData) {
+            try {
+                const parsed = JSON.parse(savedTokenData);
+                this.tokenData = { ...this.tokenData, ...parsed };
+            } catch (error) {
+                console.warn('Failed to load token data:', error);
+            }
+        }
+        
+        this.updateTokenUI();
+    }
+    
+    // Save token data to localStorage
+    saveTokenData() {
+        try {
+            localStorage.setItem('bacds_token_data', JSON.stringify(this.tokenData));
+        } catch (error) {
+            console.warn('Failed to save token data:', error);
+        }
+    }
+    
+    // Update token UI elements
+    updateTokenUI() {
+        // Update balances
+        document.getElementById('nerdBalance').textContent = this.tokenData.nerdBalance.toLocaleString();
+        document.getElementById('bsvBalance').textContent = this.tokenData.bsvBalance.toFixed(8);
+        document.getElementById('nerdUsdValue').textContent = `$${(this.tokenData.nerdBalance * 0.001).toFixed(2)}`;
+        document.getElementById('bsvUsdValue').textContent = `$${(this.tokenData.bsvBalance * 50).toFixed(2)}`;
+        
+        // Update staking info
+        document.getElementById('stakedAmount').textContent = this.tokenData.stakedAmount.toLocaleString();
+        document.getElementById('stakingRewards').textContent = this.tokenData.stakingRewards.toFixed(2);
+        document.getElementById('stakingApy').textContent = `${this.tokenData.stakingApy.toFixed(1)}%`;
+        
+        // Update governance
+        document.getElementById('votingPower').textContent = this.tokenData.votingPower.toLocaleString();
+        
+        // Update revenue sharing sliders
+        document.getElementById('creatorSlider').value = this.tokenData.revenueSharing.creator;
+        document.getElementById('seederSlider').value = this.tokenData.revenueSharing.seeder;
+        this.updateRevenueSliders();
+        
+        // Update seeder rewards
+        document.getElementById('baseReward').value = this.tokenData.seederRewards.baseReward;
+        document.getElementById('qualityMultiplier').value = this.tokenData.seederRewards.qualityMultiplier;
+    }
+    
+    // Token Library Functions
+    async stakeTokens() {
+        const amount = await this.showCustomInput(
+            'Enter amount of $NERD tokens to stake:',
+            'Stake Tokens',
+            '100'
+        );
+        
+        if (amount && !isNaN(amount) && parseFloat(amount) > 0) {
+            const stakeAmount = parseFloat(amount);
+            
+            if (stakeAmount <= this.tokenData.nerdBalance) {
+                this.tokenData.nerdBalance -= stakeAmount;
+                this.tokenData.stakedAmount += stakeAmount;
+                this.tokenData.votingPower = this.tokenData.stakedAmount;
+                
+                this.addTokenHistory('stake', stakeAmount, 'Staked tokens for rewards');
+                this.updateTokenUI();
+                this.saveTokenData();
+                
+                this.showMessage(`✅ Successfully staked ${stakeAmount} $NERD tokens!`, 'success');
+            } else {
+                this.showMessage('❌ Insufficient $NERD balance for staking', 'error');
+            }
+        }
+    }
+    
+    async unstakeTokens() {
+        const amount = await this.showCustomInput(
+            'Enter amount of $NERD tokens to unstake:',
+            'Unstake Tokens',
+            this.tokenData.stakedAmount.toString()
+        );
+        
+        if (amount && !isNaN(amount) && parseFloat(amount) > 0) {
+            const unstakeAmount = parseFloat(amount);
+            
+            if (unstakeAmount <= this.tokenData.stakedAmount) {
+                this.tokenData.stakedAmount -= unstakeAmount;
+                this.tokenData.nerdBalance += unstakeAmount;
+                this.tokenData.votingPower = this.tokenData.stakedAmount;
+                
+                this.addTokenHistory('unstake', unstakeAmount, 'Unstaked tokens');
+                this.updateTokenUI();
+                this.saveTokenData();
+                
+                this.showMessage(`✅ Successfully unstaked ${unstakeAmount} $NERD tokens!`, 'success');
+            } else {
+                this.showMessage('❌ Insufficient staked balance', 'error');
+            }
+        }
+    }
+    
+    async buyTokens() {
+        this.showMessage('🔄 Opening token marketplace...', 'info');
+        // TODO: Implement actual token purchase via 1Sat Ordinals
+        
+        // Simulate token purchase for demo
+        const purchaseAmount = 1000;
+        this.tokenData.nerdBalance += purchaseAmount;
+        this.addTokenHistory('buy', purchaseAmount, 'Purchased from marketplace');
+        this.updateTokenUI();
+        this.saveTokenData();
+        
+        this.showMessage(`✅ Demo: Added ${purchaseAmount} $NERD tokens to your balance!`, 'success');
+    }
+    
+    async sellTokens() {
+        const amount = await this.showCustomInput(
+            'Enter amount of $NERD tokens to sell:',
+            'Sell Tokens',
+            '100'
+        );
+        
+        if (amount && !isNaN(amount) && parseFloat(amount) > 0) {
+            const sellAmount = parseFloat(amount);
+            
+            if (sellAmount <= this.tokenData.nerdBalance) {
+                this.tokenData.nerdBalance -= sellAmount;
+                this.tokenData.bsvBalance += sellAmount * 0.00002; // Demo exchange rate
+                
+                this.addTokenHistory('sell', sellAmount, 'Sold for BSV');
+                this.updateTokenUI();
+                this.saveTokenData();
+                
+                this.showMessage(`✅ Successfully sold ${sellAmount} $NERD tokens!`, 'success');
+            } else {
+                this.showMessage('❌ Insufficient $NERD balance', 'error');
+            }
+        }
+    }
+    
+    async viewGovernanceProposals() {
+        this.showMessage('🗳️ Loading governance proposals...', 'info');
+        // TODO: Implement governance proposal viewing
+    }
+    
+    async submitGovernanceProposal() {
+        if (this.tokenData.votingPower < 1000) {
+            this.showMessage('❌ Need at least 1,000 voting power to submit proposals', 'error');
+            return;
+        }
+        
+        const proposal = await this.showCustomInput(
+            'Enter your governance proposal:',
+            'Submit Proposal',
+            'Increase seeder rewards by 10%'
+        );
+        
+        if (proposal && proposal.trim()) {
+            this.showMessage(`✅ Proposal submitted: "${proposal.trim()}"`, 'success');
+            // TODO: Implement actual proposal submission
+        }
+    }
+    
+    // Token Management Functions
+    async issueContentTokens() {
+        const title = document.getElementById('contentTitle').value;
+        const amount = document.getElementById('tokenAmount').value;
+        const price = document.getElementById('chunkPrice').value;
+        
+        if (!title || !amount || !price) {
+            this.showMessage('❌ Please fill in all fields for token issuance', 'error');
+            return;
+        }
+        
+        const tokenAmount = parseInt(amount);
+        const chunkPrice = parseFloat(price);
+        
+        if (tokenAmount <= 0 || chunkPrice < 0) {
+            this.showMessage('❌ Invalid token amount or price', 'error');
+            return;
+        }
+        
+        // Create token issuance record
+        const issuance = {
+            id: Date.now().toString(),
+            title: title.trim(),
+            tokenAmount: tokenAmount,
+            chunkPrice: chunkPrice,
+            issued: new Date().toISOString(),
+            status: 'active'
+        };
+        
+        // Add to distribution history
+        this.tokenData.distributionHistory.unshift(issuance);
+        
+        // Clear form
+        document.getElementById('contentTitle').value = '';
+        document.getElementById('tokenAmount').value = '';
+        document.getElementById('chunkPrice').value = '';
+        
+        this.saveTokenData();
+        this.updateTokenManagementStats();
+        
+        this.showMessage(`✅ Issued ${tokenAmount} tokens for "${title}"`, 'success');
+    }
+    
+    updateRevenueSliders() {
+        const creatorPercent = parseInt(document.getElementById('creatorSlider').value);
+        const seederPercent = parseInt(document.getElementById('seederSlider').value);
+        const networkPercent = 100 - creatorPercent - seederPercent;
+        
+        document.getElementById('creatorPercent').textContent = creatorPercent;
+        document.getElementById('seederPercent').textContent = seederPercent;
+        document.getElementById('networkPercent').textContent = networkPercent;
+        
+        // Ensure percentages add up to 100
+        if (networkPercent < 0) {
+            const adjustment = Math.abs(networkPercent);
+            if (creatorPercent > seederPercent) {
+                document.getElementById('creatorSlider').value = creatorPercent - adjustment;
+            } else {
+                document.getElementById('seederSlider').value = seederPercent - adjustment;
+            }
+            this.updateRevenueSliders(); // Recursive call to fix
+        }
+    }
+    
+    async updateRevenueSharing() {
+        const creatorPercent = parseInt(document.getElementById('creatorSlider').value);
+        const seederPercent = parseInt(document.getElementById('seederSlider').value);
+        const networkPercent = 100 - creatorPercent - seederPercent;
+        
+        if (networkPercent < 0) {
+            this.showMessage('❌ Revenue shares must total 100% or less', 'error');
+            return;
+        }
+        
+        this.tokenData.revenueSharing = {
+            creator: creatorPercent,
+            seeder: seederPercent,
+            network: networkPercent
+        };
+        
+        this.saveTokenData();
+        this.showMessage(`✅ Revenue sharing updated: Creator ${creatorPercent}%, Seeders ${seederPercent}%, Network ${networkPercent}%`, 'success');
+    }
+    
+    async updateSeederRewards() {
+        const baseReward = parseFloat(document.getElementById('baseReward').value);
+        const qualityMultiplier = parseFloat(document.getElementById('qualityMultiplier').value);
+        
+        if (isNaN(baseReward) || baseReward < 0) {
+            this.showMessage('❌ Invalid base reward amount', 'error');
+            return;
+        }
+        
+        this.tokenData.seederRewards = {
+            baseReward: baseReward,
+            qualityMultiplier: qualityMultiplier
+        };
+        
+        this.saveTokenData();
+        this.showMessage(`✅ Seeder rewards updated: ${baseReward} $NERD per MB (${qualityMultiplier}x multiplier)`, 'success');
+    }
+    
+    updateTokenManagementStats() {
+        const totalTokensIssued = this.tokenData.distributionHistory.reduce((sum, item) => sum + item.tokenAmount, 0);
+        const activeStreams = this.tokenData.distributionHistory.filter(item => item.status === 'active').length;
+        
+        document.getElementById('totalTokensIssued').textContent = totalTokensIssued.toLocaleString();
+        document.getElementById('activeRevenueStreams').textContent = activeStreams;
+        document.getElementById('totalSeederRewards').textContent = '$0.00'; // TODO: Calculate actual seeder rewards
+    }
+    
+    addTokenHistory(type, amount, description) {
+        const entry = {
+            id: Date.now().toString(),
+            type: type,
+            amount: amount,
+            description: description,
+            timestamp: new Date().toISOString()
+        };
+        
+        this.tokenData.tokenHistory.unshift(entry);
+        
+        // Keep only last 50 entries
+        if (this.tokenData.tokenHistory.length > 50) {
+            this.tokenData.tokenHistory = this.tokenData.tokenHistory.slice(0, 50);
+        }
+        
+        this.updateTokenHistoryUI();
+    }
+    
+    updateTokenHistoryUI() {
+        const historyList = document.getElementById('tokenHistoryList');
+        if (!historyList) return;
+        
+        if (this.tokenData.tokenHistory.length === 0) {
+            historyList.innerHTML = '<div class="empty-state">No token transactions yet</div>';
+            return;
+        }
+        
+        const historyHTML = this.tokenData.tokenHistory.slice(0, 10).map(entry => {
+            const date = new Date(entry.timestamp).toLocaleString();
+            const typeIcon = {
+                'stake': '🔒',
+                'unstake': '🔓', 
+                'buy': '💰',
+                'sell': '💸',
+                'reward': '🎁'
+            }[entry.type] || '📝';
+            
+            return `
+                <div class="history-entry">
+                    <span class="history-icon">${typeIcon}</span>
+                    <span class="history-description">${entry.description}</span>
+                    <span class="history-amount">${entry.amount} $NERD</span>
+                    <span class="history-date">${date}</span>
+                </div>
+            `;
+        }).join('');
+        
+        historyList.innerHTML = historyHTML;
     }
 }
 

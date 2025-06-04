@@ -1380,4 +1380,403 @@ footer p {
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);
     border-left-color: var(--primary-dark);
+}
+
+/* Token Library Section */
+.token-library-section .section-content {
+    padding: 16px;
+}
+
+.token-balances {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.token-balance-item {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    border: 1px solid var(--border);
+}
+
+.token-icon {
+    font-size: 1.5rem;
+    margin-right: 12px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-primary);
+    border-radius: 50%;
+}
+
+.token-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.token-name {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+}
+
+.token-balance {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    font-family: 'Courier New', monospace;
+}
+
+.token-value {
+    text-align: right;
+}
+
+.token-usd-value {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+}
+
+.token-operations {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.token-operations .btn {
+    padding: 8px 12px;
+    font-size: 0.8rem;
+}
+
+.staking-info {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+    padding: 12px;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    border: 1px solid var(--border);
+}
+
+.staking-stat {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+}
+
+.staking-amount {
+    font-weight: 600;
+    color: var(--primary);
+    font-size: 0.9rem;
+}
+
+.staking-label {
+    color: var(--text-muted);
+    font-size: 0.7rem;
+    margin-top: 4px;
+}
+
+.token-history {
+    margin-bottom: 20px;
+}
+
+.token-history h4 {
+    margin: 0 0 12px 0;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+}
+
+.history-list {
+    max-height: 120px;
+    overflow-y: auto;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    padding: 8px;
+}
+
+.governance-section h4 {
+    margin: 0 0 12px 0;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+}
+
+.governance-stats {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    padding: 8px 12px;
+    background: var(--bg-secondary);
+    border-radius: 6px;
+    border: 1px solid var(--border);
+}
+
+.governance-power {
+    font-weight: 600;
+    color: var(--primary);
+    font-size: 0.9rem;
+}
+
+.governance-label {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+}
+
+.governance-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.governance-actions .btn {
+    flex: 1;
+    padding: 6px 8px;
+    font-size: 0.75rem;
+}
+
+/* Token Management Section */
+.token-management-section .section-content {
+    padding: 16px;
+}
+
+.token-issuance,
+.revenue-sharing,
+.content-monetization,
+.seeder-rewards,
+.token-distribution-history {
+    margin-bottom: 24px;
+    padding: 16px;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    border: 1px solid var(--border);
+}
+
+.token-issuance h4,
+.revenue-sharing h4,
+.content-monetization h4,
+.seeder-rewards h4,
+.token-distribution-history h4 {
+    margin: 0 0 12px 0;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+}
+
+.input-group {
+    margin-bottom: 12px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 0.8rem;
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.form-input,
+.form-select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-size: 0.8rem;
+    box-sizing: border-box;
+}
+
+.form-input:focus,
+.form-select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.1);
+}
+
+.revenue-sliders {
+    margin-bottom: 16px;
+}
+
+.slider-group {
+    margin-bottom: 12px;
+}
+
+.slider-group label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    font-size: 0.8rem;
+}
+
+.slider {
+    width: 100%;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--bg-primary);
+    outline: none;
+    -webkit-appearance: none;
+}
+
+.slider::-webkit-slider-thumb {
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--primary);
+    cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--primary);
+    cursor: pointer;
+    border: none;
+}
+
+.slider-info {
+    color: var(--text-muted);
+    font-size: 0.7rem;
+    font-style: italic;
+}
+
+.monetization-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.monetization-stat {
+    text-align: center;
+    padding: 8px;
+    background: var(--bg-primary);
+    border-radius: 6px;
+    border: 1px solid var(--border);
+}
+
+.stat-value {
+    display: block;
+    font-weight: 600;
+    color: var(--primary);
+    font-size: 0.9rem;
+}
+
+.stat-label {
+    color: var(--text-muted);
+    font-size: 0.7rem;
+    margin-top: 4px;
+}
+
+.reward-input-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.reward-input-group .form-input {
+    flex: 1;
+}
+
+.currency-unit {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.distribution-list {
+    max-height: 120px;
+    overflow-y: auto;
+    background: var(--bg-primary);
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    padding: 8px;
+}
+
+/* Token History Entries */
+.history-entry {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    margin-bottom: 4px;
+    background: var(--bg-primary);
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    font-size: 0.75rem;
+}
+
+.history-entry:last-child {
+    margin-bottom: 0;
+}
+
+.history-icon {
+    font-size: 0.9rem;
+    width: 20px;
+    text-align: center;
+}
+
+.history-description {
+    flex: 1;
+    color: var(--text-primary);
+}
+
+.history-amount {
+    color: var(--primary);
+    font-weight: 600;
+    font-family: 'Courier New', monospace;
+}
+
+.history-date {
+    color: var(--text-muted);
+    font-size: 0.7rem;
+}
+
+/* Responsive adjustments for token sections */
+@media (max-width: 768px) {
+    .token-operations {
+        grid-template-columns: 1fr;
+    }
+    
+    .staking-info {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+    
+    .monetization-stats {
+        grid-template-columns: 1fr;
+    }
+    
+    .governance-actions {
+        flex-direction: column;
+    }
+}
+
+/* Responsive adjustments for library */
+@media (max-width: 768px) {
+    .library-stats {
+        grid-template-columns: 1fr;
+    }
+    
+    .library-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .library-tabs {
+        flex-direction: column;
+        gap: 4px;
+    }
+    
+    .library-controls {
+        flex-direction: column;
+    }
 } 
