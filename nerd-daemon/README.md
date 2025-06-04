@@ -8,87 +8,87 @@ The NERD daemon is the core networking component of the BACDS (Bitcoin Addressed
 
 ## Features
 
-- **Complete P2P Networking**: TCP-based peer-to-peer connections on port 6881
-- **BitTorrent Wire Protocol**: Full implementation with handshake and message handling
-- **Protocol Buffers**: Efficient message serialization for peer communication
-- **Connection Management**: Thread-safe connection pooling with proper lifecycle management
-- **Message Types**: Standard BitTorrent + NERD-specific payment and token messages
-- **Extensible Architecture**: Ready for DHT, tracker, and payment integration
+- **Complete P2P Networking**: TCP-based peer-to-peer connections.
+- **BitTorrent Wire Protocol**: Full implementation with handshake and message handling.
+- **Protocol Buffers**: Efficient message serialization for core peer communication.
+- **Connection Management**: Thread-safe connection pooling with proper lifecycle management.
+- **Distributed Hash Table (DHT)**: Kademlia-based DHT for decentralized peer discovery using `anacrolix/dht/v2`.
+- **BitTorrent Tracker**: Integrated HTTP/UDP tracker for announcing and discovering peers.
+- **BSV Micropayments (Foundational)**: System for creating, signing, and broadcasting BSV transactions for payments, using `bsv-blockchain/go-sdk`. Placeholder for UTXO fetching and payment channel management.
+- **Extensible Architecture**: Designed for further feature integration.
 
-## Current Status
+## Current Status (Phase 3 Completion)
 
 ✅ **Completed:**
-- Go project structure with proper module organization
-- TCP networking foundation with connection handling
-- Protocol Buffer message definitions and code generation
-- **Complete BitTorrent wire protocol implementation**
-- **Full handshake protocol with traditional BitTorrent compatibility**
-- **15+ message types including standard BitTorrent (0-9) and NERD extensions (100+)**
-- Connection pool management with mutex synchronization
-- Error handling and graceful connection cleanup
-- **Message serialization/deserialization with Protocol Buffers**
-- **P2P communication foundation ready for production**
+- Go project structure with proper module organization.
+- TCP networking foundation with connection handling.
+- Protocol Buffer message definitions (`messages/messages.pb.go`).
+- **Complete BitTorrent wire protocol implementation**.
+- **Full handshake protocol with traditional BitTorrent compatibility**.
+- Standard BitTorrent message types (0-9) and NERD extensions (100+).
+- Connection pool management with mutex synchronization.
+- Error handling and graceful connection cleanup.
+- **Message serialization/deserialization with Protocol Buffers**.
+- **P2P communication foundation**.
+- **Distributed Hash Table (DHT)**: Implemented in `dht.go` for peer discovery and announcement. Integrated into the main daemon flow.
+- **BitTorrent Tracker**: Implemented in `tracker.go` with HTTP and UDP interfaces. Integrated into the main daemon flow.
+- **BSV Micropayment System (Foundational)**: Implemented in `bsv_payments.go`. Includes private key management, address generation, transaction creation (inputs, outputs, fees, change), signing, and placeholder broadcasting. Uses `bsv-blockchain/go-sdk`.
 
-🚧 **In Progress:**
-- Distributed Hash Table (DHT) implementation for peer discovery
-- BitTorrent tracker server integration
-- Peer Exchange (PEX) protocol implementation
-
-📋 **Planned:**
-- BSV micropayment channels for chunk-based payments
-- $NERD token integration and rewards distribution
-- Torrent file parsing and piece management
-- Content addressing and routing
-- Seeder rewards system
+📋 **Next Steps / Planned Refinements & Features:**
+1.  **BSV Payment System - Finalization & Integration**:
+    *   Implement real UTXO fetching (e.g., via Whatsonchain API).
+    *   Implement real transaction broadcasting (currently placeholder in `bsv_payments.go` but points to Whatsonchain).
+    *   Develop robust wallet balance tracking.
+    *   Finalize and integrate payment channel logic (`OpenPaymentChannel`, `ClosePaymentChannel`, state updates).
+2.  **Content Discovery and Search**:
+    *   Advanced mechanisms for discovering and searching content (extend DHT or new indexing protocol).
+3.  **Security Enhancements**:
+    *   Peer authentication and encryption (e.g., TLS).
+    *   Message signing and verification.
+    *   Sybil attack resistance and peer reputation.
+4.  **Advanced Data Handling & NERD Tokens**:
+    *   Implement NERD-specific data storage/retrieval on DHT (`StoreNERDData`, `RetrieveNERDData`).
+    *   Flesh out NERD token functionalities and economics.
+5.  **Peer Exchange (PEX)**: Implement PEX protocol for more peer discovery.
+6.  **Torrent File Parsing & Piece Management**: Full support for `.torrent` files.
+7.  **Testing and Refinement**: Add comprehensive unit, integration, and end-to-end tests.
 
 ## Build Instructions
 
 ### Prerequisites
-- Go 1.21 or later
-- Protocol Buffers compiler (`protoc`)
-- `protoc-gen-go` plugin
-
-### Install Protocol Buffer Tools
-```bash
-# Install protoc-gen-go plugin
-go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
-
-# Make sure Go bin directory is in your PATH
-export PATH=$PATH:$(go env GOPATH)/bin
-```
+- Go 1.21 or later (ensure your `go.mod` reflects this or higher if SDKs require it).
 
 ### Build the Daemon
 ```bash
-# Clone and navigate to the project
+# Navigate to the project directory
 cd nerd-daemon
 
 # Download dependencies
 go mod tidy
 
-# Generate Protocol Buffer code (if needed)
-cd messages
-protoc --go_out=. --go_opt=paths=source_relative messages.proto
-cd ..
+# Build the daemon (latest version with Phase 3 features)
+go build -o nerd-daemon-phase3-final .
 
-# Build the daemon
-go build -o nerd-daemon
-
-# Run the daemon
-./nerd-daemon
+# To run the daemon (ensure it has execute permissions: chmod +x nerd-daemon-phase3-final)
+./nerd-daemon-phase3-final
 ```
 
 ## Project Structure
 
 ```
 nerd-daemon/
-├── main.go              # Main daemon entry point and connection handling
-├── protocol.go          # BitTorrent wire protocol implementation
-├── go.mod               # Go module definition with Protocol Buffer dependencies
-├── messages/            # Protocol Buffer message definitions
-│   ├── messages.proto   # Message schema definitions
-│   └── messages.pb.go   # Generated Go code (auto-generated)
-├── test_p2p.sh         # P2P communication test script
-└── README.md           # This file
+├── main.go                # Main daemon entry point, config, P2P, DHT, Tracker, BSV Payments integration
+├── protocol.go            # BitTorrent wire protocol implementation
+├── dht.go                 # Kademlia DHT implementation for peer discovery
+├── tracker.go             # BitTorrent tracker server implementation
+├── bsv_payments.go        # BSV micropayment system implementation
+├── go.mod                 # Go module definition
+├── go.sum                 # Go module checksums
+├── messages/              # Protocol Buffer message definitions
+│   └── messages.pb.go     # Generated Go code (auto-generated, checked-in)
+├── CHANGELOG.md           # Project changelog
+├── README.md              # This file
+└── test_p2p.sh            # P2P communication test script (may need updates)
 ```
 
 ## Message Types
@@ -106,49 +106,56 @@ nerd-daemon/
 - **PortMsg**: Announces the port for DHT node communication
 
 ### NERD-Specific Messages (100+)
-- **PaymentRequestMsg**: Request BSV payment for content delivery
-- **PaymentProofMsg**: Proof of BitcoinSV payment transaction
-- **TokenBalanceMsg**: $NERD token balance and quality score information
-- **QualityMetricsMsg**: Peer performance data (uptime, speed, reliability)
-- **GeographicHintMsg**: Geographic routing optimization data
+(Defined in `messages/messages.pb.go`)
+- **PaymentRequestMsg**: Request BSV payment for content delivery.
+- **PaymentProofMsg**: Proof of BitcoinSV payment transaction.
+- **TokenBalanceMsg**: $NERD token balance and quality score information.
+- **QualityMetricsMsg**: Peer performance data (uptime, speed, reliability).
+- **GeographicHintMsg**: Geographic routing optimization data.
 
-## Configuration
+## Configuration (`config.json` loaded by `main.go`)
 
-The daemon currently uses hardcoded configuration:
-- **Port**: 6881 (standard BitTorrent port)
-- **Test Peer**: localhost:6882
+The daemon loads configuration from `config.json`. Key settings include:
+- **ListenPort**: TCP port for P2P connections (e.g., 6881).
+- **EnableDHT**: Boolean to enable/disable the DHT server.
+- **DHTPort**: UDP port for the DHT server.
+- **BootstrapNodes**: List of initial DHT bootstrap nodes.
+- **EnableTracker**: Boolean to enable/disable the integrated tracker.
+- **TrackerHTTPPort**: HTTP port for the tracker.
+- **TrackerUDPPort**: UDP port for the tracker.
+- **BSVPayment**: Configuration block for BSV payments:
+    - **PrivateKeyWIF**: Wallet Import Format for BSV private key.
+    - **NetworkType**: "mainnet" or "testnet".
+    - **BroadcastURL**: API URL for broadcasting transactions.
+    - **UTXOFetchURLFormat**: API URL format for fetching UTXOs.
+    - **FeeRate**: Satoshis per byte for transaction fees.
 
-Future versions will support configuration files and environment variables.
+Default values are provided if `config.json` is missing or incomplete.
 
 ## Development
 
-### Current Architecture
+### Current Architecture (Post-Phase 3)
 ```
-NERD Daemon v1.0
+NERD Daemon (Phase 3)
 ├── TCP Networking ✅
-├── Protocol Buffers ✅  
+├── Protocol Buffers ✅
 ├── BitTorrent Wire Protocol ✅
 ├── Connection Management ✅
 ├── Message Handling ✅
-├── Payment Messages (structure) ✅
-└── Ready for: DHT, Tracker, Payments 🚀
+├── Kademlia DHT (anacrolix/dht/v2) ✅
+├── BitTorrent Tracker (HTTP/UDP) ✅
+├── BSV Payments (bsv-blockchain/go-sdk) - Foundational ✅
+│   ├── Address Generation ✅
+│   ├── Transaction Creation (Inputs, Outputs, Fee, Change) ✅
+│   ├── Transaction Signing ✅
+│   ├── Placeholder UTXO Fetching (to be replaced with API) ✅
+│   └── Placeholder Broadcasting (to be replaced with API) ✅
+└── Ready for: BSV API integration, Payment Channels, Content Search, Security 🚀
 ```
-
-### Adding New Message Types
-1. Define the message in `messages/messages.proto`
-2. Regenerate Go code: `protoc --go_out=. --go_opt=paths=source_relative messages.proto`
-3. Implement message handling in `main.go`
 
 ### Testing
-```bash
-# Run the P2P test script
-./test_p2p.sh
-
-# Or run manually
-./nerd-daemon
-```
-
-The daemon demonstrates complete P2P networking capabilities and is ready for the next phase of development focusing on DHT implementation and payment integration.
+The `test_p2p.sh` script may require updates to align with current functionalities.
+Manual testing by running multiple daemon instances is recommended.
 
 ## License
 
