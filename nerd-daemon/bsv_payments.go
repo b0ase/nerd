@@ -1,16 +1,22 @@
 package main
 
 import (
+	"bytes"
 	"crypto/rand"
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
+	"io"
 	"log"
+	"math"
+	"net/http"
 	"sync"
 	"time"
 
 	primitives "github.com/bsv-blockchain/go-sdk/primitives/ec"
 	"github.com/bsv-blockchain/go-sdk/script"
 	"github.com/bsv-blockchain/go-sdk/transaction"
+	"github.com/bsv-blockchain/go-sdk/transaction/template/p2pkh"
 	"github.com/nerd-daemon/messages"
 )
 
@@ -20,9 +26,19 @@ type BSVPaymentConfig struct {
 	MinPaymentSatoshis   int64   // Minimum payment amount
 	MaxPaymentSatoshis   int64   // Maximum payment amount
 	ChannelTimeoutBlocks int     // Timeout for payment channels in blocks
-	FeeRate              float64 // Satoshis per byte for transaction fees
+	FeeRate              float64 // Satoshis per byte for transaction fees (e.g., 0.05)
 	NetworkType          string  // "mainnet" or "testnet"
-	BroadcastURL         string  // URL for broadcasting transactions
+	BroadcastURL         string  // URL for broadcasting transactions (e.g., Whatsonchain API for testnet: https://api.whatsonchain.com/v1/bsv/test/tx/raw)
+	// UTXOFetchURL can be added if different from BroadcastURL or if a specific API is needed for fetching UTXOs (e.g. https://api.whatsonchain.com/v1/bsv/test/address/%s/unspent)
+	// UTXOFetchAPIKey      string  // API key if UTXO fetching service requires it
+}
+
+// UTXO represents an Unspent Transaction Output.
+type UTXO struct {
+	TxID         string // Transaction ID where this UTXO was created
+	Vout         uint32 // Output index in the transaction
+	ScriptPubKey string // The scriptPubKey hex for this UTXO
+	Satoshis     int64  // Amount in satoshis
 }
 
 // BSVPaymentSystem manages BSV micropayments and payment channels
@@ -34,6 +50,7 @@ type BSVPaymentSystem struct {
 	walletBalance   int64
 	mu              sync.RWMutex
 	isRunning       bool
+	isTestnet       bool // Added to easily check network type based on config
 }
 
 // PaymentChannel represents a bidirectional payment channel
@@ -90,7 +107,8 @@ func NewBSVPaymentSystem(config *BSVPaymentConfig) (*BSVPaymentSystem, error) {
 		privateKey:      privateKey,
 		paymentChannels: make(map[string]*PaymentChannel),
 		pendingPayments: make(map[string]*PendingPayment),
-		walletBalance:   0, // Will be updated when we check the blockchain
+		walletBalance:   0,                               // Will be updated when we check the blockchain
+		isTestnet:       config.NetworkType == "testnet", // Set based on config
 	}
 
 	return system, nil
@@ -185,10 +203,11 @@ func (bps *BSVPaymentSystem) ProcessPaymentRequest(request *PaymentRequest) (*Pe
 		return nil, fmt.Errorf("payment request has expired")
 	}
 
-	// Check if we have sufficient balance
-	if bps.walletBalance < request.Amount {
-		return nil, fmt.Errorf("insufficient balance: have %d, need %d", bps.walletBalance, request.Amount)
-	}
+	// In a real system, walletBalance should be dynamically updated.
+	// For now, we rely on fetchUTXOs to determine spendability.
+	// if bps.walletBalance < request.Amount {
+	// 	return nil, fmt.Errorf("insufficient balance: have %d, need %d", bps.walletBalance, request.Amount)
+	// }
 
 	// Create payment transaction
 	txID, err := bps.createPaymentTransaction(request.ToPeer, request.Amount, request.Purpose)
@@ -204,45 +223,310 @@ func (bps *BSVPaymentSystem) ProcessPaymentRequest(request *PaymentRequest) (*Pe
 		Purpose:     request.Purpose,
 		TxID:        txID,
 		CreatedAt:   time.Now(),
-		Status:      "pending",
+		Status:      "broadcasted", // Changed from "pending" as it's broadcast by createPaymentTransaction
 	}
 
 	bps.mu.Lock()
 	bps.pendingPayments[payment.PaymentID] = payment
 	bps.mu.Unlock()
 
-	log.Printf("[BSV] Created payment: %s, amount: %d satoshis, txid: %s",
+	log.Printf("[BSV] Created and broadcasted payment: %s, amount: %d satoshis, txid: %s",
 		payment.PaymentID, payment.Amount, payment.TxID)
 
 	return payment, nil
 }
 
-// createPaymentTransaction creates a BSV transaction for a payment
-func (bps *BSVPaymentSystem) createPaymentTransaction(toAddress string, amount int64, purpose string) (string, error) {
-	// Create new transaction
-	tx := transaction.NewTransaction()
+// fetchUTXOs is a placeholder for fetching UTXOs for the given address.
+// In a real implementation, this function would query a blockchain explorer API
+// such as Whatsonchain: GET https://api.whatsonchain.com/v1/bsv/<network>/address/<address>/unspent
+// It should return enough UTXOs to cover the requiredAmount.
+func (bps *BSVPaymentSystem) fetchUTXOs(address string, requiredAmount int64) ([]UTXO, int64, error) {
+	log.Printf("[BSV] Fetching UTXOs for address %s, requiring %d satoshis", address, requiredAmount)
 
-	// In a real implementation, you would:
-	// 1. Query UTXOs for your address
-	// 2. Add inputs from UTXOs
-	// 3. Add output to recipient
-	// 4. Add change output if necessary
-	// 5. Sign the transaction
-	// 6. Broadcast to network
+	// --- Placeholder Implementation ---
+	// This is a DUMMY UTXO. Replace with actual API call to Whatsonchain or similar.
+	// Ensure this UTXO is actually spendable on the chosen network (mainnet/testnet)
+	// and owned by the PrivateKeyWIF configured.
+	// For testing, you would need to manually create such a UTXO by sending funds to `address`
+	// on the testnet and then finding its TxID, Vout, ScriptPubKey, and Satoshis value.
 
-	// For now, we'll create a mock transaction ID
-	mockTxID := generateTransactionID()
+	if bps.isTestnet {
+		// Example: A testnet UTXO (replace with a real one you control and can spend from)
+		// You would get this from a testnet faucet or by sending test BSV to your address.
+		// The ScriptPubKey for a P2PKH address can be constructed as: "76a914" + HASH160_OF_PUBKEY + "88ac"
+		// The HASH160_OF_PUBKEY can be derived from the address itself, but it's better to get it from the UTXO source.
+		log.Println("[BSV] WARNING: Using hardcoded DUMMY Testnet UTXO for fetchUTXOs. Replace with actual UTXO fetching logic from a blockchain explorer.")
 
-	// Add OP_RETURN data with payment purpose
-	opReturnData := fmt.Sprintf("NERD_PAYMENT:%s:%d:%s", purpose, amount, toAddress)
-	if err := tx.AddOpReturnOutput([]byte(opReturnData)); err != nil {
-		return "", fmt.Errorf("failed to add OP_RETURN output: %v", err)
+		// TODO: Replace these with actual spendable testnet UTXO details for your private key.
+		dummyUTXO := UTXO{
+			TxID:         "0000000000000000000000000000000000000000000000000000000000000001", // Replace with a REAL spendable testnet TXID
+			Vout:         0,                                                                  // Replace with the correct Vout
+			ScriptPubKey: "76a914caf5ef0c1592795f9362500c52c0bd139358691f88ac",               // Replace with the actual ScriptPubKey of the UTXO
+			Satoshis:     100000,                                                             // Example: 100,000 satoshis, ensure it covers payment + fee
+		}
+		if dummyUTXO.Satoshis >= requiredAmount {
+			return []UTXO{dummyUTXO}, dummyUTXO.Satoshis, nil
+		}
+		return nil, 0, fmt.Errorf("dummy UTXO has insufficient funds (%d) for required amount (%d)", dummyUTXO.Satoshis, requiredAmount)
+
+	} else {
+		log.Println("[BSV] CRITICAL ERROR: fetchUTXOs not implemented for mainnet without actual API calls. Hardcoding mainnet UTXOs is extremely unsafe and has been prevented.")
+		return nil, 0, fmt.Errorf("fetchUTXOs for mainnet requires a live API integration to prevent accidental use of hardcoded values")
+	}
+	// --- End Placeholder Implementation ---
+}
+
+// broadcastTransaction broadcasts the raw transaction hex to the network.
+// It uses the BroadcastURL from the configuration (e.g., Whatsonchain API).
+func (bps *BSVPaymentSystem) broadcastTransaction(rawTxHex string) (string, error) {
+	if bps.config.BroadcastURL == "" {
+		log.Printf("[BSV] WARNING: BroadcastURL is not set. Transaction hex: %s... will not be broadcasted.", rawTxHex[:min(64, len(rawTxHex))])
+		return "", fmt.Errorf("BroadcastURL is not configured")
+	}
+	log.Printf("[BSV] Broadcasting transaction hex to %s: %s...", bps.config.BroadcastURL, rawTxHex[:min(64, len(rawTxHex))])
+
+	// Whatsonchain API expects a JSON payload like: {"txhex": "<your_tx_hex>"}
+	payload := map[string]string{"txhex": rawTxHex}
+	payloadBytes, err := json.Marshal(payload)
+	if err != nil {
+		return "", fmt.Errorf("failed to marshal broadcast payload: %v", err)
 	}
 
-	log.Printf("[BSV] Created transaction %s for %d satoshis to %s (purpose: %s)",
-		mockTxID, amount, toAddress, purpose)
+	req, err := http.NewRequest("POST", bps.config.BroadcastURL, bytes.NewBuffer(payloadBytes))
+	if err != nil {
+		return "", fmt.Errorf("failed to create broadcast request: %v", err)
+	}
+	req.Header.Set("Content-Type", "application/json")
 
-	return mockTxID, nil
+	client := &http.Client{Timeout: 10 * time.Second}
+	resp, err := client.Do(req)
+	if err != nil {
+		return "", fmt.Errorf("failed to execute broadcast request: %v", err)
+	}
+	defer resp.Body.Close()
+
+	bodyBytes, readErr := io.ReadAll(resp.Body)
+	if readErr != nil {
+		log.Printf("[BSV] Warning: failed to read broadcast response body: %v", readErr)
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("broadcast failed with status %s: %s", resp.Status, string(bodyBytes))
+	}
+
+	// Whatsonchain returns the TXID as plain text (not JSON) on success.
+	txID := string(bytes.TrimSpace(bodyBytes))
+
+	if len(txID) != 64 { // Basic validation for a hex TXID format
+		log.Printf("[BSV] Warning: Broadcast response doesn't look like a 64-char hex TXID: '%s'. Full response: '%s'", txID, string(bodyBytes))
+		// Depending on the API, this might still be a success, or it might be an error wrapped in JSON.
+		// For WOC, a non-200 status is the primary error indicator.
+		// If it's 200 but not a TXID, it's an unexpected response from WOC.
+		return "", fmt.Errorf("broadcast succeeded with status 200 but response was not a valid TXID: %s", txID)
+	}
+
+	log.Printf("[BSV] Transaction broadcast successful. Response TXID: %s", txID)
+	return txID, nil
+}
+
+// calculateTransactionSize estimates the size of a transaction in bytes.
+// This is based on the BSV SDK's fee modeling example.
+func calculateTransactionSize(tx *transaction.Transaction) int {
+	size := 4 // Version (4 bytes)
+
+	size += transaction.VarInt(uint64(len(tx.Inputs))).Length() // Number of inputs
+	for _, input := range tx.Inputs {
+		size += 32 // Previous TxID (32 bytes)
+		size += 4  // Previous Tx Output Index (4 bytes)
+		// Unlocking script length (VarInt) + Unlocking script
+		if input.UnlockingScript != nil {
+			size += transaction.VarInt(uint64(len(*input.UnlockingScript))).Length()
+			size += len(*input.UnlockingScript)
+		} else {
+			// Estimate size for P2PKH unlocking script (signature + pubkey)
+			// DER signature: 70-72 bytes. Compressed PubKey: 33 bytes.
+			// Script ops: OP_PUSHDATA(sig) + OP_PUSHDATA(pubkey) ~ 1 + 72 + 1 + 33 = 107
+			// This is an estimate if UnlockingScript is not yet set (e.g. before signing)
+			// If using UnlockingScriptTemplate, the template itself might not be the final script.
+			// For P2PKH, after signing, it's typically around 107-110 bytes.
+			// The SDK example panics if UnlockingScript is nil during fee computation.
+			// For estimation *before* signing, we use a common P2PKH unlocking script size.
+			// A safer bet might be to have a constant or ensure script templates are sized.
+			// The p2pkh.Unlock template itself is small; the actual script is generated during signing.
+			// For now, using a typical size.
+			estimatedUnlockingScriptSize := 108 // Approximation for a P2PKH unlocking script
+			size += transaction.VarInt(uint64(estimatedUnlockingScriptSize)).Length()
+			size += estimatedUnlockingScriptSize
+		}
+		size += 4 // Sequence (4 bytes)
+	}
+
+	size += transaction.VarInt(uint64(len(tx.Outputs))).Length() // Number of outputs
+	for _, out := range tx.Outputs {
+		size += 8 // Satoshis (8 bytes)
+		// Locking script length (VarInt) + Locking script
+		if out.LockingScript != nil {
+			size += transaction.VarInt(uint64(len(*out.LockingScript))).Length()
+			size += len(*out.LockingScript)
+		}
+		// else: an output must have a locking script.
+	}
+
+	size += 4 // LockTime (4 bytes)
+	return size
+}
+
+// createPaymentTransaction creates, signs, and broadcasts a BSV transaction for a payment.
+func (bps *BSVPaymentSystem) createPaymentTransaction(toAddress string, amount int64, purpose string) (string, error) {
+	daemonAddress := bps.GetAddress()
+	if daemonAddress == "" {
+		return "", fmt.Errorf("failed to get daemon's BSV address")
+	}
+
+	initialEstimatedFee := int64(100)
+	requiredSatoshisForUTXOFetch := amount + initialEstimatedFee
+
+	log.Printf("[BSV] Creating payment tx to %s for %d sats (purpose: '%s'). Initial estimated fee for UTXO fetch: %d",
+		toAddress, amount, purpose, initialEstimatedFee)
+
+	utxos, totalInputSatoshis, err := bps.fetchUTXOs(daemonAddress, requiredSatoshisForUTXOFetch)
+	if err != nil {
+		return "", fmt.Errorf("failed to fetch UTXOs for %s (amount needed ~%d): %v", daemonAddress, requiredSatoshisForUTXOFetch, err)
+	}
+	if totalInputSatoshis < amount {
+		return "", fmt.Errorf("insufficient funds from fetched UTXOs: have %d, need at least %d for payment amount alone", totalInputSatoshis, amount)
+	}
+
+	tx := transaction.NewTransaction()
+
+	unlockingScriptTemplate, err := p2pkh.Unlock(bps.privateKey, nil)
+	if err != nil {
+		return "", fmt.Errorf("failed to create unlocking script template: %v", err)
+	}
+
+	var actualInputsValue int64
+	for _, utxo := range utxos {
+		err := tx.AddInputFrom(
+			utxo.TxID,
+			utxo.Vout,
+			utxo.ScriptPubKey,
+			uint64(utxo.Satoshis),
+			unlockingScriptTemplate,
+		)
+		if err != nil {
+			return "", fmt.Errorf("failed to add input from UTXO %s:%d: %v", utxo.TxID, utxo.Vout, err)
+		}
+		actualInputsValue += utxo.Satoshis
+	}
+	log.Printf("[BSV] Added %d inputs with total value %d satoshis.", len(tx.Inputs), actualInputsValue)
+
+	if err := tx.PayToAddress(toAddress, uint64(amount)); err != nil {
+		return "", fmt.Errorf("failed to add payment output to %s for %d satoshis: %v", toAddress, amount, err)
+	}
+
+	if purpose != "" {
+		opReturnData := []byte("NERD_PAYMENT:" + purpose)
+		if len(opReturnData) > 220 {
+			log.Printf("[BSV] Warning: OP_RETURN data is too long (%d bytes), it will be truncated.", len(opReturnData))
+			opReturnData = opReturnData[:220]
+		}
+		if err := tx.AddOpReturnOutput(opReturnData); err != nil {
+			log.Printf("[BSV] Warning: failed to add OP_RETURN output (data: '%s'): %v. Continuing without OP_RETURN.", string(opReturnData), err)
+		}
+	}
+
+	sizeWithoutChange := calculateTransactionSize(tx)
+	calculatedFee := int64(math.Ceil(float64(sizeWithoutChange) * bps.config.FeeRate))
+	if calculatedFee < 1 {
+		calculatedFee = 1
+	}
+	log.Printf("[BSV] Estimated tx size (no change): %d bytes. Calculated fee (at %.4f sat/byte): %d satoshis.",
+		sizeWithoutChange, bps.config.FeeRate, calculatedFee)
+
+	changeAmount := actualInputsValue - amount - calculatedFee
+	dustThreshold := int64(1)
+
+	if changeAmount >= dustThreshold {
+		log.Printf("[BSV] Calculated change: %d satoshis. Adding change output to %s.", changeAmount, daemonAddress)
+		if err := tx.PayToAddress(daemonAddress, uint64(changeAmount)); err != nil {
+			return "", fmt.Errorf("failed to add change output to %s for %d satoshis: %v", daemonAddress, changeAmount, err)
+		}
+
+		finalSize := calculateTransactionSize(tx)
+		finalFee := int64(math.Ceil(float64(finalSize) * bps.config.FeeRate))
+		if finalFee < 1 {
+			finalFee = 1
+		}
+
+		if finalFee > calculatedFee {
+			log.Printf("[BSV] Fee increased after adding change. Original: %d, New: %d (size: %d bytes). Adjusting change.", calculatedFee, finalFee, finalSize)
+			changeAmountAfterRecalc := actualInputsValue - amount - finalFee
+			if changeAmountAfterRecalc < dustThreshold {
+				log.Printf("[BSV] Change (%d) became dust after fee recalc. Removing change output; fee will absorb diff.", changeAmountAfterRecalc)
+				if len(tx.Outputs) > 0 {
+					// Assuming change was the last output added
+					isChangeOutput := false
+					lastOutput := tx.Outputs[len(tx.Outputs)-1]
+
+					// Check if the last output script matches the daemon's address script
+					addressObj, err := script.NewAddressFromString(daemonAddress)
+					if err == nil {
+						lockingScriptForDaemon, err := p2pkh.Lock(addressObj)
+						if err == nil && lockingScriptForDaemon != nil && lastOutput.LockingScript != nil && lastOutput.LockingScript.Equals(lockingScriptForDaemon) {
+							isChangeOutput = true
+						}
+					}
+
+					if isChangeOutput {
+						tx.Outputs = tx.Outputs[:len(tx.Outputs)-1]
+						log.Printf("[BSV] Removed last output (assumed to be change).")
+					} else {
+						log.Printf("[BSV] Could not confirm last output was change, not removing. Higher fee may be paid.")
+					}
+				}
+			} else {
+				if len(tx.Outputs) > 0 {
+					tx.Outputs[len(tx.Outputs)-1].Satoshis = uint64(changeAmountAfterRecalc)
+					log.Printf("[BSV] Adjusted change output to %d satoshis.", changeAmountAfterRecalc)
+				}
+			}
+			calculatedFee = finalFee
+		} else if finalFee < calculatedFee {
+			log.Printf("[BSV] Warning: Fee unexpectedly decreased after adding change output. Original: %d, New: %d.", calculatedFee, finalFee)
+			calculatedFee = finalFee
+		}
+	} else if changeAmount < 0 {
+		return "", fmt.Errorf("insufficient funds for payment (%d) and initial fee (%d): inputs %d. Deficit: %d",
+			amount, calculatedFee, actualInputsValue, -changeAmount)
+	} else {
+		log.Printf("[BSV] Change is dust (%d satoshis). It will be added to transaction fee.", changeAmount)
+	}
+
+	log.Printf("[BSV] Signing transaction. Total inputs: %d, Payment: %d, Final Calculated Fee: %d",
+		actualInputsValue, amount, calculatedFee)
+
+	if err := tx.Sign(); err != nil {
+		return "", fmt.Errorf("failed to sign transaction: %v", err)
+	}
+
+	rawTxHex := tx.Hex()
+	log.Printf("[BSV] Signed raw transaction hex generated (len: %d): %s...", len(rawTxHex), rawTxHex[:min(64, len(rawTxHex))])
+
+	broadcastTxID, broadcastErr := bps.broadcastTransaction(rawTxHex)
+	if broadcastErr != nil {
+		log.Printf("[BSV] Broadcast failed for TxHex: %s", rawTxHex)
+		return "", fmt.Errorf("transaction broadcast failed: %v", broadcastErr)
+	}
+
+	actualTxIDHash := tx.TxID()
+	actualTxIDStr := actualTxIDHash.String()
+
+	if broadcastTxID != "" && broadcastTxID != actualTxIDStr {
+		log.Printf("[BSV] Warning: Calculated TxID from SDK (%s) differs from broadcast response TxID (%s). Using SDK's calculated TxID.", actualTxIDStr, broadcastTxID)
+	}
+	log.Printf("[BSV] Transaction created and broadcasted successfully. TxID: %s", actualTxIDStr)
+
+	return actualTxIDStr, nil
 }
 
 // OpenPaymentChannel opens a new payment channel with a peer
@@ -438,20 +722,31 @@ func (bps *BSVPaymentSystem) checkPaymentConfirmations() {
 	bps.mu.Lock()
 	defer bps.mu.Unlock()
 
-	for paymentID, payment := range bps.pendingPayments {
-		if payment.Status == "pending" {
-			// In a real implementation, you would query the BSV network
-			// to check if the transaction has been confirmed
+	var confirmedPayments []string
 
-			// For demo purposes, we'll randomly confirm some payments
-			if time.Since(payment.CreatedAt) > 2*time.Minute {
+	for paymentID, payment := range bps.pendingPayments {
+		// Only check payments that are thought to be on the network but not yet confirmed.
+		if payment.Status == "broadcasted" {
+			log.Printf("[BSV] Placeholder: Checking confirmation for payment %s (txid: %s), current status: %s", paymentID, payment.TxID, payment.Status)
+
+			// In a real implementation, query the BSV network (e.g. Whatsonchain)
+			// using payment.TxID: GET https://api.whatsonchain.com/v1/bsv/<network>/tx/hash/<txid>
+			// Look for block height or confirmations.
+
+			// For demo purposes, simulate confirmation after a delay (if on testnet)
+			if bps.isTestnet && time.Since(payment.CreatedAt) > 30*time.Second {
 				now := time.Now()
 				payment.ConfirmedAt = &now
 				payment.Status = "confirmed"
-
-				log.Printf("[BSV] Payment %s confirmed (txid: %s)", paymentID, payment.TxID)
+				confirmedPayments = append(confirmedPayments, paymentID)
+				log.Printf("[BSV] DEMO: Payment %s (txid: %s) marked as confirmed on testnet.", paymentID, payment.TxID)
 			}
 		}
+	}
+
+	if len(confirmedPayments) > 0 {
+		log.Printf("[BSV] %d payments processed for confirmation during this cycle.", len(confirmedPayments))
+		// TODO: Update bps.walletBalance if managing it directly, or re-fetch UTXOs.
 	}
 }
 
@@ -541,4 +836,12 @@ func generateTransactionID() string {
 	bytes := make([]byte, 32)
 	rand.Read(bytes)
 	return hex.EncodeToString(bytes)
+}
+
+// min is a helper function to get the minimum of two integers.
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
 }
