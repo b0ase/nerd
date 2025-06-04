@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package nerd;
+
+// HandshakeMsg is the initial message exchanged between peers.
+// It includes the protocol string, reserved bytes, info hash, and peer ID.
+message HandshakeMsg {
+  bytes protocol_string = 1; // Should be "BitTorrent protocol" (19 bytes)
+  bytes reserved = 2;        // 8 reserved bytes (for extensions)
+  bytes info_hash = 3;       // 20-byte SHA1 hash of the torrent's info dictionary
+  bytes peer_id = 4;         // 20-byte peer ID
+}
+
+// InterestedMsg indicates that a peer is interested in downloading pieces.
+message InterestedMsg {
+  // No payload needed for this message type.
+  // It will be identified by its message ID (which we'll define later).
+}
+
+// HaveMsg indicates that a peer has a complete piece.
+message HaveMsg {
+  uint32 piece_index = 1; // The zero-based index of the piece the peer has
+}
+
+// TODO: Define other standard BitTorrent message types (KeepAlive, Choke, Unchoke, Request, Piece, Cancel)
+// TODO: Define NERD-specific message types (PaymentRequest, PaymentProof, TokenBalance, etc.) 
