@@ -29,18 +29,15 @@
                         <span class="collapse-toggle">▼</span>
                     </div>
                     <div class="section-content" id="wallet-content">
-                        <div class="wallet-status" id="walletStatus">
-                            <div class="loading">Loading wallet status...</div>
-                        </div>
                         
                         <!-- Debug Section -->
-                        <div class="debug-section" style="background: rgba(0, 20, 10, 0.8); padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid var(--nerd-green);">
+                        <div class="debug-section" style="background: rgba(0, 20, 10, 0.8); padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid var(--primary);">
                             <h4>🔧 Debug Tools</h4>
                             <button onclick="testWalletStatus()" class="btn small secondary">Test Wallet Status</button>
                             <button onclick="testDaemonStatus()" class="btn small secondary">Test Daemon Status</button>
                             <button onclick="testStartDaemon()" class="btn small primary">Start Daemon</button>
                             <button onclick="testStopDaemon()" class="btn small danger">Stop Daemon</button>
-                            <div id="debugOutput" style="margin-top: 10px; font-family: 'SF Mono', monospace; font-size: 12px; color: var(--nerd-green);"></div>
+                            <div id="debugOutput" style="margin-top: 10px; font-family: monospace; font-size: 12px; color: var(--primary);"></div>
                         </div>
                         
                         <!-- Private Key Import Section (RESTORED) -->
