@@ -1,7 +1,7 @@
 {
-  "name": "bacds",
+  "name": "nerd",
   "version": "1.0.0",
-  "description": "Bitcoin-Addressed Content Delivery System (BACDS) - Revolutionary decentralized content delivery using Bitcoin addresses as network endpoints. Foundation for BitStream and BitNet Infrastructure products on the BitNet network.",
+  "description": "N.E.R.D (Network Endpoint Redistribution Daemon) - Revolutionary decentralized P2P content delivery with Bitcoin integration and $NERD token economics. The future of Web3 content distribution.",
   "main": "src/main.js",
   "scripts": {
     "start": "npm run kill-electron && sleep 2 && electron .",
@@ -12,37 +12,43 @@
     "dist": "electron-builder --publish=never",
     "clean-start": "npm run kill-electron && sleep 3 && npm start",
     "clean-dev": "npm run kill-electron && sleep 3 && npm run dev",
-    "kill-electron": "pkill -9 -f 'node.*electron.*jpeg-renamer' || true; pkill -9 -f 'Electron.*jpeg-renamer' || true; pkill -9 -f 'bacds.*Electron' || true; sleep 1"
+    "kill-electron": "pkill -9 -f 'node.*electron.*nerd' || true; pkill -9 -f 'Electron.*nerd' || true; pkill -9 -f 'nerd.*Electron' || true; sleep 1"
   },
   "keywords": [
+    "nerd",
+    "network-endpoint",
+    "redistribution-daemon",
     "bitcoin",
-    "bacds",
-    "content-delivery",
-    "bitnet",
     "p2p",
-    "p2p-network",
-    "bitstream",
-    "decentralized"
+    "decentralized",
+    "content-delivery",
+    "web3",
+    "bsv",
+    "token-economics"
   ],
-  "author": "BACDS Team",
+  "author": "N.E.R.D Development Team",
   "license": "MIT",
   "devDependencies": {
     "electron": "^27.0.0",
     "electron-builder": "^24.6.4"
   },
   "dependencies": {
+    "bip32": "^5.0.0-rc.0",
+    "bip39": "^3.1.0",
+    "bitcoinjs-lib": "^6.1.7",
     "cors": "^2.8.5",
     "express": "^4.18.2",
     "fs-extra": "^11.1.1",
     "multer": "^1.4.5-lts.1",
     "node-fetch": "^3.3.2",
     "path": "^0.12.7",
+    "secp256k1": "^5.0.1",
     "sharp": "^0.34.2",
     "ws": "^8.18.2"
   },
   "build": {
-    "appId": "com.bacds.desktop",
-    "productName": "BACDS Desktop",
+    "appId": "com.nerd.desktop",
+    "productName": "N.E.R.D Desktop",
     "directories": {
       "output": "dist"
     },

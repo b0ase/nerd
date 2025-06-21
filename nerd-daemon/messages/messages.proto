@@ -131,4 +131,109 @@ message GeographicHintMsg {
   float latitude = 3;       // GPS latitude
   float longitude = 4;      // GPS longitude
   uint32 as_number = 5;     // Autonomous System number
+}
+
+// BSV Social Protocol Messages (200+)
+
+// SocialFollowMsg handles follow/unfollow actions
+message SocialFollowMsg {
+  bytes creator_address = 1;     // BSV address of creator being followed
+  bytes follower_address = 2;    // BSV address of follower
+  bool is_follow = 3;            // true = follow, false = unfollow
+  bytes bsv_signature = 4;       // BSV signature proving authenticity
+  uint64 timestamp = 5;          // Unix timestamp
+  bytes transaction_id = 6;      // BSV transaction ID (optional, for on-chain follows)
+}
+
+// SocialCommentMsg handles comments on content
+message SocialCommentMsg {
+  bytes content_address = 1;     // Bitcoin address of content being commented on
+  bytes commenter_address = 2;   // BSV address of commenter
+  string comment_text = 3;       // The actual comment
+  bytes bsv_signature = 4;       // BSV signature proving authenticity
+  uint64 timestamp = 5;          // Unix timestamp
+  bytes parent_comment_id = 6;   // For threaded replies (optional)
+  uint32 nerd_tip = 7;          // $NERD tokens tipped with comment
+}
+
+// SocialReactionMsg handles likes, hearts, etc.
+message SocialReactionMsg {
+  bytes content_address = 1;     // Bitcoin address of content
+  bytes reactor_address = 2;     // BSV address of person reacting
+  string reaction_type = 3;      // "like", "heart", "fire", "star", etc.
+  bytes bsv_signature = 4;       // BSV signature proving authenticity
+  uint64 timestamp = 5;          // Unix timestamp
+  uint32 nerd_reward = 6;        // $NERD tokens earned for this reaction
+  bool is_removal = 7;           // true = removing reaction, false = adding
+}
+
+// SocialShareMsg handles content sharing
+message SocialShareMsg {
+  bytes content_address = 1;     // Bitcoin address of content being shared
+  bytes sharer_address = 2;      // BSV address of person sharing
+  string share_message = 3;      // Optional message with the share
+  bytes bsv_signature = 4;       // BSV signature proving authenticity
+  uint64 timestamp = 5;          // Unix timestamp
+  repeated string platforms = 6; // Platforms shared to (optional)
+  uint32 viral_reward = 7;       // $NERD reward for viral sharing
+}
+
+// SocialNotificationMsg handles engagement notifications
+message SocialNotificationMsg {
+  bytes recipient_address = 1;   // BSV address of notification recipient
+  bytes sender_address = 2;      // BSV address of notification sender
+  string notification_type = 3;  // "follow", "comment", "like", "share", "tip"
+  bytes content_address = 4;     // Related content (optional)
+  string message = 5;           // Notification message
+  uint64 timestamp = 6;         // Unix timestamp
+  bool is_read = 7;            // Read status
+  uint32 nerd_amount = 8;      // $NERD tokens involved (if any)
+}
+
+// SocialDirectMsg handles private messaging
+message SocialDirectMsg {
+  bytes sender_address = 1;      // BSV address of sender
+  bytes recipient_address = 2;   // BSV address of recipient
+  bytes encrypted_message = 3;   // Encrypted message content
+  bytes bsv_signature = 4;       // BSV signature proving authenticity
+  uint64 timestamp = 5;          // Unix timestamp
+  bytes message_id = 6;          // Unique message identifier
+  bool is_group_message = 7;     // For future group messaging
+}
+
+// SocialProfileMsg handles creator profile updates
+message SocialProfileMsg {
+  bytes creator_address = 1;     // BSV address of creator
+  string display_name = 2;       // Public display name
+  string bio = 3;               // Creator bio/description
+  string avatar_hash = 4;       // IPFS hash of avatar image
+  string banner_hash = 5;       // IPFS hash of banner image
+  repeated string social_links = 6; // External social media links
+  bytes bsv_signature = 7;       // BSV signature proving authenticity
+  uint64 timestamp = 8;          // Unix timestamp
+  uint32 content_count = 9;      // Number of published content pieces
+  uint64 total_earnings = 10;    // Total BSV earnings (satoshis)
+  uint32 follower_count = 11;    // Number of followers
+}
+
+// SocialStatusMsg handles creator status updates
+message SocialStatusMsg {
+  bytes creator_address = 1;     // BSV address of creator
+  string status_text = 2;        // Status update text
+  string status_type = 3;        // "announcement", "live", "working", "available"
+  bytes bsv_signature = 4;       // BSV signature proving authenticity
+  uint64 timestamp = 5;          // Unix timestamp
+  uint64 expires_at = 6;         // When status expires (optional)
+  bytes related_content = 7;     // Related content address (optional)
+}
+
+// SocialDiscoveryMsg handles content recommendations
+message SocialDiscoveryMsg {
+  bytes requester_address = 1;   // BSV address requesting recommendations
+  repeated bytes content_addresses = 2; // Recommended content addresses
+  repeated string recommendation_reasons = 3; // Why each is recommended
+  repeated uint32 social_scores = 4; // Social engagement scores
+  repeated uint32 quality_scores = 5; // Content quality scores
+  uint64 timestamp = 6;          // Unix timestamp
+  string discovery_type = 7;     // "trending", "following", "similar", "geographic"
 } 

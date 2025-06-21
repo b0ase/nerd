@@ -1,299 +1,141 @@
-# 🚀 BACDS - Bitcoin-Addressed Content Delivery System
+# 🤓 N.E.R.D - Network Endpoint Redistribution Daemon
 
-A Bitcoin-Addressed Content Delivery System that serves as the foundation for decentralized content delivery. This application demonstrates how Bitcoin addresses can serve as both payment endpoints AND network endpoints for peer-to-peer content delivery.
+**Revolutionary decentralized P2P content delivery with Bitcoin integration and $NERD token economics. The future of Web3 content distribution.**
 
-**Live Website**: [bacds.website](https://bacds.website) ✅  
-**Desktop Platform**: Full-featured content management system  
-**HandCash Integration**: Ready for real BSV payments  
+*"Only nerds will understand... and profit from it"* 🤓
 
-> **🤓 Coming Soon**: Evolution to **NERD** (Network Endpoint Redistribution Daemon) with **$NERD** token economy on 1Sat Ordinals! See [STRATEGIC_PLAN.md](STRATEGIC_PLAN.md) for details.
+## 🚀 What is N.E.R.D?
 
-## 🌐 BACDS Ecosystem
+N.E.R.D (Network Endpoint Redistribution Daemon) is a decentralized content delivery system that combines the best of BitTorrent networking with Bitcoin micropayments. Every file chunk gets a unique Bitcoin address, creating a truly tokenized content economy where creators get paid directly and users own what they buy.
 
-**BACDS** (Bitcoin-Addressed Content Delivery System) consists of:
+### ⚡ Key Features
 
-- **Marketing Website** - Professional landing page with HandCash integration ✅ 
-- **Desktop Application** - Content management and file chunking system ✅
-- **BACDS API Server** - Backend infrastructure for content delivery ✅
-- **Future Integrations** - P2P networking and expanded creator tools
+- **🌐 P2P Network**: BitTorrent-inspired networking with Bitcoin micropayments
+- **₿ Bitcoin Integrated**: Every file chunk has a unique Bitcoin address 
+- **🤓 $NERD Tokenomics**: Stake tokens, earn rewards, participate in governance
+- **🔒 HD Wallets**: BIP32/BIP44 compliant hierarchical deterministic wallets
+- **⚡ Real-time DHT**: Kademlia-based distributed hash table for peer discovery
+- **🎭 Social Protocol**: On-chain social features with BSV signatures
 
-### What Makes BACDS Different
+## 🎨 Killer Black Theme UI
 
-Traditional CDN: `User → DNS → CDN Server → Origin → Content`  
-**BACDS Network**: `User → Bitcoin Address → Direct Peer → Content + Payment`
+N.E.R.D features a completely redesigned dark interface with:
+- **Neon green/cyan accents** with futuristic glow effects
+- **Glassmorphism design** with backdrop blur and transparency
+- **Animated backgrounds** with scanning lines and grid patterns
+- **Monospace fonts** for that authentic hacker aesthetic
+- **Smooth transitions** and hover effects throughout
 
-## 🤓 **NERD Evolution Preview**
+## 📦 Download N.E.R.D
 
-### **Upcoming: $NERD Token Economy**
-BACDS is evolving into **NERD** (Network Endpoint Redistribution Daemon) with native tokenomics:
+### 🍎 macOS
+- **N.E.R.D Desktop-1.0.0.dmg** (103MB) - Installer for macOS
+- **N.E.R.D Desktop-1.0.0-mac.zip** (100MB) - Portable app archive
 
-- **$NERD tokens** on 1Sat Ordinals marketplace
-- **Revenue sharing** for token holders from network fees
-- **Staking rewards** for running NERD daemon nodes
-- **Governance rights** for protocol decisions
-- **Premium features** for token holders
+### 🪟 Windows & 🐧 Linux
+*Coming Soon!* Windows and Linux builds will be available in the next release.
 
-**Value Proposition**: *"Only nerds will understand... and profit from it"* 🤓
+## 🌐 GitHub Pages Website
 
-### **Token Utility**
-- 📈 **Dividends** from network transaction fees
-- ⚡ **Reduced fees** when accessing content
-- 🗳️ **Governance voting** on protocol upgrades
-- 🎯 **Staking rewards** for network participation
+Visit our killer landing page: **[N.E.R.D Official Website](https://b0ase.github.io/NERD/)**
 
-### **Launch Strategy**
-1. **Phase 1** ✅: BACDS foundation (complete)
-2. **Phase 2** 🔄: NERD tokenomics design (current)
-3. **Phase 3** 🚀: $NERD token launch + rebrand
-4. **Phase 4** 💰: Full token economy implementation
+## 🤓 Example Content
 
-## Features
+Check out **OVERNERD Comic** - the first premium content collection on the N.E.R.D network! Located in `examples/overnerd-comic/`, it demonstrates:
 
-- 🔒 **HD Bitcoin Wallet**: Deterministic Bitcoin address generation with master seed
-- 📁 **Universal File Chunking**: Split any file type (videos, documents, images) into Bitcoin-addressed chunks
-- 🎨 **Modern UI**: Clean, professional interface with real-time feedback
-- 🌐 **BACDS API Server**: Express.js API with comprehensive endpoints
-- 💻 **Web Interface**: Content delivery platform with professional design
-- 📊 **Payment Tracking**: Monitor Bitcoin payments to content addresses
-- 🖥️ **Cross-Platform**: Works on macOS, Windows, and Linux
-- 🎬 **Drag & Drop Support**: Simply drag videos, documents, or any files for instant chunking
-- 🚀 **HandCash Integration**: Ready for real BSV payments via @handles
+- Tokenized access to comic pages
+- Creator royalties built into every transaction
+- $NERD token holder discounts
+- P2P distribution without censorship
 
-## How It Works
+## 🛠 Technical Architecture
 
-The system creates a decentralized content delivery network by:
+### Backend (Go)
+- **P2P Networking**: Custom BitTorrent-inspired protocol
+- **Bitcoin Integration**: HD wallets with BIP32/BIP44 support
+- **DHT Implementation**: Kademlia-based peer discovery
+- **BSV Social**: On-chain social features and messaging
+- **gRPC API**: High-performance communication layer
 
-1. Creating or loading a master seed (HD wallet)
-2. Splitting files into 1MB chunks with unique Bitcoin addresses
-3. Generating payment URLs for each chunk
-4. Enabling payment-gated content access via HandCash
-5. Providing foundation for peer-to-peer delivery
+### Frontend (Electron)
+- **Cross-platform Desktop**: Built with Electron 27
+- **Modern UI**: Futuristic black theme with neon accents
+- **Bitcoin Wallet**: Complete HD wallet management
+- **Content Browser**: Search and discover network content
+- **Social Features**: Follow creators, engage with content
 
-Each chunk gets a unique Bitcoin address that serves as both a payment endpoint and future network endpoint for direct peer-to-peer delivery.
-
-## Installation
-
-### Prerequisites
-
-- Node.js (version 16 or higher)
-- npm or yarn
-
-### Setup
-
-1. Clone or download this repository
-2. Open a terminal in the project directory
-3. Install dependencies:
+## 🏗 Development Setup
 
 ```bash
+# Clone the repository
+git clone https://github.com/b0ase/NERD.git
+cd NERD
+
+# Install dependencies
 npm install
-```
 
-## Usage
-
-### Development Mode
-
-To run the complete BACDS platform with API server:
-
-```bash
+# Start in development mode
 npm run dev
+
+# Build the Go daemon
+cd nerd-daemon
+go build -o nerd-daemon-latest
 ```
 
-This starts:
-- Desktop Electron app
-- BACDS API server on `http://127.0.0.1:3001`
-- Web interface at `http://127.0.0.1:3001/web`
+## 📈 Tokenomics ($NERD)
 
-### Production Mode
+The $NERD token powers the entire ecosystem:
 
-To run the app normally:
+- **Content Access**: Pay with Bitcoin or $NERD tokens
+- **Staking Rewards**: Earn from network transaction fees
+- **Governance**: Vote on protocol upgrades and features
+- **Creator Incentives**: Enhanced rewards for quality content
+- **Network Effects**: The more usage, the more valuable tokens become
 
-```bash
-npm start
-```
+## 🎯 Use Cases
 
-### API Only
+### For Creators
+- **Direct Monetization**: Get paid instantly for every view/download
+- **No Censorship**: Truly decentralized distribution
+- **Fan Engagement**: Built-in social features and messaging
+- **Collectible Content**: Turn digital works into tradeable assets
 
-To run just the BACDS API server:
+### For Consumers  
+- **True Ownership**: Your purchases are yours forever
+- **Fair Pricing**: Micropayments mean affordable access
+- **Quality Content**: Creators incentivized to produce their best
+- **Privacy**: No central authority tracking your consumption
 
-```bash
-npm run api
-```
+### For Investors
+- **Network Growth**: Token value increases with adoption
+- **Staking Yields**: Earn from network transaction fees
+- **Early Access**: Get in before mainstream adoption
+- **Technical Innovation**: Backing cutting-edge Web3 infrastructure
 
-### Building Executables
+## 🔮 Roadmap
 
-To create distributable executables for your platform:
+- **Phase 1**: ✅ Core P2P networking and Bitcoin integration
+- **Phase 2**: ✅ Desktop app with killer black theme UI
+- **Phase 3**: 🚧 $NERD token launch on 1Sat Ordinals
+- **Phase 4**: 🔜 Mobile apps and browser extension
+- **Phase 5**: 🔜 Creator marketplace and NFT integration
 
-```bash
-npm run build
-```
+## 📄 License
 
-The built applications will be in the `dist` folder.
-
-## How to Use the App
-
-1. **Launch the Application**
-   - Run using `npm run dev` for full platform
-   - Access web interface at `http://127.0.0.1:3001/web`
-
-2. **Generate Master Key**
-   - First launch creates a new HD wallet master seed
-   - Or import existing master key from backup
-
-3. **Upload Content**
-   - Use web interface to upload images/videos
-   - Automatic Bitcoin address generation for each piece
-   - Set pricing and access controls
-
-4. **Manage Content**
-   - View content gallery with payment addresses
-   - Track payments and views
-   - Export address mappings for external use
-
-5. **Desktop File Management**
-   - Select files to rename with Bitcoin addresses
-   - Create address-to-content mappings
-   - Prepare for network delivery
-
-## BACDS Platform Architecture
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    BACDS ECOSYSTEM                          │
-├─────────────────────────────────────────────────────────────┤
-│  Web Layer                                                  │
-│  ├── Marketing Website (bacds.website) ✅                   │
-│  ├── HandCash Integration ✅                                │
-│  └── Content Marketplace Demo ✅                            │
-├─────────────────────────────────────────────────────────────┤
-│  Application Layer                                          │
-│  ├── Desktop App (Cross-platform) ✅                       │
-│  ├── Content Management ✅                                  │
-│  └── Payment Integration ✅                                 │
-├─────────────────────────────────────────────────────────────┤
-│  BACDS API Layer ✅                                        │
-│  ├── Master Key Management                                 │
-│  ├── Bitcoin Address Generation                            │
-│  ├── File Analysis & Content Hashing                      │
-│  └── Payment URL Generation                                │
-├─────────────────────────────────────────────────────────────┤
-│  Core Foundation ✅                                        │
-│  ├── HD Wallet Integration                                 │
-│  ├── Bitcoin Address Chunking                              │
-│  └── Local File Management                                 │
-└─────────────────────────────────────────────────────────────┘
-```
-
-## Example
-
-**Original file:** `movie_trailer.mp4` (50MB)  
-**Chunked into:** 50 chunks with Bitcoin addresses  
-**Example chunk:** `1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa_chunk_0.dat`  
-**Payment URL:** `bitcoin:1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa?amount=0.00001&label=movie_chunk_0`
-
-**Supported File Types:**
-- 🎬 **Videos**: MP4, AVI, MOV, MKV, WebM
-- 📷 **Images**: JPEG, PNG, GIF, WebP
-- 📄 **Documents**: PDF, DOCX, TXT, MD
-- 🎵 **Audio**: MP3, WAV, FLAC
-- 💾 **Any file type** for chunking and network delivery
-
-## BACDS API Endpoints
-
-The built-in API server provides:
-
-- `GET /api/status` - System status and capabilities
-- `POST /api/master-key/generate` - Create new HD wallet
-- `GET /api/master-key/export` - Backup master seed
-- `GET /api/addresses/single/:index` - Generate single address
-- `GET /api/addresses/batch/:start/:count` - Generate address batch
-- `POST /api/files/analyze` - Upload and analyze files
-- `GET /web` - Web interface
-
-See `API_DOCUMENTATION.md` for complete endpoint details.
-
-## Technical Details
-
-### Bitcoin Address Format
-
-- **Type**: Pay-to-Public-Key-Hash (P2PKH)
-- **Network**: Bitcoin Mainnet
-- **Format**: Base58Check encoding
-- **Length**: 26-35 characters
-- **Prefix**: Always starts with "1"
-
-### HD Wallet Implementation
-
-- Deterministic key derivation from master seed
-- Incremental address index tracking
-- Air-gapped private key security (never exposed via API)
-- Public address mapping for external integrations
-
-### Security
-
-- Master seed stored locally with AES encryption
-- Private keys never transmitted over network
-- Proper Bitcoin address validation with checksums
-- Atomic file operations prevent data corruption
-
-## BACDS Vision
-
-**Phase 1** ✅: Desktop foundation with BACDS API and professional website  
-**Phase 2** 🔄: NERD tokenomics design and community building  
-**Phase 3** 🚀: $NERD token launch and platform rebrand  
-**Phase 4** 💰: Full token economy with revenue distribution  
-
-The ultimate goal: **Bitcoin addresses as network endpoints**, enabling direct machine-to-machine content delivery with built-in payment verification and token rewards.
-
-## Development
-
-### Project Structure
-
-```
-bacds/
-├── src/
-│   ├── main.js              # Electron main process
-│   ├── preload.js           # Security bridge
-│   ├── renderer.js          # Desktop UI logic
-│   ├── index.html           # Desktop interface
-│   ├── styles.css           # Desktop styling
-│   ├── api-server.js        # BACDS API server
-│   └── web/
-│       ├── index.html       # API web interface
-│       └── content.js       # Content management
-├── vercel-app/
-│   ├── index.html           # Marketing website
-│   ├── app.js               # HandCash integration
-│   └── vercel.json          # Deployment config
-├── package.json             # Dependencies and scripts
-├── STRATEGIC_PLAN.md        # NERD evolution roadmap
-└── README.md               # This file
-```
-
-## Contributing
-
-Contributions welcome! This project is building the foundation for decentralized content delivery with token incentives. Areas of focus:
-
-- $NERD tokenomics implementation
-- 1Sat Ordinals integration
-- P2P networking development
-- Community building and governance
-- UI/UX enhancements
-
-## 📞 Contact & Support
-
-- **HandCash**: Send BSV payments or messages to [$BOASE](https://handcash.io/$BOASE)
-- **GitHub**: [b0ase/BACDS](https://github.com/b0ase/BACDS)
-- **Website**: Contact form at [bacds.website](https://bacds.website)
-- **In-App**: Direct messaging via BACDS desktop client
-
-For technical support, collaboration, or $NERD token inquiries, reach out via HandCash $BOASE or submit issues on GitHub.
-
-## License
-
-MIT License - Open source foundation for the BACDS/NERD ecosystem.
+MIT License - Build whatever you want with this code!
 
 ---
 
-**🚀 BACDS → NERD Evolution**: Where Bitcoin addresses become network endpoints, content delivery meets cryptocurrency payments, and nerds profit from decentralization.
+## 🤝 Contributing
 
-**Status**: Phase 1 complete ✅, Phase 2 tokenomics design ✅, Ready for $NERD token launch! 🤓💰
+We welcome contributions from fellow nerds! Whether it's code, documentation, or just spreading the word - every bit helps build the future of decentralized content.
+
+## 📞 Contact
+
+- **GitHub**: [https://github.com/b0ase/NERD](https://github.com/b0ase/NERD)
+- **Issues**: [Report bugs and request features](https://github.com/b0ase/NERD/issues)
+- **Discussions**: [Join the community](https://github.com/b0ase/NERD/discussions)
+
+---
+
+*Built by nerds, for nerds. The future of content distribution is decentralized.* 🤓⚡

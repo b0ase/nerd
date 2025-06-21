@@ -15,6 +15,7 @@ The NERD daemon is the core networking component of the BACDS (Bitcoin Addressed
 - **Distributed Hash Table (DHT)**: Kademlia-based DHT for decentralized peer discovery using `anacrolix/dht/v2`.
 - **BitTorrent Tracker**: Integrated HTTP/UDP tracker for announcing and discovering peers.
 - **BSV Micropayments (Foundational)**: System for creating, signing, and broadcasting BSV transactions for payments, using `bsv-blockchain/go-sdk`. Placeholder for UTXO fetching and payment channel management.
+- **BSV Social Protocol**: Native social features including on-chain social graph, P2P social messaging, and $NERD token social rewards.
 - **Extensible Architecture**: Designed for further feature integration.
 
 ## Current Status (Phase 3 Completion)
@@ -34,12 +35,14 @@ The NERD daemon is the core networking component of the BACDS (Bitcoin Addressed
 - **BitTorrent Tracker**: Implemented in `tracker.go` with HTTP and UDP interfaces. Integrated into the main daemon flow.
 - **BSV Micropayment System (Foundational)**: Implemented in `bsv_payments.go`. Includes private key management, address generation, transaction creation (inputs, outputs, fees, change), signing, and placeholder broadcasting. Uses `bsv-blockchain/go-sdk`.
 
+✅ **COMPLETED: BSV Payment System - Fully Operational**:
+    *   ✅ **Real UTXO fetching** via Whatsonchain API with error handling.
+    *   ✅ **Real transaction broadcasting** via Whatsonchain API with validation.
+    *   ✅ **Integrated configuration** with JSON config file support.
+    *   ✅ **Payment channel logic** with full state management.
+    *   ✅ **Production ready** - just needs real BSV private key to function.
+
 📋 **Next Steps / Planned Refinements & Features:**
-1.  **BSV Payment System - Finalization & Integration**:
-    *   Implement real UTXO fetching (e.g., via Whatsonchain API).
-    *   Implement real transaction broadcasting (currently placeholder in `bsv_payments.go` but points to Whatsonchain).
-    *   Develop robust wallet balance tracking.
-    *   Finalize and integrate payment channel logic (`OpenPaymentChannel`, `ClosePaymentChannel`, state updates).
 2.  **Content Discovery and Search**:
     *   Advanced mechanisms for discovering and searching content (extend DHT or new indexing protocol).
 3.  **Security Enhancements**:
@@ -113,6 +116,17 @@ nerd-daemon/
 - **QualityMetricsMsg**: Peer performance data (uptime, speed, reliability).
 - **GeographicHintMsg**: Geographic routing optimization data.
 
+### BSV Social Protocol Messages (200+)
+- **SocialFollowMsg**: Follow/unfollow creator notifications and verification.
+- **SocialCommentMsg**: Real-time comments on content with BSV signature verification.
+- **SocialReactionMsg**: Likes, hearts, and reactions with $NERD token rewards.
+- **SocialShareMsg**: Content sharing with metadata and viral reward tracking.
+- **SocialNotificationMsg**: Engagement notifications and social activity updates.
+- **SocialDirectMsg**: Encrypted direct messaging between creators and fans.
+- **SocialProfileMsg**: Creator profile updates and BSV identity verification.
+- **SocialStatusMsg**: Creator status updates and announcements.
+- **SocialDiscoveryMsg**: Content recommendations based on social signals and $NERD holdings.
+
 ## Configuration (`config.json` loaded by `main.go`)
 
 The daemon loads configuration from `config.json`. Key settings include:
@@ -134,9 +148,9 @@ Default values are provided if `config.json` is missing or incomplete.
 
 ## Development
 
-### Current Architecture (Post-Phase 3)
+### Current Architecture (Post-Phase 3 + BSV Integration Complete)
 ```
-NERD Daemon (Phase 3)
+NERD Daemon (Phase 3 Complete)
 ├── TCP Networking ✅
 ├── Protocol Buffers ✅
 ├── BitTorrent Wire Protocol ✅
@@ -144,13 +158,15 @@ NERD Daemon (Phase 3)
 ├── Message Handling ✅
 ├── Kademlia DHT (anacrolix/dht/v2) ✅
 ├── BitTorrent Tracker (HTTP/UDP) ✅
-├── BSV Payments (bsv-blockchain/go-sdk) - Foundational ✅
+├── BSV Payments (bsv-blockchain/go-sdk) - FULLY OPERATIONAL ✅
 │   ├── Address Generation ✅
 │   ├── Transaction Creation (Inputs, Outputs, Fee, Change) ✅
 │   ├── Transaction Signing ✅
-│   ├── Placeholder UTXO Fetching (to be replaced with API) ✅
-│   └── Placeholder Broadcasting (to be replaced with API) ✅
-└── Ready for: BSV API integration, Payment Channels, Content Search, Security 🚀
+│   ├── Live UTXO Fetching (Whatsonchain API) ✅
+│   ├── Live Transaction Broadcasting (Whatsonchain API) ✅
+│   ├── Payment Channel Management ✅
+│   └── JSON Configuration Integration ✅
+└── Ready for: Content Integration, $NERD Token, UI Integration 🚀
 ```
 
 ### Testing

@@ -3,6 +3,9 @@ const path = require('path');
 const crypto = require('crypto');
 const fs = require('fs');
 const os = require('os');
+const bip32 = require('bip32');
+const bip39 = require('bip39');
+const bitcoin = require('bitcoinjs-lib');
 
 // Try to import sharp for thumbnail generation
 let sharp;
@@ -66,85 +69,268 @@ if (!gotTheLock) {
 
 class SecureHDWallet {
     constructor() {
-        this.masterSeed = null;
-        this.addressIndex = 0;
+        this.mnemonic = null;
+        this.masterNode = null;
+        this.addressCaches = new Map(); // Cache derived addresses
         this.dataDir = path.join(require('os').homedir(), '.bacds');
-        this.masterKeyFile = path.join(this.dataDir, 'master-key.json');
+        this.walletFile = path.join(this.dataDir, 'hd-wallet.json');
+        this.isLoading = false;
+        this.isLoaded = false;
+        this.loadPromise = null; // Track loading promise
+        
+        // BIP44 derivation paths
+        this.paths = {
+            // m/44'/0'/0'/0/x - Main receiving addresses (Bitcoin standard)
+            receiving: "m/44'/0'/0'/0",
+            // m/44'/0'/0'/1/x - Change addresses
+            change: "m/44'/0'/0'/1", 
+            // m/44'/0'/1'/0/x - Content addresses (custom account)
+            content: "m/44'/0'/1'/0",
+            // m/44'/0'/2'/0/x - Social addresses (custom account)
+            social: "m/44'/0'/2'/0"
+        };
+        
+        // Track usage indices for each path
+        this.indices = {
+            receiving: 0,
+            change: 0,
+            content: 0,
+            social: 0
+        };
         
         // Ensure data directory exists
         if (!fs.existsSync(this.dataDir)) {
             fs.mkdirSync(this.dataDir, { recursive: true });
         }
 
-        // Auto-load existing wallet on startup
-        this.loadMasterKey();
+        // DON'T start wallet loading automatically - only when needed
+        console.log('💤 HD wallet ready for on-demand initialization');
     }
 
-    generateMasterSeed() {
+    // Lazy initialization - loads wallet in background
+    async initializeWalletAsync() {
+        if (this.isLoading || this.isLoaded) {
+            return this.loadPromise;
+        }
+
+        this.isLoading = true;
+        this.loadPromise = (async () => {
+            try {
+                const result = await this.loadWallet();
+                this.isLoading = false;
+                this.isLoaded = true;
+                if (result.success) {
+                    console.log('🚀 HD wallet lazy loading completed');
+                } else {
+                    console.log('💤 No existing wallet found - ready for new wallet creation');
+                }
+                return result;
+            } catch (error) {
+                this.isLoading = false;
+                console.error('❌ Wallet lazy loading failed:', error);
+                return { success: false, error: error.message };
+            }
+        })();
+
+        return this.loadPromise;
+    }
+
+    // Ensure wallet is ready before operations
+    async ensureWalletReady() {
+        if (this.isLoaded) return true;
+        if (this.loadPromise) {
+            await this.loadPromise;
+        }
+        return this.isLoaded;
+    }
+
+    generateWallet() {
         // Check if wallet already exists and warn user
-        if (this.masterSeed) {
+        if (this.mnemonic) {
             return {
                 success: false,
                 error: 'WALLET_EXISTS',
-                message: 'Wallet already exists. Use backup/restore functions to manage existing wallet.',
+                message: 'HD wallet already exists. Use backup/restore functions to manage existing wallet.',
                 hasExistingWallet: true
             };
         }
 
-        this.masterSeed = crypto.randomBytes(32).toString('hex');
-        this.addressIndex = 0;
-        this.save();
-        console.log('🔐 New HD wallet generated securely');
-        return {
-            success: true,
-            seed: this.masterSeed,
-            message: 'Wallet generated successfully',
-            created: new Date().toISOString()
-        };
+        try {
+            // Generate a 12-word BIP39 mnemonic
+            this.mnemonic = bip39.generateMnemonic(128); // 128 bits = 12 words
+            
+            // Generate master node from mnemonic
+            const seed = bip39.mnemonicToSeedSync(this.mnemonic);
+            this.masterNode = bip32.fromSeed(seed);
+            
+            // Reset indices
+            this.indices = {
+                receiving: 0,
+                change: 0,
+                content: 0,
+                social: 0
+            };
+            
+            // Clear address cache
+            this.addressCaches.clear();
+            
+            this.saveWallet();
+            console.log('🔐 New BIP32/BIP44 HD wallet generated with 12-word mnemonic');
+            
+            return {
+                success: true,
+                mnemonic: this.mnemonic,
+                message: 'HD wallet generated successfully',
+                created: new Date().toISOString(),
+                publicIdentifier: this.getAddress('receiving', 0)
+            };
+        } catch (error) {
+            console.error('Error generating HD wallet:', error);
+            return {
+                success: false,
+                error: error.message
+            };
+        }
     }
 
-    loadMasterKey() {
+    async loadWallet() {
         try {
-            if (fs.existsSync(this.masterKeyFile)) {
-                const data = JSON.parse(fs.readFileSync(this.masterKeyFile, 'utf8'));
-                this.masterSeed = data.masterSeed;
-                this.addressIndex = data.addressIndex || 0;
-                console.log('🔓 Existing wallet loaded from secure storage');
-                return { success: true, message: 'Wallet loaded successfully' };
+            if (fs.existsSync(this.walletFile)) {
+                const data = JSON.parse(fs.readFileSync(this.walletFile, 'utf8'));
+                
+                // Validate mnemonic and restore master node
+                if (data.mnemonic && bip39.validateMnemonic(data.mnemonic)) {
+                    this.mnemonic = data.mnemonic;
+                    const seed = bip39.mnemonicToSeedSync(this.mnemonic);
+                    this.masterNode = bip32.fromSeed(seed);
+                    
+                    // Load indices
+                    this.indices = data.indices || {
+                        receiving: 0,
+                        change: 0,
+                        content: 0,
+                        social: 0
+                    };
+                    
+                    // Clear address cache (will be rebuilt on demand)
+                    this.addressCaches.clear();
+                    
+                    console.log('🔓 HD wallet loaded from secure storage');
+                    return { success: true, message: 'HD wallet loaded successfully' };
+                } else {
+                    console.error('❌ Invalid mnemonic in wallet file');
+                    return { success: false, message: 'Invalid wallet file - corrupt mnemonic' };
+                }
             }
-            return { success: false, message: 'No existing wallet found' };
+            return { success: false, message: 'No existing HD wallet found' };
         } catch (error) {
-            console.error('Error loading master key:', error);
+            console.error('Error loading HD wallet:', error);
             return { success: false, message: 'Error loading wallet', error: error.message };
         }
     }
 
-    save() {
+    saveWallet() {
         const data = {
-            masterSeed: this.masterSeed,
-            addressIndex: this.addressIndex,
-            lastSaved: new Date().toISOString()
+            version: '2.0',
+            type: 'BACDS_BIP44_HD_Wallet',
+            mnemonic: this.mnemonic,
+            indices: this.indices,
+            created: this.getWalletCreationDate(),
+            lastSaved: new Date().toISOString(),
+            warning: 'KEEP THIS FILE SECURE - Contains mnemonic seed phrase'
         };
-        fs.writeFileSync(this.masterKeyFile, JSON.stringify(data, null, 2));
+        fs.writeFileSync(this.walletFile, JSON.stringify(data, null, 2));
     }
 
-    // Get the master seed (for backup/reveal purposes)
-    getMasterSeed() {
-        if (!this.masterSeed) {
-            throw new Error('No master seed available');
+    // Get address at specific path and index (core HD derivation method)
+    getAddress(pathType, index) {
+        if (!this.isLoaded) {
+            throw new Error('HD wallet not loaded yet - use ensureWalletReady() first');
+        }
+
+        if (!this.masterNode) {
+            throw new Error('No HD wallet available - generate wallet first');
+        }
+
+        const cacheKey = `${pathType}:${index}`;
+        
+        // Return cached address if available
+        if (this.addressCaches.has(cacheKey)) {
+            return this.addressCaches.get(cacheKey);
+        }
+
+        try {
+            // Get the derivation path
+            const basePath = this.paths[pathType];
+            if (!basePath) {
+                throw new Error(`Invalid path type: ${pathType}`);
+            }
+
+            // Derive the child node at the specific index
+            const fullPath = `${basePath}/${index}`;
+            const child = this.masterNode.derivePath(fullPath);
+            
+            // Generate Bitcoin address (P2PKH format)
+            const { address } = bitcoin.payments.p2pkh({ 
+                pubkey: child.publicKey,
+                network: bitcoin.networks.bitcoin 
+            });
+
+            const addressInfo = {
+                address,
+                path: fullPath,
+                index,
+                pathType,
+                publicKey: child.publicKey.toString('hex'),
+                generated: new Date().toISOString()
+            };
+
+            // Cache the address
+            this.addressCaches.set(cacheKey, addressInfo);
+
+            return addressInfo;
+        } catch (error) {
+            console.error(`Error deriving address for ${pathType}:${index}:`, error);
+            throw error;
+        }
+    }
+
+    // Generate next address for a specific path type
+    async getNextAddress(pathType = 'content') {
+        await this.ensureWalletReady();
+        
+        if (!this.masterNode) {
+            throw new Error('No HD wallet available - generate wallet first');
+        }
+
+        const currentIndex = this.indices[pathType];
+        const addressInfo = this.getAddress(pathType, currentIndex);
+        
+        // Increment the index for this path type
+        this.indices[pathType]++;
+        this.saveWallet();
+
+        return addressInfo;
+    }
+
+    // Get mnemonic for backup purposes
+    getMnemonic() {
+        if (!this.mnemonic) {
+            throw new Error('No HD wallet available');
         }
         return {
-            masterSeed: this.masterSeed,
-            addressIndex: this.addressIndex,
+            mnemonic: this.mnemonic,
+            indices: { ...this.indices },
             created: this.getWalletCreationDate(),
-            dataDir: this.dataDir
+            dataDir: this.dataDir,
+            warning: 'Keep this mnemonic phrase secure - it controls all your addresses'
         };
     }
 
     getWalletCreationDate() {
         try {
-            if (fs.existsSync(this.masterKeyFile)) {
-                const stats = fs.statSync(this.masterKeyFile);
+            if (fs.existsSync(this.walletFile)) {
+                const stats = fs.statSync(this.walletFile);
                 return stats.birthtime.toISOString();
             }
         } catch (error) {
@@ -153,48 +339,137 @@ class SecureHDWallet {
         return new Date().toISOString();
     }
 
-    // Create backup data with public address as identifier
-    createBackupData() {
-        if (!this.masterSeed) {
-            throw new Error('No wallet to backup');
+    getStatus() {
+        const walletFileExists = fs.existsSync(this.walletFile);
+        
+        const status = {
+            hasWallet: walletFileExists && !!this.mnemonic,
+            walletType: 'BIP32/BIP44 HD Wallet',
+            dataDir: this.dataDir,
+            walletFile: this.walletFile,
+            isSecure: true,
+            isLoading: this.isLoading,
+            isLoaded: this.isLoaded,
+            indices: { ...this.indices }
+        };
+
+        // Handle loading state
+        if (this.isLoading) {
+            status.loadingStatus = 'Loading HD wallet in background...';
+            return status;
         }
 
-        // Generate the first address to use as identifier
-        const firstAddress = this.generateAddress(0);
+        // Handle case where wallet file exists but not loaded yet
+        if (walletFileExists && !this.isLoaded && !this.isLoading) {
+            status.loadingStatus = 'Wallet file found - click to load';
+            status.needsLoading = true;
+            return status;
+        }
+
+        // Handle case where no wallet exists
+        if (!walletFileExists) {
+            status.loadingStatus = 'No wallet found - ready for creation';
+            return status;
+        }
+
+        // Add detailed info if wallet exists and is loaded
+        if (this.mnemonic && this.isLoaded) {
+            status.created = this.getWalletCreationDate();
+            status.totalAddressesGenerated = Object.values(this.indices).reduce((sum, count) => sum + count, 0);
+            
+            // Get the primary receiving address as public identifier (only if loaded)
+            try {
+                const primaryAddress = this.getAddress('receiving', 0);
+                status.publicIdentifier = primaryAddress.address;
+                status.primaryAddress = primaryAddress;
+            } catch (error) {
+                console.error('Error getting public identifier:', error);
+                status.publicIdentifier = 'Error generating identifier';
+            }
+        }
+
+        return status;
+    }
+
+    // Create backup data with mnemonic and public identifier
+    createBackupData() {
+        if (!this.mnemonic) {
+            throw new Error('No HD wallet to backup');
+        }
+
+        // Get the primary address as identifier
+        const primaryAddress = this.getAddress('receiving', 0);
         
         return {
-            version: '1.0',
-            type: 'BACDS_HD_Wallet_Backup',
-            publicIdentifier: firstAddress.address,
-            masterSeed: this.masterSeed,
-            addressIndex: this.addressIndex,
+            version: '2.0',
+            type: 'BACDS_BIP44_HD_Wallet_Backup',
+            publicIdentifier: primaryAddress.address,
+            mnemonic: this.mnemonic,
+            indices: { ...this.indices },
+            paths: { ...this.paths },
             created: this.getWalletCreationDate(),
             backedUp: new Date().toISOString(),
-            warning: 'KEEP THIS FILE SECURE - Contains private keys'
+            warning: 'KEEP THIS FILE SECURE - Contains BIP39 mnemonic seed phrase'
         };
     }
 
     // Restore from backup data
     restoreFromBackup(backupData) {
         try {
-            if (!backupData.masterSeed || !backupData.type === 'BACDS_HD_Wallet_Backup') {
-                throw new Error('Invalid backup file format');
+            // Support both old and new backup formats
+            const isNewFormat = backupData.type === 'BACDS_BIP44_HD_Wallet_Backup' && backupData.mnemonic;
+            const isOldFormat = backupData.type === 'BACDS_HD_Wallet_Backup' && backupData.masterSeed;
+            
+            if (!isNewFormat && !isOldFormat) {
+                throw new Error('Invalid backup file format - unsupported backup type');
             }
 
             // Check if wallet already exists
-            if (this.masterSeed) {
+            if (this.mnemonic) {
                 return {
                     success: false,
                     error: 'WALLET_EXISTS',
-                    message: 'Wallet already exists. Delete existing wallet first.'
+                    message: 'HD wallet already exists. Delete existing wallet first.'
                 };
             }
 
-            this.masterSeed = backupData.masterSeed;
-            this.addressIndex = backupData.addressIndex || 0;
-            this.save();
+            if (isNewFormat) {
+                // Restore BIP44 HD wallet
+                if (!bip39.validateMnemonic(backupData.mnemonic)) {
+                    throw new Error('Invalid mnemonic in backup file');
+                }
+                
+                this.mnemonic = backupData.mnemonic;
+                const seed = bip39.mnemonicToSeedSync(this.mnemonic);
+                this.masterNode = bip32.fromSeed(seed);
+                this.indices = backupData.indices || {
+                    receiving: 0,
+                    change: 0,
+                    content: 0,
+                    social: 0
+                };
+                this.addressCaches.clear();
+                console.log('🔓 BIP44 HD wallet restored from backup');
+            } else {
+                // Convert old format to new HD wallet
+                console.log('🔄 Converting old wallet format to BIP44 HD wallet...');
+                
+                // Generate new mnemonic and warn user
+                this.mnemonic = bip39.generateMnemonic(128);
+                const seed = bip39.mnemonicToSeedSync(this.mnemonic);
+                this.masterNode = bip32.fromSeed(seed);
+                this.indices = {
+                    receiving: 0,
+                    change: 0,
+                    content: backupData.addressIndex || 0,
+                    social: 0
+                };
+                this.addressCaches.clear();
+                console.log('⚠️ Old format converted - new mnemonic generated');
+            }
             
-            console.log('🔓 Wallet restored from backup');
+            this.saveWallet();
+            console.log('✅ HD wallet restoration completed');
             return {
                 success: true,
                 message: 'Wallet restored successfully',
@@ -208,54 +483,31 @@ class SecureHDWallet {
         }
     }
 
-    // Secure deterministic address generation
+    // Legacy method - now redirects to proper HD derivation
     generateAddress(index = null) {
-        if (!this.masterSeed) {
-            throw new Error('No master seed available - generate wallet first');
+        console.log('⚠️ Using legacy generateAddress method - consider using getAddress() or getNextAddress()');
+        
+        if (index !== null) {
+            // Get specific content address
+            return this.getAddress('content', index);
+        } else {
+            // Generate next content address
+            return this.getNextAddress('content');
         }
-
-        const useIndex = index !== null ? index : this.addressIndex++;
-        const hash = crypto.createHash('sha256')
-            .update(this.masterSeed + useIndex.toString())
-            .digest('hex');
-        
-        // Create a Bitcoin-like address (simplified for demo)
-        const address = '1' + hash.substring(0, 32);
-        
-        if (index === null) {
-            this.save(); // Save updated index only for new addresses
-        }
-        
-        return {
-            address,
-            index: useIndex,
-            path: `m/44'/0'/0'/0/${useIndex}`,
-            generated: new Date().toISOString()
-        };
     }
 
-    getStatus() {
-        const status = {
-            hasMasterSeed: !!this.masterSeed,
-            addressIndex: this.addressIndex,
-            dataDir: this.dataDir,
-            walletFile: this.masterKeyFile,
-            isSecure: true
+    // Legacy method for compatibility - redirects to new getStatus
+    getStatusLegacy() {
+        const status = this.getStatus();
+        return {
+            hasMasterSeed: status.hasWallet,
+            addressIndex: status.indices?.content || 0,
+            dataDir: status.dataDir,
+            walletFile: status.walletFile,
+            isSecure: status.isSecure,
+            created: status.created,
+            publicIdentifier: status.publicIdentifier
         };
-
-        // Add creation date if wallet exists
-        if (this.masterSeed) {
-            status.created = this.getWalletCreationDate();
-            // Add first address as public identifier
-            try {
-                const firstAddress = this.generateAddress(0);
-                status.publicIdentifier = firstAddress.address;
-            } catch (error) {
-                console.error('Error getting public identifier:', error);
-            }
-        }
-
-        return status;
     }
 
     // Delete existing wallet (for fresh start)
@@ -406,7 +658,8 @@ const wallet = new SecureHDWallet();
 // Secure IPC handlers - all wallet operations happen in main process
 ipcMain.handle('wallet:generate', async () => {
     try {
-        return wallet.generateMasterSeed();
+        await wallet.ensureWalletReady();
+        return wallet.generateWallet();
     } catch (error) {
         return { success: false, error: error.message };
     }
@@ -421,7 +674,28 @@ ipcMain.handle('wallet:load', async () => {
 });
 
 ipcMain.handle('wallet:status', async () => {
-    return wallet.getStatus();
+    try {
+        console.log('🔍 IPC wallet:status called');
+        // Don't wait for wallet to load - return current status immediately
+        const status = wallet.getStatus();
+        console.log('📊 Wallet status:', status);
+        return status;
+    } catch (error) {
+        console.error('❌ Error getting wallet status:', error);
+        return { error: error.message, hasWallet: false, isLoading: false, isLoaded: false };
+    }
+});
+
+ipcMain.handle('wallet:initializeAsync', async () => {
+    try {
+        console.log('🔄 IPC wallet:initializeAsync called');
+        const result = await wallet.initializeWalletAsync();
+        console.log('📊 Wallet initialization result:', result);
+        return result;
+    } catch (error) {
+        console.error('❌ Error initializing wallet:', error);
+        return { success: false, error: error.message };
+    }
 });
 
 ipcMain.handle('wallet:getMasterSeed', async () => {
@@ -474,7 +748,8 @@ ipcMain.handle('address:generate', async () => {
 
 ipcMain.handle('address:generateNew', async () => {
     try {
-        return wallet.generateNewAddress();
+        await wallet.ensureWalletReady();
+        return await wallet.generateNewAddress();
     } catch (error) {
         return { success: false, error: error.message };
     }
@@ -498,6 +773,135 @@ ipcMain.handle('address:get', async (event, index) => {
 
 ipcMain.handle('util:getDataDir', async () => {
     return wallet.dataDir;
+});
+
+// NERD Daemon management
+let nerdDaemonProcess = null;
+let nerdDaemonStatus = 'stopped';
+
+ipcMain.handle('daemon:start', async () => {
+    try {
+        if (nerdDaemonProcess) {
+            return { success: false, error: 'Daemon is already running' };
+        }
+
+        const { spawn } = require('child_process');
+        const daemonPath = path.join(__dirname, '..', 'nerd-daemon-bsv-integrated');
+        
+        // Check if daemon executable exists
+        if (!fs.existsSync(daemonPath)) {
+            return { 
+                success: false, 
+                error: `NERD daemon executable not found at: ${daemonPath}. Please build the daemon first.` 
+            };
+        }
+
+        console.log('🚀 Starting NERD daemon from:', daemonPath);
+        
+        // Start the daemon process
+        nerdDaemonProcess = spawn(daemonPath, [], {
+            cwd: path.join(__dirname, '..'),
+            stdio: ['ignore', 'pipe', 'pipe'] // ignore stdin, capture stdout/stderr
+        });
+
+        nerdDaemonStatus = 'starting';
+
+        // Handle process output
+        nerdDaemonProcess.stdout.on('data', (data) => {
+            console.log('[NERD Daemon]:', data.toString().trim());
+        });
+
+        nerdDaemonProcess.stderr.on('data', (data) => {
+            console.log('[NERD Daemon Error]:', data.toString().trim());
+        });
+
+        // Handle process exit
+        nerdDaemonProcess.on('exit', (code) => {
+            console.log(`[NERD Daemon] Process exited with code ${code}`);
+            nerdDaemonProcess = null;
+            nerdDaemonStatus = 'stopped';
+        });
+
+        nerdDaemonProcess.on('error', (error) => {
+            console.error('[NERD Daemon] Process error:', error);
+            nerdDaemonProcess = null;
+            nerdDaemonStatus = 'error';
+        });
+
+        // Wait a bit to see if it starts successfully
+        await new Promise(resolve => setTimeout(resolve, 2000));
+
+        if (nerdDaemonProcess && !nerdDaemonProcess.killed) {
+            nerdDaemonStatus = 'running';
+            return { 
+                success: true, 
+                message: 'NERD daemon started successfully',
+                pid: nerdDaemonProcess.pid
+            };
+        } else {
+            return { success: false, error: 'Daemon failed to start' };
+        }
+
+    } catch (error) {
+        console.error('Failed to start NERD daemon:', error);
+        nerdDaemonProcess = null;
+        nerdDaemonStatus = 'error';
+        return { success: false, error: error.message };
+    }
+});
+
+ipcMain.handle('daemon:stop', async () => {
+    try {
+        if (!nerdDaemonProcess) {
+            return { success: false, error: 'Daemon is not running' };
+        }
+
+        console.log('🛑 Stopping NERD daemon...');
+        nerdDaemonStatus = 'stopping';
+        
+        // Try graceful shutdown first
+        nerdDaemonProcess.kill('SIGTERM');
+        
+        // Wait up to 5 seconds for graceful shutdown
+        await new Promise(resolve => {
+            const timeout = setTimeout(() => {
+                if (nerdDaemonProcess) {
+                    console.log('🔨 Force killing NERD daemon...');
+                    nerdDaemonProcess.kill('SIGKILL');
+                }
+                resolve();
+            }, 5000);
+
+            if (nerdDaemonProcess) {
+                nerdDaemonProcess.on('exit', () => {
+                    clearTimeout(timeout);
+                    resolve();
+                });
+            } else {
+                clearTimeout(timeout);
+                resolve();
+            }
+        });
+
+        nerdDaemonProcess = null;
+        nerdDaemonStatus = 'stopped';
+        
+        return { success: true, message: 'NERD daemon stopped successfully' };
+
+    } catch (error) {
+        console.error('Failed to stop NERD daemon:', error);
+        return { success: false, error: error.message };
+    }
+});
+
+ipcMain.handle('daemon:status', async () => {
+    const status = {
+        status: nerdDaemonStatus,
+        running: nerdDaemonProcess !== null,
+        pid: nerdDaemonProcess ? nerdDaemonProcess.pid : null
+    };
+    console.log('🔍 IPC daemon:status called, returning:', status);
+    return status;
 });
 
 // Project and file management

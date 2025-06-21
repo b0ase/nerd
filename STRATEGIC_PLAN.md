@@ -285,14 +285,119 @@ This section breaks down the development of the NERD daemon into smaller, action
 - [ ] Enhance PEX messages to include payment preferences and quality signals. *Design Question: What additional data should PEX messages carry?*
 - [ ] Implement handling of received PEX messages to update peer lists.
 
-### **Ready for Phase 3: P2P Payment Layer** 🚀
+### **Phase 3: BSV Social Protocol Integration** 🚀
 
-The daemon now has complete P2P networking capabilities and is ready for payment integration. The next phase will focus on:
+**NEW ADDITION: BSV-Native Social Layer**
+
+The daemon now includes a complete BSV-native social protocol that avoids external platform censorship risks while providing rich social features optimized for content creators.
+
+#### **BSV Social Protocol Architecture**
+```
+BSV Social Layer:
+├── On-Chain Social Graph (BSV blockchain)
+├── P2P Social Messaging (NERD protocol extensions)
+├── Content Social Features (follow, like, share, comment)
+├── $NERD Social Rewards (engagement incentives)
+├── Creator Social Profiles (BSV address-based identity)
+└── Social Content Discovery (DHT + social signals)
+```
+
+#### **Core Social Features**
+
+**1. BSV-Based Identity System**
+- **Creator Profiles**: BSV addresses as primary identity
+- **Social Verification**: BSV signatures for all social actions
+- **Reputation System**: On-chain social transaction history
+- **Avatar/Profile**: IPFS hashes stored on BSV blockchain
+
+**2. On-Chain Social Graph**
+```
+BSV Social Transaction Types:
+├── follow_creator (BSV tx with creator's address)
+├── unfollow_creator (BSV tx marking unfollow)
+├── content_like (BSV tx + content address)
+├── content_share (BSV tx + sharing metadata)
+├── creator_tip (BSV payment + social signal)
+└── social_boost (Pay BSV to amplify content)
+```
+
+**3. P2P Social Messaging**
+```
+NERD Social Message Types (200-299):
+├── social_follow (200): Follow/unfollow notifications
+├── social_comment (201): Real-time comments on content
+├── social_reaction (202): Likes, hearts, reactions
+├── social_share (203): Content sharing with metadata
+├── social_notification (204): Engagement notifications
+├── social_dm (205): Direct encrypted messaging
+├── social_profile_update (206): Profile changes
+├── social_status (207): Creator status updates
+└── social_discovery (208): Content recommendations
+```
+
+**4. $NERD Social Token Economy**
+```
+Social $NERD Rewards:
+├── Content Creator Rewards (publishing, engagement)
+├── Social Engagement Rewards (meaningful comments/shares)
+├── Discovery Rewards (sharing viral content early)
+├── Community Moderation Rewards (quality curation)
+├── Social Node Rewards (running social infrastructure)
+└── Anti-Spam Incentives (BSV cost for social actions)
+```
+
+#### **Implementation Plan: BSV Social Integration**
+
+**Phase 3A: Core Social Protocol (4-6 weeks)**
+- [x] BSV Payment System Integration ✅
+- [ ] **Social Message Types**: Extend NERD protocol with social messages (200-299)
+- [ ] **BSV Social Transactions**: On-chain social graph implementation
+- [ ] **Social DHT Integration**: Social discovery via enhanced DHT
+- [ ] **Basic Social UI**: Follow/unfollow, like, comment interface
+
+**Phase 3B: Advanced Social Features (6-8 weeks)**
+- [ ] **Creator Profiles**: Rich BSV-based identity system
+- [ ] **Social Content Discovery**: Algorithm combining P2P + social signals
+- [ ] **$NERD Social Rewards**: Token distribution for social engagement
+- [ ] **Direct Messaging**: Encrypted P2P messaging system
+- [ ] **Social Analytics**: Creator engagement and revenue analytics
+
+**Phase 3C: Social Network Effects (8-12 weeks)**
+- [ ] **Viral Content Mechanics**: $NERD rewards for early content discovery
+- [ ] **Community Features**: Groups, collections, collaborative playlists
+- [ ] **Social Moderation**: Community-driven content curation
+- [ ] **Cross-Platform Bridges**: Optional ActivityPub federation
+- [ ] **Mobile Social App**: Native mobile client for social features
+
+#### **BSV Social Advantages**
+
+**vs. Nostr/Lightning:**
+- ✅ **No BTC maximalist censorship**: BSV-native, immune to BTC politics
+- ✅ **Larger transaction capacity**: BSV handles social scale better
+- ✅ **Data storage**: On-chain profile/social data storage capability
+- ✅ **Perfect NERD integration**: Native $NERD token compatibility
+
+**vs. ActivityPub:**
+- ✅ **Censorship resistance**: No server dependencies
+- ✅ **Built-in payments**: Native BSV micropayments
+- ✅ **Token economics**: $NERD rewards for social engagement
+- ✅ **Creator focused**: Designed for content monetization
+
+**vs. AT Protocol:**
+- ✅ **Simpler architecture**: No complex PDS/Relay infrastructure
+- ✅ **Payment native**: BSV transactions vs. external payment solutions
+- ✅ **Content optimized**: Built specifically for content creators
+- ✅ **Immediate network**: Leverage existing NERD P2P network
+
+### **Updated Phase 3: P2P Payment + Social Layer** 🚀
+
+The daemon now has complete P2P networking capabilities and is ready for integrated payment and social features:
 
 1. **BSV Micropayment Channels**: Integration with BitcoinSV for chunk-based payments
-2. **$NERD Token Integration**: Token balance verification and rewards distribution  
-3. **Content Addressing**: Torrent-like content chunking and addressing
-4. **Seeder Rewards**: Automatic payment distribution for content hosting
+2. **BSV Social Protocol**: Native social features without external platform risks
+3. **$NERD Token Integration**: Token balance verification and social rewards distribution  
+4. **Content Addressing**: Torrent-like content chunking and addressing
+5. **Seeder + Social Rewards**: Automatic payment distribution for content hosting and social engagement
 
 **Current Architecture:**
 ```

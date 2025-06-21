@@ -1,10 +1,12 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"log"
 	"net"
+	"os"
 	"sync"
 	"time"
 
@@ -17,23 +19,88 @@ var (
 	connectionsMutex  sync.Mutex
 )
 
-// Configuration struct with DHT and Tracker support
+// Configuration struct with DHT, Tracker, and BSV Payment support
 type Config struct {
 	Port            int
 	DHTPort         int
 	TrackerHTTPPort int
 	TrackerUDPPort  int
-	ConnectPeers    []string // List of peer addresses to try connecting to (for now)
-	BootstrapNodes  []string // DHT bootstrap nodes
-	EnableDHT       bool     // Enable DHT functionality
-	EnableTracker   bool     // Enable tracker functionality
+	ConnectPeers    []string         // List of peer addresses to try connecting to (for now)
+	BootstrapNodes  []string         // DHT bootstrap nodes
+	EnableDHT       bool             // Enable DHT functionality
+	EnableTracker   bool             // Enable tracker functionality
+	EnableBSV       bool             // Enable BSV payment functionality
+	DataDir         string           // Data directory for storage
+	BSVPayment      BSVPaymentConfig // BSV payment configuration
 }
 
-// Load configuration with DHT and Tracker support
+// JSONConfig represents the JSON structure for configuration file
+type JSONConfig struct {
+	Port            int      `json:"port"`
+	DHTPort         int      `json:"dht_port"`
+	TrackerHTTPPort int      `json:"tracker_http_port"`
+	TrackerUDPPort  int      `json:"tracker_udp_port"`
+	EnableDHT       bool     `json:"enable_dht"`
+	EnableTracker   bool     `json:"enable_tracker"`
+	EnableBSV       bool     `json:"enable_bsv"`
+	BootstrapNodes  []string `json:"bootstrap_nodes"`
+	ConnectPeers    []string `json:"connect_peers"`
+	BSVPayment      struct {
+		PrivateKeyWIF        string  `json:"private_key_wif"`
+		MinPaymentSatoshis   int64   `json:"min_payment_satoshis"`
+		MaxPaymentSatoshis   int64   `json:"max_payment_satoshis"`
+		ChannelTimeoutBlocks int     `json:"channel_timeout_blocks"`
+		FeeRate              float64 `json:"fee_rate"`
+		NetworkType          string  `json:"network_type"`
+		BroadcastURL         string  `json:"broadcast_url"`
+		UTXOFetchURLFormat   string  `json:"utxo_fetch_url_format"`
+	} `json:"bsv_payment"`
+}
+
+// Load configuration with support for JSON file loading and fallback to defaults
 func loadConfig() (*Config, error) {
-	// TODO: Implement actual configuration loading (e.g., from file, env vars)
 	log.Println("Loading configuration...")
 
+	// Try to load from config.json first
+	configFile := "config.json"
+	if data, err := os.ReadFile(configFile); err == nil {
+		log.Printf("Loading configuration from %s", configFile)
+
+		var jsonConfig JSONConfig
+		if err := json.Unmarshal(data, &jsonConfig); err != nil {
+			log.Printf("Warning: Failed to parse %s: %v. Using default configuration.", configFile, err)
+		} else {
+			// Convert JSON config to internal Config struct
+			config := &Config{
+				Port:            jsonConfig.Port,
+				DHTPort:         jsonConfig.DHTPort,
+				TrackerHTTPPort: jsonConfig.TrackerHTTPPort,
+				TrackerUDPPort:  jsonConfig.TrackerUDPPort,
+				EnableDHT:       jsonConfig.EnableDHT,
+				EnableTracker:   jsonConfig.EnableTracker,
+				EnableBSV:       jsonConfig.EnableBSV,
+				DataDir:         "./nerd-data", // Default data directory
+				BootstrapNodes:  jsonConfig.BootstrapNodes,
+				ConnectPeers:    jsonConfig.ConnectPeers,
+				BSVPayment: BSVPaymentConfig{
+					PrivateKeyWIF:        jsonConfig.BSVPayment.PrivateKeyWIF,
+					MinPaymentSatoshis:   jsonConfig.BSVPayment.MinPaymentSatoshis,
+					MaxPaymentSatoshis:   jsonConfig.BSVPayment.MaxPaymentSatoshis,
+					ChannelTimeoutBlocks: jsonConfig.BSVPayment.ChannelTimeoutBlocks,
+					FeeRate:              jsonConfig.BSVPayment.FeeRate,
+					NetworkType:          jsonConfig.BSVPayment.NetworkType,
+					BroadcastURL:         jsonConfig.BSVPayment.BroadcastURL,
+					UTXOFetchURLFormat:   jsonConfig.BSVPayment.UTXOFetchURLFormat,
+				},
+			}
+			log.Printf("Configuration loaded from file successfully")
+			return config, nil
+		}
+	} else {
+		log.Printf("No %s file found: %v. Using default configuration.", configFile, err)
+	}
+
+	// Fallback to default configuration
 	// Default DHT bootstrap nodes (BitTorrent mainline DHT)
 	defaultBootstrapNodes := []string{
 		"router.utorrent.com:6881",
@@ -42,7 +109,6 @@ func loadConfig() (*Config, error) {
 		"dht.aelitis.com:6881",
 	}
 
-	// For now, return a default config with a standard BitTorrent port (6881)
 	defaultConfig := &Config{
 		Port:            6881,
 		DHTPort:         6882, // DHT on different port to avoid conflicts
@@ -50,11 +116,22 @@ func loadConfig() (*Config, error) {
 		TrackerUDPPort:  8081, // Tracker UDP port
 		EnableDHT:       true,
 		EnableTracker:   true,
+		EnableBSV:       true,          // Enable BSV payments by default
+		DataDir:         "./nerd-data", // Default data directory
 		BootstrapNodes:  defaultBootstrapNodes,
-		// Example hardcoded peer for testing - replace later
-		ConnectPeers: []string{"localhost:6883"}, // Assuming another instance runs on 6883
+		ConnectPeers:    []string{"localhost:6883"}, // Example peer for testing
+		BSVPayment: BSVPaymentConfig{
+			PrivateKeyWIF:        "REPLACE_WITH_YOUR_BSV_PRIVATE_KEY_WIF_FORMAT", // Placeholder
+			MinPaymentSatoshis:   1,                                              // 1 satoshi minimum
+			MaxPaymentSatoshis:   10000,                                          // 10k satoshi maximum
+			ChannelTimeoutBlocks: 144,                                            // 24 hours (assuming 10 min blocks)
+			FeeRate:              0.5,                                            // 0.5 satoshis per byte
+			NetworkType:          "testnet",
+			BroadcastURL:         "https://api.whatsonchain.com/v1/bsv/test/tx/raw",
+			UTXOFetchURLFormat:   "https://api.whatsonchain.com/v1/bsv/%s/address/%s/unspent",
+		},
 	}
-	log.Printf("Using default configuration: %+v\n", defaultConfig)
+	log.Printf("Using default configuration")
 	return defaultConfig, nil
 }
 
@@ -418,6 +495,79 @@ func logTrackerStats(tracker *TrackerServer) {
 	}()
 }
 
+// initializeBSVPayments sets up and starts the BSV payment system
+func initializeBSVPayments(config *Config) (*BSVPaymentSystem, error) {
+	if !config.EnableBSV {
+		log.Println("BSV payments are disabled in configuration")
+		return nil, nil
+	}
+
+	// Validate BSV configuration
+	if config.BSVPayment.PrivateKeyWIF == "" ||
+		config.BSVPayment.PrivateKeyWIF == "L1abc123def456..." ||
+		config.BSVPayment.PrivateKeyWIF == "REPLACE_WITH_YOUR_BSV_PRIVATE_KEY_WIF_FORMAT" {
+		log.Println("WARNING: BSV private key is not configured or is placeholder. BSV payments will not function.")
+		log.Println("Please set a valid BSV private key WIF in the configuration file or generate one using BSV tools.")
+		log.Println("For testnet development, you can get free testnet coins from: https://faucet.bitcoincloud.net/")
+		return nil, nil
+	}
+
+	log.Printf("Initializing BSV payment system (network: %s)...", config.BSVPayment.NetworkType)
+
+	// Create BSV payment system
+	bsvSystem, err := NewBSVPaymentSystem(&config.BSVPayment)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create BSV payment system: %v", err)
+	}
+
+	// Start BSV payment system
+	err = bsvSystem.Start()
+	if err != nil {
+		return nil, fmt.Errorf("failed to start BSV payment system: %v", err)
+	}
+
+	log.Printf("BSV payment system initialized successfully")
+	log.Printf("BSV Address: %s", bsvSystem.GetAddress())
+	return bsvSystem, nil
+}
+
+// logBSVStats periodically logs BSV payment statistics
+func logBSVStats(bsvSystem *BSVPaymentSystem) {
+	if bsvSystem == nil {
+		return
+	}
+
+	go func() {
+		ticker := time.NewTicker(15 * time.Minute)
+		defer ticker.Stop()
+
+		for range ticker.C {
+			stats := bsvSystem.GetPaymentStats()
+			log.Printf("[BSV Stats] Address: %v, Pending: %v, Channels: %v",
+				stats["address"], stats["pending_payments"], stats["open_channels"])
+		}
+	}()
+}
+
+// logSocialStats periodically logs BSV Social Protocol statistics
+func logSocialStats(socialSystem *BSVSocialSystem) {
+	if socialSystem == nil {
+		return
+	}
+
+	go func() {
+		ticker := time.NewTicker(20 * time.Minute)
+		defer ticker.Stop()
+
+		for range ticker.C {
+			stats := socialSystem.GetStats()
+			log.Printf("[Social Stats] Follows: %v, Likes: %v, Comments: %v, Shares: %v, Profiles: %v",
+				stats["total_follows"], stats["total_likes"], stats["total_comments"],
+				stats["total_shares"], stats["total_profiles"])
+		}
+	}()
+}
+
 func main() {
 	log.Println("NERD daemon starting...")
 
@@ -452,6 +602,32 @@ func main() {
 		}
 	}()
 
+	// Initialize BSV Payment System if enabled
+	bsvSystem, err := initializeBSVPayments(cfg)
+	if err != nil {
+		log.Fatalf("Failed to initialize BSV payment system: %v", err)
+	}
+	defer func() {
+		if bsvSystem != nil {
+			bsvSystem.Stop()
+		}
+	}()
+
+	// Initialize BSV Social Protocol if BSV is enabled
+	var socialSystem *BSVSocialSystem
+	if cfg.EnableBSV && bsvSystem != nil {
+		socialSystem = NewBSVSocialSystem(bsvSystem, cfg.DataDir)
+		err = socialSystem.Start()
+		if err != nil {
+			log.Fatalf("Failed to initialize BSV social protocol: %v", err)
+		}
+		defer func() {
+			if socialSystem != nil {
+				socialSystem.Stop()
+			}
+		}()
+	}
+
 	// Set up TCP listener for P2P connections
 	listenAddr := fmt.Sprintf(":%d", cfg.Port)
 	listener, err := net.Listen("tcp", listenAddr)
@@ -474,6 +650,16 @@ func main() {
 		logTrackerStats(tracker)
 	}
 
+	// Start BSV-related background tasks
+	if bsvSystem != nil {
+		logBSVStats(bsvSystem)
+	}
+
+	// Start Social-related background tasks
+	if socialSystem != nil {
+		logSocialStats(socialSystem)
+	}
+
 	// Log service status
 	log.Printf("=== NERD Daemon Services ===")
 	log.Printf("P2P Network: listening on port %d", cfg.Port)
@@ -486,6 +672,16 @@ func main() {
 		log.Printf("Tracker: HTTP port %d, UDP port %d", cfg.TrackerHTTPPort, cfg.TrackerUDPPort)
 	} else {
 		log.Printf("Tracker: disabled")
+	}
+	if bsvSystem != nil {
+		log.Printf("BSV Payments: enabled on %s (address: %s)", cfg.BSVPayment.NetworkType, bsvSystem.GetAddress())
+	} else {
+		log.Printf("BSV Payments: disabled")
+	}
+	if socialSystem != nil {
+		log.Printf("BSV Social Protocol: enabled")
+	} else {
+		log.Printf("BSV Social Protocol: disabled")
 	}
 	log.Printf("============================")
 

@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>N.E.R.D - Network Endpoint Redistribution Daemon</title>
+    <meta name="description" content="Revolutionary decentralized P2P content delivery with Bitcoin integration and $NERD token economics. The future of Web3 content distribution.">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --nerd-black: #0a0a0a;
+            --nerd-dark: #111111;
+            --nerd-green: #00ff88;
+            --nerd-cyan: #00ffff;
+            --nerd-blue: #0088ff;
+            --nerd-gradient: linear-gradient(135deg, #00ff88, #00ffff, #0088ff);
+            --nerd-glow: 0 0 20px rgba(0, 255, 136, 0.3);
+        }
+
+        body {
+            font-family: 'SF Mono', 'Monaco', 'Cascadia Code', 'Roboto Mono', monospace;
+            background: var(--nerd-black);
+            background-image: 
+                radial-gradient(circle at 20% 80%, rgba(0, 255, 136, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(0, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(0, 136, 255, 0.1) 0%, transparent 50%);
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(90deg, transparent 79px, rgba(0, 255, 136, 0.03) 81px, transparent 82px),
+                linear-gradient(0deg, transparent 79px, rgba(0, 255, 136, 0.03) 81px, transparent 82px);
+            background-size: 80px 80px;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: var(--nerd-gradient);
+            opacity: 0.05;
+            animation: rotate 30s linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .logo {
+            font-size: 8rem;
+            font-weight: 900;
+            background: var(--nerd-gradient);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 30px rgba(0, 255, 136, 0.5);
+            letter-spacing: 0.2em;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .logo::after {
+            content: 'N.E.R.D';
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: var(--nerd-gradient);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            animation: glitch 3s infinite;
+        }
+
+        @keyframes glitch {
+            0%, 90%, 100% { transform: translate(0); }
+            92% { transform: translate(3px, 0); }
+            94% { transform: translate(-3px, 0); }
+            96% { transform: translate(2px, 0); }
+        }
+
+        .tagline {
+            font-size: 2rem;
+            color: var(--nerd-cyan);
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .description {
+            font-size: 1.3rem;
+            color: rgba(255, 255, 255, 0.8);
+            max-width: 800px;
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 60px;
+        }
+
+        .btn {
+            padding: 20px 40px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: var(--nerd-gradient);
+            color: var(--nerd-black);
+            border: 2px solid transparent;
+        }
+
+        .btn-secondary {
+            background: rgba(0, 0, 0, 0.8);
+            color: var(--nerd-green);
+            border: 2px solid var(--nerd-green);
+        }
+
+        .btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 255, 136, 0.4);
+        }
+
+        .btn-secondary:hover {
+            background: var(--nerd-green);
+            color: var(--nerd-black);
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .feature {
+            background: rgba(17, 17, 17, 0.8);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            backdrop-filter: blur(20px);
+            transition: all 0.3s ease;
+        }
+
+        .feature:hover {
+            transform: translateY(-10px);
+            border-color: var(--nerd-green);
+            box-shadow: var(--nerd-glow);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .feature h3 {
+            color: var(--nerd-green);
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .feature p {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+        }
+
+        .stats {
+            margin: 80px 0;
+            text-align: center;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .stat {
+            background: rgba(17, 17, 17, 0.8);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            border-radius: 15px;
+            padding: 30px 20px;
+            backdrop-filter: blur(20px);
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--nerd-green);
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            color: var(--nerd-cyan);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-size: 0.9rem;
+        }
+
+        .download-section {
+            background: rgba(17, 17, 17, 0.9);
+            border-top: 2px solid var(--nerd-green);
+            padding: 80px 20px;
+            text-align: center;
+        }
+
+        .download-title {
+            font-size: 3rem;
+            background: var(--nerd-gradient);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 30px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .platforms {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 40px;
+        }
+
+        .platform {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid var(--nerd-green);
+            border-radius: 15px;
+            padding: 30px;
+            min-width: 200px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: var(--nerd-green);
+        }
+
+        .platform:hover {
+            transform: translateY(-10px);
+            background: var(--nerd-green);
+            color: var(--nerd-black);
+            box-shadow: 0 20px 40px rgba(0, 255, 136, 0.4);
+        }
+
+        .platform-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .platform-name {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .platform-details {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .footer {
+            background: var(--nerd-black);
+            border-top: 1px solid rgba(0, 255, 136, 0.3);
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        .footer-link {
+            color: var(--nerd-cyan);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-link:hover {
+            color: var(--nerd-green);
+        }
+
+        .footer-text {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+        }
+
+        .coming-soon {
+            background: rgba(136, 0, 255, 0.1);
+            border: 2px solid #8800ff;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 40px auto;
+            max-width: 600px;
+            text-align: center;
+        }
+
+        .coming-soon h3 {
+            color: #8800ff;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        @media (max-width: 768px) {
+            .logo { font-size: 4rem; }
+            .tagline { font-size: 1.5rem; }
+            .description { font-size: 1.1rem; }
+            .cta-buttons { flex-direction: column; align-items: center; }
+            .features { grid-template-columns: 1fr; }
+            .platforms { flex-direction: column; align-items: center; }
+        }
+    </style>
+</head>
+<body>
+    <main class="hero">
+        <h1 class="logo">N.E.R.D</h1>
+        <div class="tagline">Network Endpoint Redistribution Daemon</div>
+        <p class="description">
+            Revolutionary decentralized P2P content delivery with Bitcoin integration and $NERD token economics. 
+            The future of Web3 content distribution is here.
+        </p>
+        
+        <div class="cta-buttons">
+            <a href="#download" class="btn btn-primary">Download N.E.R.D</a>
+            <a href="https://github.com/b0ase/NERD" class="btn btn-secondary">View on GitHub</a>
+        </div>
+
+        <div class="features">
+            <div class="feature">
+                <span class="feature-icon">🌐</span>
+                <h3>P2P Network</h3>
+                <p>BitTorrent-inspired networking with Bitcoin micropayments for truly decentralized content delivery</p>
+            </div>
+            
+            <div class="feature">
+                <span class="feature-icon">₿</span>
+                <h3>Bitcoin Integrated</h3>
+                <p>Every file chunk has a unique Bitcoin address. Content access requires payment, creating a tokenized economy</p>
+            </div>
+            
+            <div class="feature">
+                <span class="feature-icon">🤓</span>
+                <h3>$NERD Tokenomics</h3>
+                <p>Stake $NERD tokens, earn rewards from network fees, and participate in governance decisions</p>
+            </div>
+            
+            <div class="feature">
+                <span class="feature-icon">🔒</span>
+                <h3>HD Wallets</h3>
+                <p>BIP32/BIP44 compliant hierarchical deterministic wallets with advanced Bitcoin address management</p>
+            </div>
+            
+            <div class="feature">
+                <span class="feature-icon">⚡</span>
+                <h3>Real-time DHT</h3>
+                <p>Kademlia-based distributed hash table for peer discovery and content routing without central servers</p>
+            </div>
+            
+            <div class="feature">
+                <span class="feature-icon">🎭</span>
+                <h3>Social Protocol</h3>
+                <p>On-chain social features with BSV signatures, encrypted messaging, and viral reward tracking</p>
+            </div>
+        </div>
+    </main>
+
+    <section class="stats">
+        <div class="stats-grid">
+            <div class="stat">
+                <span class="stat-number">∞</span>
+                <span class="stat-label">Scalability</span>
+            </div>
+            <div class="stat">
+                <span class="stat-number">0%</span>
+                <span class="stat-label">Censorship</span>
+            </div>
+            <div class="stat">
+                <span class="stat-number">100%</span>
+                <span class="stat-label">Decentralized</span>
+            </div>
+            <div class="stat">
+                <span class="stat-number">🤓</span>
+                <span class="stat-label">Nerd Level</span>
+            </div>
+        </div>
+    </section>
+
+    <div class="coming-soon">
+        <h3>🚀 Coming Soon: $NERD Token Launch</h3>
+        <p>
+            Get ready for the evolution to full tokenomics on 1Sat Ordinals! 
+            Early adopters will receive $NERD token airdrops based on network participation.
+            <br><br>
+            <em>"Only nerds will understand... and profit from it"</em> 🤓
+        </p>
+    </div>
+
+    <section id="download" class="download-section">
+        <h2 class="download-title">Download N.E.R.D</h2>
+        <p class="description">
+            Get started with the future of decentralized content delivery. 
+            Choose your platform and join the revolution.
+        </p>
+        
+        <div class="platforms">
+            <a href="https://github.com/b0ase/NERD/releases/latest" class="platform">
+                <span class="platform-icon">🍎</span>
+                <div class="platform-name">macOS</div>
+                <div class="platform-details">DMG • Intel & Apple Silicon</div>
+            </a>
+            
+            <a href="https://github.com/b0ase/NERD/releases/latest" class="platform">
+                <span class="platform-icon">🪟</span>
+                <div class="platform-name">Windows</div>
+                <div class="platform-details">Coming Soon • x64</div>
+            </a>
+            
+            <a href="https://github.com/b0ase/NERD/releases/latest" class="platform">
+                <span class="platform-icon">🐧</span>
+                <div class="platform-name">Linux</div>
+                <div class="platform-details">Coming Soon • AppImage</div>
+            </a>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-links">
+            <a href="https://github.com/b0ase/NERD" class="footer-link">GitHub</a>
+            <a href="https://github.com/b0ase/NERD/wiki" class="footer-link">Documentation</a>
+            <a href="https://github.com/b0ase/NERD/issues" class="footer-link">Support</a>
+            <a href="#" class="footer-link">Community</a>
+        </div>
+        <div class="footer-text">
+            © 2024 N.E.R.D Development Team • Open Source MIT License
+        </div>
+    </footer>
+</body>
+</html> 

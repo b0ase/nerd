@@ -3,30 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BACDS - P2P Content Network</title>
+    <title>N.E.R.D - Network Endpoint Redistribution Daemon</title>
     <link rel="stylesheet" href="styles-simple.css">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>BACDS</h1>
-            <p>Bitcoin Addressed Content Delivery System</p>
+            <h1 data-text="N.E.R.D">N.E.R.D</h1>
+            <p>Network Endpoint Redistribution Daemon</p>
             <div class="security-badge">🌐 Connected to Network</div>
-            <button id="startNerdButton" class="btn primary">Start NERD</button>
+            <div class="daemon-controls">
+                <button id="startNerdButton" class="btn primary">Start NERD</button>
+                <button id="stopNerdButton" class="btn danger">Stop NERD</button>
+                <span class="daemon-status" data-daemon-status>Stopped</span>
+            </div>
         </header>
 
         <main class="two-column-grid">
             <!-- LEFT COLUMN: 3 sections -->
-            <div class="grid-item">
+            <div class="left-column">
                 <!-- Wallet Management -->
                 <section class="wallet-section collapsible-section">
-                    <div class="section-header" data-target="wallet-content">
+                    <div class="section-header expanded" data-target="wallet-content">
                         <h2>💼 Wallet Management</h2>
-                        <span class="collapse-toggle">▶</span>
+                        <span class="collapse-toggle">▼</span>
                     </div>
-                    <div class="section-content collapsed" id="wallet-content">
+                    <div class="section-content" id="wallet-content">
                         <div class="wallet-status" id="walletStatus">
                             <div class="loading">Loading wallet status...</div>
+                        </div>
+                        
+                        <!-- Debug Section -->
+                        <div class="debug-section" style="background: rgba(0, 20, 10, 0.8); padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid var(--nerd-green);">
+                            <h4>🔧 Debug Tools</h4>
+                            <button onclick="testWalletStatus()" class="btn small secondary">Test Wallet Status</button>
+                            <button onclick="testDaemonStatus()" class="btn small secondary">Test Daemon Status</button>
+                            <button onclick="testStartDaemon()" class="btn small primary">Start Daemon</button>
+                            <button onclick="testStopDaemon()" class="btn small danger">Stop Daemon</button>
+                            <div id="debugOutput" style="margin-top: 10px; font-family: 'SF Mono', monospace; font-size: 12px; color: var(--nerd-green);"></div>
                         </div>
                         
                         <!-- Private Key Import Section (RESTORED) -->
@@ -53,6 +67,47 @@
                             <button id="backupWallet" class="btn success">Backup Wallet</button>
                             <button id="restoreWallet" class="btn warning">Restore Wallet</button>
                             <button id="deleteWallet" class="btn danger">Delete Wallet</button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Feed Section -->
+                <section class="feed-section collapsible-section">
+                    <div class="section-header expanded" data-target="feed-content">
+                        <h2>📱 Feed</h2>
+                        <span class="collapse-toggle">▼</span>
+                    </div>
+                    <div class="section-content" id="feed-content">
+                        <!-- Post Composer -->
+                        <div class="post-composer">
+                            <div class="composer-header">
+                                <h4>💬 Share Your Thoughts</h4>
+                            </div>
+                            <div class="composer-body">
+                                <textarea 
+                                    id="postContent" 
+                                    placeholder="What's happening? Share your thoughts..."
+                                    class="composer-textarea"
+                                    rows="3"></textarea>
+                                <div class="composer-actions">
+                                    <div class="composer-options">
+                                        <button class="composer-option" id="addLink">🔗 Link</button>
+                                        <button class="composer-option" id="addImage">🖼️ Image</button>
+                                        <button class="composer-option" id="addPoll">📊 Poll</button>
+                                    </div>
+                                    <button id="publishPost" class="btn primary">Post</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Social Feed -->
+                        <div class="social-feed" id="socialFeedContainer">
+                            <div class="empty-state">
+                                <div class="empty-icon">👋</div>
+                                <h4>Welcome to N.E.R.D Social!</h4>
+                                <p>Follow creators and engage with content to see posts here</p>
+                                <button class="btn secondary" id="exploreCreators">Explore Creators</button>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -88,25 +143,61 @@
                         </div>
                         
                         <div class="search-results" id="searchResults">
-                            <div class="empty-state">Enter search terms to find content on the network</div>
+                            <div class="empty-state">Enter search terms to find content on the N.E.R.D network</div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Discover Section -->
+                <section class="discover-section collapsible-section">
+                    <div class="section-header expanded" data-target="discover-content">
+                        <h2>🌟 Discover</h2>
+                        <span class="collapse-toggle">▼</span>
+                    </div>
+                    <div class="section-content" id="discover-content">
+                        <!-- Search & Categories -->
+                        <div class="discover-header">
+                            <h4>🔍 Discover Creators</h4>
+                            <div class="discover-search">
+                                <input type="text" id="creatorSearch" placeholder="Search creators..." class="search-input">
+                                <button id="searchCreators" class="btn secondary">Search</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Creator Categories -->
+                        <div class="creator-categories">
+                            <h5>Popular Categories</h5>
+                            <div class="category-tags">
+                                <span class="category-tag active" data-category="all">All</span>
+                                <span class="category-tag" data-category="developers">Developers</span>
+                                <span class="category-tag" data-category="artists">Artists</span>
+                                <span class="category-tag" data-category="musicians">Musicians</span>
+                                <span class="category-tag" data-category="writers">Writers</span>
+                                <span class="category-tag" data-category="educators">Educators</span>
+                            </div>
+                        </div>
+
+                        <!-- Suggested Creators -->
+                        <div class="suggested-creators" id="suggestedCreators">
+                            <div class="empty-state">Discovering creators on the N.E.R.D network...</div>
                         </div>
                     </div>
                 </section>
 
                 <!-- Content Management -->
-                <section class="file-section collapsible-section">
-                    <div class="section-header" data-target="file-content">
+                <section class="content-section collapsible-section">
+                    <div class="section-header expanded" data-target="content-content">
                         <h2>📁 Content Management</h2>
-                        <span class="collapse-toggle">▶</span>
+                        <span class="collapse-toggle">▼</span>
                     </div>
-                    <div class="section-content collapsed" id="file-content">
+                    <div class="section-content" id="content-content">
                         <!-- Project Setup (RESTORED) -->
                         <div class="project-setup" id="projectSetup">
                             <div class="setup-controls">
                                 <input type="text" id="projectName" placeholder="Enter project name..." class="project-input">
                                 <button id="createProject" class="btn primary">Create Project</button>
                                 <button id="loadProject" class="btn secondary">Load Project</button>
-                                <button id="convertFolder" class="btn warning">Convert Folder to BACDS</button>
+                                <button id="convertFolder" class="btn warning">Convert Folder to N.E.R.D</button>
                                 <button id="upgradeProject" class="btn warning" style="display: none;">Upgrade to New Format</button>
                             </div>
                             <div class="project-status" id="projectStatus">
@@ -129,13 +220,85 @@
                     </div>
                 </section>
 
-                <!-- Token Management -->
-                <section class="token-management-section collapsible-section">
-                    <div class="section-header" data-target="token-management-content">
-                        <h2>🔧 Token Management</h2>
-                        <span class="collapse-toggle">▶</span>
+                <!-- Profile Section -->
+                <section class="profile-section collapsible-section">
+                    <div class="section-header expanded" data-target="profile-content">
+                        <h2>👤 Profile</h2>
+                        <span class="collapse-toggle">▼</span>
                     </div>
-                    <div class="section-content collapsed" id="token-management-content">
+                    <div class="section-content" id="profile-content">
+                        <!-- Profile Editor -->
+                        <div class="profile-editor">
+                            <h4>👤 Your Creator Profile</h4>
+                            <div class="profile-form">
+                                <div class="profile-avatar">
+                                    <div class="avatar-preview" id="avatarPreview">
+                                        <span class="avatar-placeholder">📸</span>
+                                    </div>
+                                    <button class="btn secondary" id="uploadAvatar">Change Avatar</button>
+                                </div>
+                                
+                                <div class="profile-fields">
+                                    <div class="input-group">
+                                        <label>Display Name:</label>
+                                        <input type="text" id="displayName" placeholder="Your name" class="form-input">
+                                    </div>
+                                    <div class="input-group">
+                                        <label>Bio:</label>
+                                        <textarea id="profileBio" placeholder="Tell people about yourself..." class="form-textarea" rows="3"></textarea>
+                                    </div>
+                                    <div class="input-group">
+                                        <label>Website:</label>
+                                        <input type="url" id="profileWebsite" placeholder="https://your-website.com" class="form-input">
+                                    </div>
+                                    <div class="input-group">
+                                        <label>Categories:</label>
+                                        <select id="profileCategory" class="form-select">
+                                            <option value="developer">Developer</option>
+                                            <option value="artist">Artist</option>
+                                            <option value="musician">Musician</option>
+                                            <option value="writer">Writer</option>
+                                            <option value="educator">Educator</option>
+                                            <option value="other">Other</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="profile-actions">
+                                    <button id="saveProfile" class="btn primary">Save Profile</button>
+                                    <button id="previewProfile" class="btn secondary">Preview</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Profile Analytics -->
+                        <div class="profile-analytics">
+                            <h5>📊 Profile Analytics</h5>
+                            <div class="analytics-grid">
+                                <div class="analytics-item">
+                                    <span class="analytics-value" id="profileViews">0</span>
+                                    <span class="analytics-label">Profile Views</span>
+                                </div>
+                                <div class="analytics-item">
+                                    <span class="analytics-value" id="contentInteractions">0</span>
+                                    <span class="analytics-label">Content Interactions</span>
+                                </div>
+                                <div class="analytics-item">
+                                    <span class="analytics-value" id="socialTips">0 $NERD</span>
+                                    <span class="analytics-label">Tips Received</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Token Management -->
+                <section class="token-section collapsible-section">
+                    <div class="section-header expanded" data-target="token-content">
+                        <h2>🪙 Token Management</h2>
+                        <span class="collapse-toggle">▼</span>
+                    </div>
+                    <div class="section-content" id="token-content">
                         <!-- Token Issuance -->
                         <div class="token-issuance">
                             <h4>Issue Tokens for Content</h4>
@@ -231,43 +394,103 @@
             </div>
 
             <!-- RIGHT COLUMN: 4 sections -->
-            <div class="grid-item">
+            <div class="right-column">
                 <!-- Earnings -->
                 <section class="earnings-section collapsible-section">
-                    <div class="section-header" data-target="earnings-content">
+                    <div class="section-header expanded" data-target="earnings-content">
                         <h2>💰 Earnings</h2>
-                        <span class="collapse-toggle">▶</span>
+                        <span class="collapse-toggle">▼</span>
                     </div>
-                    <div class="section-content collapsed" id="earnings-content">
-                        <div class="earnings-summary">
-                            <div class="earning-stat">
-                                <span class="earning-amount" id="totalEarnings">$0.00</span>
-                                <span class="earning-label">Total Earnings</span>
+                    <div class="section-content" id="earnings-content">
+                        <!-- Earnings content here -->
+                        <p>Earnings tracking will be implemented here.</p>
+                    </div>
+                </section>
+
+                <!-- Market Section -->
+                <section class="market-section collapsible-section">
+                    <div class="section-header expanded" data-target="market-content">
+                        <h2>📊 Market</h2>
+                        <span class="collapse-toggle">▼</span>
+                    </div>
+                    <div class="section-content" id="market-content">
+                        <!-- Portfolio Overview -->
+                        <div class="portfolio-overview">
+                            <h4>💰 Portfolio Overview</h4>
+                            <div class="portfolio-summary">
+                                <div class="total-value">
+                                    <span class="value-label">Total Portfolio Value</span>
+                                    <span class="total-amount" id="totalPortfolioValue">$0.00</span>
+                                </div>
+                                <div class="portfolio-change">
+                                    <span class="change-label">24h Change</span>
+                                    <span class="change-amount positive" id="portfolioChange">+$0.00 (0%)</span>
+                                </div>
                             </div>
-                            <div class="earning-stat">
-                                <span class="earning-amount" id="monthlyEarnings">$0.00</span>
-                                <span class="earning-label">This Month</span>
-                            </div>
-                            <div class="earning-stat">
-                                <span class="earning-amount" id="activeListings">0</span>
-                                <span class="earning-label">Active Listings</span>
+                            
+                            <!-- Quick Actions -->
+                            <div class="market-actions">
+                                <button class="btn primary" id="refreshPrices">🔄 Refresh Prices</button>
+                                <button class="btn secondary" id="exportPortfolio">📊 Export Data</button>
                             </div>
                         </div>
-                        
-                        <div class="pricing-controls">
-                            <h3>Set Content Pricing</h3>
-                            <div class="price-setting">
-                                <label>Default price for new content:</label>
-                                <div class="price-input-group">
-                                    <span class="currency-symbol">$</span>
-                                    <input type="number" id="defaultPrice" placeholder="0.00" step="0.01" min="0" class="price-input">
-                                    <button id="updatePricing" class="btn secondary">Update</button>
+
+                        <!-- Token Categories -->
+                        <!-- Platform Token: $NERD -->
+                        <div class="token-category">
+                            <div class="category-header">
+                                <h5>🚀 Platform Token</h5>
+                                <span class="category-count" id="platformTokenCount">1 token</span>
+                            </div>
+                            <div class="token-list" id="platformTokens">
+                                <div class="token-item featured">
+                                    <div class="token-info">
+                                        <div class="token-icon">🤖</div>
+                                        <div class="token-details">
+                                            <div class="token-name">$NERD</div>
+                                            <div class="token-description">Network Endpoint Redistribution Daemon</div>
+                                        </div>
+                                    </div>
+                                    <div class="token-market">
+                                        <div class="token-price" id="nerdPrice">$0.0000</div>
+                                        <div class="token-change positive" id="nerdChange">+0.00%</div>
+                                        <div class="token-holdings">
+                                            <span class="holdings-amount" id="nerdHoldings">0 $NERD</span>
+                                            <span class="holdings-value" id="nerdValue">$0.00</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        
-                        <div class="earnings-history" id="earningsHistory">
-                            <div class="empty-state">No earnings yet. Share content to start earning!</div>
+
+                        <!-- Content Tokens -->
+                        <div class="token-category">
+                            <div class="category-header">
+                                <h5>🎨 Content Tokens</h5>
+                                <span class="category-count" id="contentTokenCount">0 tokens</span>
+                            </div>
+                            <div class="token-list" id="contentTokens">
+                                <div class="empty-state">
+                                    <div class="empty-icon">📝</div>
+                                    <p>No content tokens in portfolio</p>
+                                    <button class="btn secondary" id="browseContent">Browse Content</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Distributor Tokens -->
+                        <div class="token-category">
+                            <div class="category-header">
+                                <h5>📡 Distributor Tokens</h5>
+                                <span class="category-count" id="distributorTokenCount">0 tokens</span>
+                            </div>
+                            <div class="token-list" id="distributorTokens">
+                                <div class="empty-state">
+                                    <div class="empty-icon">🌐</div>
+                                    <p>No distributor tokens in portfolio</p>
+                                    <button class="btn secondary" id="becomeDistributor">Become a Distributor</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -279,163 +502,196 @@
                         <span class="collapse-toggle">▼</span>
                     </div>
                     <div class="section-content" id="library-content">
-                        <!-- Library Stats -->
-                        <div class="library-stats" id="libraryStats">
-                            <div class="stat-item">
-                                <span class="stat-number" id="totalFiles">0</span>
-                                <span class="stat-label">Total Files</span>
+                        <!-- Library content here -->
+                        <p>Content library will be implemented here.</p>
+                    </div>
+                </section>
+
+                <!-- Mint Section -->
+                <section class="mint-section collapsible-section">
+                    <div class="section-header expanded" data-target="mint-content">
+                        <h2>🏭 Mint</h2>
+                        <span class="collapse-toggle">▼</span>
+                    </div>
+                    <div class="section-content" id="mint-content">
+                        <!-- Token Creator -->
+                        <div class="token-creator">
+                            <h4>🏭 Create New Token</h4>
+                            
+                            <!-- Token Type Selection -->
+                            <div class="token-type-selection">
+                                <h5>Select Token Type</h5>
+                                <div class="token-type-options">
+                                    <div class="token-type-option active" data-type="content">
+                                        <div class="type-icon">🎨</div>
+                                        <div class="type-info">
+                                            <div class="type-name">Content Token</div>
+                                            <div class="type-description">For digital content, art, media</div>
+                                        </div>
+                                    </div>
+                                    <div class="token-type-option" data-type="distributor">
+                                        <div class="type-icon">📡</div>
+                                        <div class="type-info">
+                                            <div class="type-name">Distributor Token</div>
+                                            <div class="type-description">For network nodes, services</div>
+                                        </div>
+                                    </div>
+                                    <div class="token-type-option" data-type="utility">
+                                        <div class="type-icon">🔧</div>
+                                        <div class="type-info">
+                                            <div class="type-name">Utility Token</div>
+                                            <div class="type-description">For platform features, access</div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="stat-item">
-                                <span class="stat-number" id="totalSize">0 GB</span>
-                                <span class="stat-label">Storage Used</span>
-                            </div>
-                            <div class="stat-item">
-                                <span class="stat-number" id="publicFiles">0</span>
-                                <span class="stat-label">Shared Files</span>
+
+                            <!-- Token Configuration -->
+                            <div class="token-config">
+                                <div class="config-section">
+                                    <h5>Token Details</h5>
+                                    <div class="config-fields">
+                                        <div class="input-group">
+                                            <label>Token Name:</label>
+                                            <input type="text" id="tokenName" placeholder="My Awesome Token" class="form-input">
+                                        </div>
+                                        <div class="input-group">
+                                            <label>Token Symbol:</label>
+                                            <input type="text" id="tokenSymbol" placeholder="MAT" class="form-input" maxlength="10">
+                                        </div>
+                                        <div class="input-group">
+                                            <label>Description:</label>
+                                            <textarea id="tokenDescription" placeholder="Describe your token..." class="form-textarea" rows="3"></textarea>
+                                        </div>
+                                        <div class="input-group">
+                                            <label>Total Supply:</label>
+                                            <input type="number" id="tokenSupply" placeholder="1000000" class="form-input" min="1">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="config-section">
+                                    <h5>Token Economics</h5>
+                                    <div class="config-fields">
+                                        <div class="input-group">
+                                            <label>Initial Price (BSV):</label>
+                                            <input type="number" id="initialPrice" placeholder="0.001" class="form-input" step="0.000001">
+                                        </div>
+                                        <div class="input-group">
+                                            <label>Mint Cost ($NERD):</label>
+                                            <input type="number" id="mintCost" value="100" class="form-input" readonly>
+                                            <small class="help-text">Standard minting fee</small>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mint-actions">
+                                    <button id="previewToken" class="btn secondary">👁️ Preview Token</button>
+                                    <button id="mintToken" class="btn primary">🏭 Mint Token</button>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Library Tabs -->
-                        <div class="library-tabs">
-                            <button class="library-tab active" data-tab="my-content">My Content</button>
-                            <button class="library-tab" data-tab="others-content">Others' Content</button>
-                            <button class="library-tab" data-tab="commercial-content">Commercial Content</button>
+                        <!-- Token Templates -->
+                        <div class="token-templates">
+                            <h5>🎯 Quick Templates</h5>
+                            <div class="template-list">
+                                <div class="template-item" data-template="artwork">
+                                    <div class="template-icon">🖼️</div>
+                                    <div class="template-info">
+                                        <div class="template-name">Digital Artwork</div>
+                                        <div class="template-desc">For art, images, NFTs</div>
+                                    </div>
+                                </div>
+                                <div class="template-item" data-template="music">
+                                    <div class="template-icon">🎵</div>
+                                    <div class="template-info">
+                                        <div class="template-name">Music Token</div>
+                                        <div class="template-desc">For songs, albums, audio</div>
+                                    </div>
+                                </div>
+                                <div class="template-item" data-template="video">
+                                    <div class="template-icon">🎬</div>
+                                    <div class="template-info">
+                                        <div class="template-name">Video Content</div>
+                                        <div class="template-desc">For videos, courses, media</div>
+                                    </div>
+                                </div>
+                                <div class="template-item" data-template="service">
+                                    <div class="template-icon">⚙️</div>
+                                    <div class="template-info">
+                                        <div class="template-name">Service Token</div>
+                                        <div class="template-desc">For services, access rights</div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
-                        <!-- My Content Tab -->
-                        <div class="library-tab-content active" id="my-content">
-                            <div class="library-controls">
-                                <button id="addContent" class="btn primary">Add Content</button>
-                                <button id="importFolder" class="btn secondary">Import Folder</button>
-                                <button id="createCollection" class="btn secondary">New Collection</button>
-                            </div>
-                            <div class="library-grid" id="myContentGrid">
-                                <div class="empty-state">Your content library is empty. Add some files to get started!</div>
-                            </div>
-                        </div>
-
-                        <!-- Others' Content Tab -->
-                        <div class="library-tab-content" id="others-content">
-                            <div class="library-controls">
-                                <button id="refreshOthers" class="btn primary">Refresh</button>
-                                <button id="downloadSelected" class="btn secondary">Download Selected</button>
-                            </div>
-                            <div class="library-grid" id="othersContentGrid">
-                                <div class="empty-state">No content from other users discovered yet. Search the network to find content!</div>
-                            </div>
-                        </div>
-
-                        <!-- Commercial Content Tab -->
-                        <div class="library-tab-content" id="commercial-content">
-                            <div class="library-controls">
-                                <button id="browseMarketplace" class="btn primary">Browse Marketplace</button>
-                                <button id="myPurchases" class="btn secondary">My Purchases</button>
-                            </div>
-                            <div class="library-grid" id="commercialContentGrid">
-                                <div class="empty-state">No commercial content yet. Browse the marketplace to discover paid content!</div>
+                        <!-- Recent Mints -->
+                        <div class="recent-mints">
+                            <h5>📋 Your Recent Mints</h5>
+                            <div class="mint-history" id="mintHistory">
+                                <div class="empty-state">
+                                    <div class="empty-icon">🏭</div>
+                                    <p>No tokens minted yet</p>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </section>
 
                 <!-- Content Address Mapping -->
-                <section class="mapping-section collapsible-section">
-                    <div class="section-header" data-target="mapping-content">
+                <section class="address-mapping-section collapsible-section">
+                    <div class="section-header expanded" data-target="address-mapping-content">
                         <h2>🔗 Content Address Mapping</h2>
-                        <span class="collapse-toggle">▶</span>
+                        <span class="collapse-toggle">▼</span>
                     </div>
-                    <div class="section-content collapsed" id="mapping-content">
-                        <p>Files are automatically assigned unique Bitcoin-style addresses for content identification</p>
-                        
-                        <!-- Address Generation Controls (integrated from Content Addresses) -->
-                        <div class="address-controls">
-                            <button id="newAddress" class="btn primary">Generate Address</button>
-                            <button id="showAddresses" class="btn secondary">View All Addresses</button>
+                    <div class="section-content" id="address-mapping-content">
+                        <!-- Address mapping content here -->
+                        <p>Content address mapping will be implemented here.</p>
+                    </div>
+                </section>
+
+                <!-- Notifications Section -->
+                <section class="notifications-section collapsible-section">
+                    <div class="section-header expanded" data-target="notifications-content">
+                        <h2>🔔 Notifications</h2>
+                        <span class="collapse-toggle">▼</span>
+                    </div>
+                    <div class="section-content" id="notifications-content">
+                        <!-- Filters & Actions -->
+                        <div class="notifications-header">
+                            <h4>🔔 Notifications</h4>
+                            <div class="notification-actions">
+                                <button class="btn secondary" id="markAllRead">Mark All Read</button>
+                                <button class="btn secondary" id="notificationSettings">Settings</button>
+                            </div>
                         </div>
                         
-                        <!-- Address List (integrated from Content Addresses) -->
-                        <div class="address-list" id="addressList"></div>
-                        
-                        <!-- File Mapping List -->
-                        <div class="mapping-list" id="mappingList"></div>
+                        <div class="notification-filters">
+                            <button class="filter-btn active" data-filter="all">All</button>
+                            <button class="filter-btn" data-filter="likes">Likes</button>
+                            <button class="filter-btn" data-filter="comments">Comments</button>
+                            <button class="filter-btn" data-filter="follows">Follows</button>
+                            <button class="filter-btn" data-filter="tips">Tips</button>
+                        </div>
+
+                        <!-- Notifications List -->
+                        <div class="notifications-list" id="notificationsList">
+                            <div class="empty-state">No notifications yet</div>
+                        </div>
                     </div>
                 </section>
 
                 <!-- Token Library -->
                 <section class="token-library-section collapsible-section">
-                    <div class="section-header" data-target="token-library-content">
-                        <h2>🏦 Token Library</h2>
-                        <span class="collapse-toggle">▶</span>
+                    <div class="section-header expanded" data-target="token-library-content">
+                        <h2>💰 Token Library</h2>
+                        <span class="collapse-toggle">▼</span>
                     </div>
-                    <div class="section-content collapsed" id="token-library-content">
-                        <!-- Token Balances -->
-                        <div class="token-balances">
-                            <div class="token-balance-item">
-                                <div class="token-icon">🤓</div>
-                                <div class="token-info">
-                                    <span class="token-name">$NERD</span>
-                                    <span class="token-balance" id="nerdBalance">0</span>
-                                </div>
-                                <div class="token-value">
-                                    <span class="token-usd-value" id="nerdUsdValue">$0.00</span>
-                                </div>
-                            </div>
-                            <div class="token-balance-item">
-                                <div class="token-icon">₿</div>
-                                <div class="token-info">
-                                    <span class="token-name">BSV</span>
-                                    <span class="token-balance" id="bsvBalance">0.00000000</span>
-                                </div>
-                                <div class="token-value">
-                                    <span class="token-usd-value" id="bsvUsdValue">$0.00</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Token Operations -->
-                        <div class="token-operations">
-                            <button id="stakeTokens" class="btn primary">Stake $NERD</button>
-                            <button id="unstakeTokens" class="btn secondary">Unstake</button>
-                            <button id="buyTokens" class="btn secondary">Buy $NERD</button>
-                            <button id="sellTokens" class="btn warning">Sell $NERD</button>
-                        </div>
-
-                        <!-- Staking Info -->
-                        <div class="staking-info" id="stakingInfo">
-                            <div class="staking-stat">
-                                <span class="staking-amount" id="stakedAmount">0</span>
-                                <span class="staking-label">Staked $NERD</span>
-                            </div>
-                            <div class="staking-stat">
-                                <span class="staking-amount" id="stakingRewards">0.00</span>
-                                <span class="staking-label">Pending Rewards</span>
-                            </div>
-                            <div class="staking-stat">
-                                <span class="staking-amount" id="stakingApy">0.0%</span>
-                                <span class="staking-label">Current APY</span>
-                            </div>
-                        </div>
-
-                        <!-- Token History -->
-                        <div class="token-history" id="tokenHistory">
-                            <h4>Recent Transactions</h4>
-                            <div class="history-list" id="tokenHistoryList">
-                                <div class="empty-state">No token transactions yet</div>
-                            </div>
-                        </div>
-
-                        <!-- Governance -->
-                        <div class="governance-section" id="governanceSection">
-                            <h4>🗳️ Governance</h4>
-                            <div class="governance-stats">
-                                <span class="governance-power" id="votingPower">0</span>
-                                <span class="governance-label">Voting Power</span>
-                            </div>
-                            <div class="governance-actions">
-                                <button id="viewProposals" class="btn secondary">View Proposals</button>
-                                <button id="submitProposal" class="btn secondary">Submit Proposal</button>
-                            </div>
-                        </div>
+                    <div class="section-content" id="token-library-content">
+                        <!-- Token library content here -->
+                        <p>Token library will be implemented here.</p>
                     </div>
                 </section>
             </div>

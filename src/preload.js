@@ -7,6 +7,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     generateWallet: () => ipcRenderer.invoke('wallet:generate'),
     loadWallet: () => ipcRenderer.invoke('wallet:load'),
     getWalletStatus: () => ipcRenderer.invoke('wallet:status'),
+    initializeWalletAsync: () => ipcRenderer.invoke('wallet:initializeAsync'),
     getMasterSeed: () => ipcRenderer.invoke('wallet:getMasterSeed'),
     createBackup: () => ipcRenderer.invoke('wallet:createBackup'),
     deleteWallet: () => ipcRenderer.invoke('wallet:delete'),
@@ -29,5 +30,10 @@ contextBridge.exposeInMainWorld('electronAPI', {
     storeFile: (projectPath, fileName, fileBuffer, address) => ipcRenderer.invoke('project:storeFile', projectPath, fileName, fileBuffer, address),
     
     // Utility operations
-    getDataDir: () => ipcRenderer.invoke('util:getDataDir')
+    getDataDir: () => ipcRenderer.invoke('util:getDataDir'),
+    
+    // NERD Daemon operations
+    startNerdDaemon: () => ipcRenderer.invoke('daemon:start'),
+    stopNerdDaemon: () => ipcRenderer.invoke('daemon:stop'),
+    getNerdDaemonStatus: () => ipcRenderer.invoke('daemon:status')
 }); 

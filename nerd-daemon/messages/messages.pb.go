@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.6
 // 	protoc        v5.29.3
-// source: messages.proto
+// source: messages/messages.proto
 
 package messages
 
@@ -33,7 +33,7 @@ type Message struct {
 
 func (x *Message) Reset() {
 	*x = Message{}
-	mi := &file_messages_proto_msgTypes[0]
+	mi := &file_messages_messages_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -45,7 +45,7 @@ func (x *Message) String() string {
 func (*Message) ProtoMessage() {}
 
 func (x *Message) ProtoReflect() protoreflect.Message {
-	mi := &file_messages_proto_msgTypes[0]
+	mi := &file_messages_messages_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -58,7 +58,7 @@ func (x *Message) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Message.ProtoReflect.Descriptor instead.
 func (*Message) Descriptor() ([]byte, []int) {
-	return file_messages_proto_rawDescGZIP(), []int{0}
+	return file_messages_messages_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *Message) GetLength() uint32 {
@@ -96,7 +96,7 @@ type HandshakeMsg struct {
 
 func (x *HandshakeMsg) Reset() {
 	*x = HandshakeMsg{}
-	mi := &file_messages_proto_msgTypes[1]
+	mi := &file_messages_messages_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -108,7 +108,7 @@ func (x *HandshakeMsg) String() string {
 func (*HandshakeMsg) ProtoMessage() {}
 
 func (x *HandshakeMsg) ProtoReflect() protoreflect.Message {
-	mi := &file_messages_proto_msgTypes[1]
+	mi := &file_messages_messages_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -121,7 +121,7 @@ func (x *HandshakeMsg) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use HandshakeMsg.ProtoReflect.Descriptor instead.
 func (*HandshakeMsg) Descriptor() ([]byte, []int) {
-	return file_messages_proto_rawDescGZIP(), []int{1}
+	return file_messages_messages_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *HandshakeMsg) GetProtocolString() []byte {
@@ -161,7 +161,7 @@ type KeepAliveMsg struct {
 
 func (x *KeepAliveMsg) Reset() {
 	*x = KeepAliveMsg{}
-	mi := &file_messages_proto_msgTypes[2]
+	mi := &file_messages_messages_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -173,7 +173,7 @@ func (x *KeepAliveMsg) String() string {
 func (*KeepAliveMsg) ProtoMessage() {}
 
 func (x *KeepAliveMsg) ProtoReflect() protoreflect.Message {
-	mi := &file_messages_proto_msgTypes[2]
+	mi := &file_messages_messages_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -186,7 +186,7 @@ func (x *KeepAliveMsg) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use KeepAliveMsg.ProtoReflect.Descriptor instead.
 func (*KeepAliveMsg) Descriptor() ([]byte, []int) {
-	return file_messages_proto_rawDescGZIP(), []int{2}
+	return file_messages_messages_proto_rawDescGZIP(), []int{2}
 }
 
 // ChokeMsg indicates that the sender is choking the receiver
@@ -198,7 +198,7 @@ type ChokeMsg struct {
 
 func (x *ChokeMsg) Reset() {
 	*x = ChokeMsg{}
-	mi := &file_messages_proto_msgTypes[3]
+	mi := &file_messages_messages_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -210,7 +210,7 @@ func (x *ChokeMsg) String() string {
 func (*ChokeMsg) ProtoMessage() {}
 
 func (x *ChokeMsg) ProtoReflect() protoreflect.Message {
-	mi := &file_messages_proto_msgTypes[3]
+	mi := &file_messages_messages_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -223,7 +223,7 @@ func (x *ChokeMsg) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ChokeMsg.ProtoReflect.Descriptor instead.
 func (*ChokeMsg) Descriptor() ([]byte, []int) {
-	return file_messages_proto_rawDescGZIP(), []int{3}
+	return file_messages_messages_proto_rawDescGZIP(), []int{3}
 }
 
 // UnchokeMsg indicates that the sender is unchoking the receiver
@@ -235,7 +235,7 @@ type UnchokeMsg struct {
 
 func (x *UnchokeMsg) Reset() {
 	*x = UnchokeMsg{}
-	mi := &file_messages_proto_msgTypes[4]
+	mi := &file_messages_messages_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -247,7 +247,7 @@ func (x *UnchokeMsg) String() string {
 func (*UnchokeMsg) ProtoMessage() {}
 
 func (x *UnchokeMsg) ProtoReflect() protoreflect.Message {
-	mi := &file_messages_proto_msgTypes[4]
+	mi := &file_messages_messages_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -260,7 +260,7 @@ func (x *UnchokeMsg) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UnchokeMsg.ProtoReflect.Descriptor instead.
 func (*UnchokeMsg) Descriptor() ([]byte, []int) {
-	return file_messages_proto_rawDescGZIP(), []int{4}
+	return file_messages_messages_proto_rawDescGZIP(), []int{4}
 }
 
 // InterestedMsg indicates that a peer is interested in downloading pieces.
@@ -272,7 +272,7 @@ type InterestedMsg struct {
 
 func (x *InterestedMsg) Reset() {
 	*x = InterestedMsg{}
-	mi := &file_messages_proto_msgTypes[5]
+	mi := &file_messages_messages_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -284,7 +284,7 @@ func (x *InterestedMsg) String() string {
 func (*InterestedMsg) ProtoMessage() {}
 
 func (x *InterestedMsg) ProtoReflect() protoreflect.Message {
-	mi := &file_messages_proto_msgTypes[5]
+	mi := &file_messages_messages_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -297,7 +297,7 @@ func (x *InterestedMsg) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use InterestedMsg.ProtoReflect.Descriptor instead.
 func (*InterestedMsg) Descriptor() ([]byte, []int) {
-	return file_messages_proto_rawDescGZIP(), []int{5}
+	return file_messages_messages_proto_rawDescGZIP(), []int{5}
 }
 
 // NotInterestedMsg indicates that a peer is not interested in downloading
@@ -309,7 +309,7 @@ type NotInterestedMsg struct {
 
 func (x *NotInterestedMsg) Reset() {
 	*x = NotInterestedMsg{}
-	mi := &file_messages_proto_msgTypes[6]
+	mi := &file_messages_messages_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -321,7 +321,7 @@ func (x *NotInterestedMsg) String() string {
 func (*NotInterestedMsg) ProtoMessage() {}
 
 func (x *NotInterestedMsg) ProtoReflect() protoreflect.Message {
-	mi := &file_messages_proto_msgTypes[6]
+	mi := &file_messages_messages_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -334,7 +334,7 @@ func (x *NotInterestedMsg) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use NotInterestedMsg.ProtoReflect.Descriptor instead.
 func (*NotInterestedMsg) Descriptor() ([]byte, []int) {
-	return file_messages_proto_rawDescGZIP(), []int{6}
+	return file_messages_messages_proto_rawDescGZIP(), []int{6}
 }
 
 // HaveMsg indicates that a peer has a complete piece.
@@ -347,7 +347,7 @@ type HaveMsg struct {
 
 func (x *HaveMsg) Reset() {
 	*x = HaveMsg{}
-	mi := &file_messages_proto_msgTypes[7]
+	mi := &file_messages_messages_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -359,7 +359,7 @@ func (x *HaveMsg) String() string {
 func (*HaveMsg) ProtoMessage() {}
 
 func (x *HaveMsg) ProtoReflect() protoreflect.Message {
-	mi := &file_messages_proto_msgTypes[7]
+	mi := &file_messages_messages_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -372,7 +372,7 @@ func (x *HaveMsg) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use HaveMsg.ProtoReflect.Descriptor instead.
 func (*HaveMsg) Descriptor() ([]byte, []int) {
-	return file_messages_proto_rawDescGZIP(), []int{7}
+	return file_messages_messages_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *HaveMsg) GetPieceIndex() uint32 {
@@ -392,7 +392,7 @@ type BitfieldMsg struct {
 
 func (x *BitfieldMsg) Reset() {
 	*x = BitfieldMsg{}
-	mi := &file_messages_proto_msgTypes[8]
+	mi := &file_messages_messages_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -404,7 +404,7 @@ func (x *BitfieldMsg) String() string {
 func (*BitfieldMsg) ProtoMessage() {}
 
 func (x *BitfieldMsg) ProtoReflect() protoreflect.Message {
-	mi := &file_messages_proto_msgTypes[8]
+	mi := &file_messages_messages_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -417,7 +417,7 @@ func (x *BitfieldMsg) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BitfieldMsg.ProtoReflect.Descriptor instead.
 func (*BitfieldMsg) Descriptor() ([]byte, []int) {
-	return file_messages_proto_rawDescGZIP(), []int{8}
+	return file_messages_messages_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *BitfieldMsg) GetBitfield() []byte {
@@ -439,7 +439,7 @@ type RequestMsg struct {
 
 func (x *RequestMsg) Reset() {
 	*x = RequestMsg{}
-	mi := &file_messages_proto_msgTypes[9]
+	mi := &file_messages_messages_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -451,7 +451,7 @@ func (x *RequestMsg) String() string {
 func (*RequestMsg) ProtoMessage() {}
 
 func (x *RequestMsg) ProtoReflect() protoreflect.Message {
-	mi := &file_messages_proto_msgTypes[9]
+	mi := &file_messages_messages_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -464,7 +464,7 @@ func (x *RequestMsg) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RequestMsg.ProtoReflect.Descriptor instead.
 func (*RequestMsg) Descriptor() ([]byte, []int) {
-	return file_messages_proto_rawDescGZIP(), []int{9}
+	return file_messages_messages_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *RequestMsg) GetPieceIndex() uint32 {
@@ -500,7 +500,7 @@ type PieceMsg struct {
 
 func (x *PieceMsg) Reset() {
 	*x = PieceMsg{}
-	mi := &file_messages_proto_msgTypes[10]
+	mi := &file_messages_messages_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -512,7 +512,7 @@ func (x *PieceMsg) String() string {
 func (*PieceMsg) ProtoMessage() {}
 
 func (x *PieceMsg) ProtoReflect() protoreflect.Message {
-	mi := &file_messages_proto_msgTypes[10]
+	mi := &file_messages_messages_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -525,7 +525,7 @@ func (x *PieceMsg) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PieceMsg.ProtoReflect.Descriptor instead.
 func (*PieceMsg) Descriptor() ([]byte, []int) {
-	return file_messages_proto_rawDescGZIP(), []int{10}
+	return file_messages_messages_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *PieceMsg) GetPieceIndex() uint32 {
@@ -561,7 +561,7 @@ type CancelMsg struct {
 
 func (x *CancelMsg) Reset() {
 	*x = CancelMsg{}
-	mi := &file_messages_proto_msgTypes[11]
+	mi := &file_messages_messages_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -573,7 +573,7 @@ func (x *CancelMsg) String() string {
 func (*CancelMsg) ProtoMessage() {}
 
 func (x *CancelMsg) ProtoReflect() protoreflect.Message {
-	mi := &file_messages_proto_msgTypes[11]
+	mi := &file_messages_messages_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -586,7 +586,7 @@ func (x *CancelMsg) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CancelMsg.ProtoReflect.Descriptor instead.
 func (*CancelMsg) Descriptor() ([]byte, []int) {
-	return file_messages_proto_rawDescGZIP(), []int{11}
+	return file_messages_messages_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *CancelMsg) GetPieceIndex() uint32 {
@@ -620,7 +620,7 @@ type PortMsg struct {
 
 func (x *PortMsg) Reset() {
 	*x = PortMsg{}
-	mi := &file_messages_proto_msgTypes[12]
+	mi := &file_messages_messages_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -632,7 +632,7 @@ func (x *PortMsg) String() string {
 func (*PortMsg) ProtoMessage() {}
 
 func (x *PortMsg) ProtoReflect() protoreflect.Message {
-	mi := &file_messages_proto_msgTypes[12]
+	mi := &file_messages_messages_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -645,7 +645,7 @@ func (x *PortMsg) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PortMsg.ProtoReflect.Descriptor instead.
 func (*PortMsg) Descriptor() ([]byte, []int) {
-	return file_messages_proto_rawDescGZIP(), []int{12}
+	return file_messages_messages_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *PortMsg) GetPort() uint32 {
@@ -668,7 +668,7 @@ type PaymentRequestMsg struct {
 
 func (x *PaymentRequestMsg) Reset() {
 	*x = PaymentRequestMsg{}
-	mi := &file_messages_proto_msgTypes[13]
+	mi := &file_messages_messages_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -680,7 +680,7 @@ func (x *PaymentRequestMsg) String() string {
 func (*PaymentRequestMsg) ProtoMessage() {}
 
 func (x *PaymentRequestMsg) ProtoReflect() protoreflect.Message {
-	mi := &file_messages_proto_msgTypes[13]
+	mi := &file_messages_messages_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -693,7 +693,7 @@ func (x *PaymentRequestMsg) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PaymentRequestMsg.ProtoReflect.Descriptor instead.
 func (*PaymentRequestMsg) Descriptor() ([]byte, []int) {
-	return file_messages_proto_rawDescGZIP(), []int{13}
+	return file_messages_messages_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *PaymentRequestMsg) GetBsvAddress() []byte {
@@ -736,7 +736,7 @@ type PaymentProofMsg struct {
 
 func (x *PaymentProofMsg) Reset() {
 	*x = PaymentProofMsg{}
-	mi := &file_messages_proto_msgTypes[14]
+	mi := &file_messages_messages_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -748,7 +748,7 @@ func (x *PaymentProofMsg) String() string {
 func (*PaymentProofMsg) ProtoMessage() {}
 
 func (x *PaymentProofMsg) ProtoReflect() protoreflect.Message {
-	mi := &file_messages_proto_msgTypes[14]
+	mi := &file_messages_messages_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -761,7 +761,7 @@ func (x *PaymentProofMsg) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PaymentProofMsg.ProtoReflect.Descriptor instead.
 func (*PaymentProofMsg) Descriptor() ([]byte, []int) {
-	return file_messages_proto_rawDescGZIP(), []int{14}
+	return file_messages_messages_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *PaymentProofMsg) GetTransactionId() []byte {
@@ -798,7 +798,7 @@ type TokenBalanceMsg struct {
 
 func (x *TokenBalanceMsg) Reset() {
 	*x = TokenBalanceMsg{}
-	mi := &file_messages_proto_msgTypes[15]
+	mi := &file_messages_messages_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -810,7 +810,7 @@ func (x *TokenBalanceMsg) String() string {
 func (*TokenBalanceMsg) ProtoMessage() {}
 
 func (x *TokenBalanceMsg) ProtoReflect() protoreflect.Message {
-	mi := &file_messages_proto_msgTypes[15]
+	mi := &file_messages_messages_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -823,7 +823,7 @@ func (x *TokenBalanceMsg) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TokenBalanceMsg.ProtoReflect.Descriptor instead.
 func (*TokenBalanceMsg) Descriptor() ([]byte, []int) {
-	return file_messages_proto_rawDescGZIP(), []int{15}
+	return file_messages_messages_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *TokenBalanceMsg) GetNerdBalance() uint64 {
@@ -869,7 +869,7 @@ type QualityMetricsMsg struct {
 
 func (x *QualityMetricsMsg) Reset() {
 	*x = QualityMetricsMsg{}
-	mi := &file_messages_proto_msgTypes[16]
+	mi := &file_messages_messages_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -881,7 +881,7 @@ func (x *QualityMetricsMsg) String() string {
 func (*QualityMetricsMsg) ProtoMessage() {}
 
 func (x *QualityMetricsMsg) ProtoReflect() protoreflect.Message {
-	mi := &file_messages_proto_msgTypes[16]
+	mi := &file_messages_messages_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -894,7 +894,7 @@ func (x *QualityMetricsMsg) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use QualityMetricsMsg.ProtoReflect.Descriptor instead.
 func (*QualityMetricsMsg) Descriptor() ([]byte, []int) {
-	return file_messages_proto_rawDescGZIP(), []int{16}
+	return file_messages_messages_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *QualityMetricsMsg) GetUptimeSeconds() uint64 {
@@ -953,7 +953,7 @@ type GeographicHintMsg struct {
 
 func (x *GeographicHintMsg) Reset() {
 	*x = GeographicHintMsg{}
-	mi := &file_messages_proto_msgTypes[17]
+	mi := &file_messages_messages_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -965,7 +965,7 @@ func (x *GeographicHintMsg) String() string {
 func (*GeographicHintMsg) ProtoMessage() {}
 
 func (x *GeographicHintMsg) ProtoReflect() protoreflect.Message {
-	mi := &file_messages_proto_msgTypes[17]
+	mi := &file_messages_messages_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -978,7 +978,7 @@ func (x *GeographicHintMsg) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GeographicHintMsg.ProtoReflect.Descriptor instead.
 func (*GeographicHintMsg) Descriptor() ([]byte, []int) {
-	return file_messages_proto_rawDescGZIP(), []int{17}
+	return file_messages_messages_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *GeographicHintMsg) GetCountryCode() string {
@@ -1016,11 +1016,880 @@ func (x *GeographicHintMsg) GetAsNumber() uint32 {
 	return 0
 }
 
-var File_messages_proto protoreflect.FileDescriptor
+// SocialFollowMsg handles follow/unfollow actions
+type SocialFollowMsg struct {
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	CreatorAddress  []byte                 `protobuf:"bytes,1,opt,name=creator_address,json=creatorAddress,proto3" json:"creator_address,omitempty"`    // BSV address of creator being followed
+	FollowerAddress []byte                 `protobuf:"bytes,2,opt,name=follower_address,json=followerAddress,proto3" json:"follower_address,omitempty"` // BSV address of follower
+	IsFollow        bool                   `protobuf:"varint,3,opt,name=is_follow,json=isFollow,proto3" json:"is_follow,omitempty"`                     // true = follow, false = unfollow
+	BsvSignature    []byte                 `protobuf:"bytes,4,opt,name=bsv_signature,json=bsvSignature,proto3" json:"bsv_signature,omitempty"`          // BSV signature proving authenticity
+	Timestamp       uint64                 `protobuf:"varint,5,opt,name=timestamp,proto3" json:"timestamp,omitempty"`                                   // Unix timestamp
+	TransactionId   []byte                 `protobuf:"bytes,6,opt,name=transaction_id,json=transactionId,proto3" json:"transaction_id,omitempty"`       // BSV transaction ID (optional, for on-chain follows)
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
 
-const file_messages_proto_rawDesc = "" +
+func (x *SocialFollowMsg) Reset() {
+	*x = SocialFollowMsg{}
+	mi := &file_messages_messages_proto_msgTypes[18]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SocialFollowMsg) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SocialFollowMsg) ProtoMessage() {}
+
+func (x *SocialFollowMsg) ProtoReflect() protoreflect.Message {
+	mi := &file_messages_messages_proto_msgTypes[18]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SocialFollowMsg.ProtoReflect.Descriptor instead.
+func (*SocialFollowMsg) Descriptor() ([]byte, []int) {
+	return file_messages_messages_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *SocialFollowMsg) GetCreatorAddress() []byte {
+	if x != nil {
+		return x.CreatorAddress
+	}
+	return nil
+}
+
+func (x *SocialFollowMsg) GetFollowerAddress() []byte {
+	if x != nil {
+		return x.FollowerAddress
+	}
+	return nil
+}
+
+func (x *SocialFollowMsg) GetIsFollow() bool {
+	if x != nil {
+		return x.IsFollow
+	}
+	return false
+}
+
+func (x *SocialFollowMsg) GetBsvSignature() []byte {
+	if x != nil {
+		return x.BsvSignature
+	}
+	return nil
+}
+
+func (x *SocialFollowMsg) GetTimestamp() uint64 {
+	if x != nil {
+		return x.Timestamp
+	}
+	return 0
+}
+
+func (x *SocialFollowMsg) GetTransactionId() []byte {
+	if x != nil {
+		return x.TransactionId
+	}
+	return nil
+}
+
+// SocialCommentMsg handles comments on content
+type SocialCommentMsg struct {
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	ContentAddress   []byte                 `protobuf:"bytes,1,opt,name=content_address,json=contentAddress,proto3" json:"content_address,omitempty"`       // Bitcoin address of content being commented on
+	CommenterAddress []byte                 `protobuf:"bytes,2,opt,name=commenter_address,json=commenterAddress,proto3" json:"commenter_address,omitempty"` // BSV address of commenter
+	CommentText      string                 `protobuf:"bytes,3,opt,name=comment_text,json=commentText,proto3" json:"comment_text,omitempty"`                // The actual comment
+	BsvSignature     []byte                 `protobuf:"bytes,4,opt,name=bsv_signature,json=bsvSignature,proto3" json:"bsv_signature,omitempty"`             // BSV signature proving authenticity
+	Timestamp        uint64                 `protobuf:"varint,5,opt,name=timestamp,proto3" json:"timestamp,omitempty"`                                      // Unix timestamp
+	ParentCommentId  []byte                 `protobuf:"bytes,6,opt,name=parent_comment_id,json=parentCommentId,proto3" json:"parent_comment_id,omitempty"`  // For threaded replies (optional)
+	NerdTip          uint32                 `protobuf:"varint,7,opt,name=nerd_tip,json=nerdTip,proto3" json:"nerd_tip,omitempty"`                           // $NERD tokens tipped with comment
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
+}
+
+func (x *SocialCommentMsg) Reset() {
+	*x = SocialCommentMsg{}
+	mi := &file_messages_messages_proto_msgTypes[19]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SocialCommentMsg) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SocialCommentMsg) ProtoMessage() {}
+
+func (x *SocialCommentMsg) ProtoReflect() protoreflect.Message {
+	mi := &file_messages_messages_proto_msgTypes[19]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SocialCommentMsg.ProtoReflect.Descriptor instead.
+func (*SocialCommentMsg) Descriptor() ([]byte, []int) {
+	return file_messages_messages_proto_rawDescGZIP(), []int{19}
+}
+
+func (x *SocialCommentMsg) GetContentAddress() []byte {
+	if x != nil {
+		return x.ContentAddress
+	}
+	return nil
+}
+
+func (x *SocialCommentMsg) GetCommenterAddress() []byte {
+	if x != nil {
+		return x.CommenterAddress
+	}
+	return nil
+}
+
+func (x *SocialCommentMsg) GetCommentText() string {
+	if x != nil {
+		return x.CommentText
+	}
+	return ""
+}
+
+func (x *SocialCommentMsg) GetBsvSignature() []byte {
+	if x != nil {
+		return x.BsvSignature
+	}
+	return nil
+}
+
+func (x *SocialCommentMsg) GetTimestamp() uint64 {
+	if x != nil {
+		return x.Timestamp
+	}
+	return 0
+}
+
+func (x *SocialCommentMsg) GetParentCommentId() []byte {
+	if x != nil {
+		return x.ParentCommentId
+	}
+	return nil
+}
+
+func (x *SocialCommentMsg) GetNerdTip() uint32 {
+	if x != nil {
+		return x.NerdTip
+	}
+	return 0
+}
+
+// SocialReactionMsg handles likes, hearts, etc.
+type SocialReactionMsg struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	ContentAddress []byte                 `protobuf:"bytes,1,opt,name=content_address,json=contentAddress,proto3" json:"content_address,omitempty"` // Bitcoin address of content
+	ReactorAddress []byte                 `protobuf:"bytes,2,opt,name=reactor_address,json=reactorAddress,proto3" json:"reactor_address,omitempty"` // BSV address of person reacting
+	ReactionType   string                 `protobuf:"bytes,3,opt,name=reaction_type,json=reactionType,proto3" json:"reaction_type,omitempty"`       // "like", "heart", "fire", "star", etc.
+	BsvSignature   []byte                 `protobuf:"bytes,4,opt,name=bsv_signature,json=bsvSignature,proto3" json:"bsv_signature,omitempty"`       // BSV signature proving authenticity
+	Timestamp      uint64                 `protobuf:"varint,5,opt,name=timestamp,proto3" json:"timestamp,omitempty"`                                // Unix timestamp
+	NerdReward     uint32                 `protobuf:"varint,6,opt,name=nerd_reward,json=nerdReward,proto3" json:"nerd_reward,omitempty"`            // $NERD tokens earned for this reaction
+	IsRemoval      bool                   `protobuf:"varint,7,opt,name=is_removal,json=isRemoval,proto3" json:"is_removal,omitempty"`               // true = removing reaction, false = adding
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *SocialReactionMsg) Reset() {
+	*x = SocialReactionMsg{}
+	mi := &file_messages_messages_proto_msgTypes[20]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SocialReactionMsg) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SocialReactionMsg) ProtoMessage() {}
+
+func (x *SocialReactionMsg) ProtoReflect() protoreflect.Message {
+	mi := &file_messages_messages_proto_msgTypes[20]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SocialReactionMsg.ProtoReflect.Descriptor instead.
+func (*SocialReactionMsg) Descriptor() ([]byte, []int) {
+	return file_messages_messages_proto_rawDescGZIP(), []int{20}
+}
+
+func (x *SocialReactionMsg) GetContentAddress() []byte {
+	if x != nil {
+		return x.ContentAddress
+	}
+	return nil
+}
+
+func (x *SocialReactionMsg) GetReactorAddress() []byte {
+	if x != nil {
+		return x.ReactorAddress
+	}
+	return nil
+}
+
+func (x *SocialReactionMsg) GetReactionType() string {
+	if x != nil {
+		return x.ReactionType
+	}
+	return ""
+}
+
+func (x *SocialReactionMsg) GetBsvSignature() []byte {
+	if x != nil {
+		return x.BsvSignature
+	}
+	return nil
+}
+
+func (x *SocialReactionMsg) GetTimestamp() uint64 {
+	if x != nil {
+		return x.Timestamp
+	}
+	return 0
+}
+
+func (x *SocialReactionMsg) GetNerdReward() uint32 {
+	if x != nil {
+		return x.NerdReward
+	}
+	return 0
+}
+
+func (x *SocialReactionMsg) GetIsRemoval() bool {
+	if x != nil {
+		return x.IsRemoval
+	}
+	return false
+}
+
+// SocialShareMsg handles content sharing
+type SocialShareMsg struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	ContentAddress []byte                 `protobuf:"bytes,1,opt,name=content_address,json=contentAddress,proto3" json:"content_address,omitempty"` // Bitcoin address of content being shared
+	SharerAddress  []byte                 `protobuf:"bytes,2,opt,name=sharer_address,json=sharerAddress,proto3" json:"sharer_address,omitempty"`    // BSV address of person sharing
+	ShareMessage   string                 `protobuf:"bytes,3,opt,name=share_message,json=shareMessage,proto3" json:"share_message,omitempty"`       // Optional message with the share
+	BsvSignature   []byte                 `protobuf:"bytes,4,opt,name=bsv_signature,json=bsvSignature,proto3" json:"bsv_signature,omitempty"`       // BSV signature proving authenticity
+	Timestamp      uint64                 `protobuf:"varint,5,opt,name=timestamp,proto3" json:"timestamp,omitempty"`                                // Unix timestamp
+	Platforms      []string               `protobuf:"bytes,6,rep,name=platforms,proto3" json:"platforms,omitempty"`                                 // Platforms shared to (optional)
+	ViralReward    uint32                 `protobuf:"varint,7,opt,name=viral_reward,json=viralReward,proto3" json:"viral_reward,omitempty"`         // $NERD reward for viral sharing
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *SocialShareMsg) Reset() {
+	*x = SocialShareMsg{}
+	mi := &file_messages_messages_proto_msgTypes[21]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SocialShareMsg) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SocialShareMsg) ProtoMessage() {}
+
+func (x *SocialShareMsg) ProtoReflect() protoreflect.Message {
+	mi := &file_messages_messages_proto_msgTypes[21]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SocialShareMsg.ProtoReflect.Descriptor instead.
+func (*SocialShareMsg) Descriptor() ([]byte, []int) {
+	return file_messages_messages_proto_rawDescGZIP(), []int{21}
+}
+
+func (x *SocialShareMsg) GetContentAddress() []byte {
+	if x != nil {
+		return x.ContentAddress
+	}
+	return nil
+}
+
+func (x *SocialShareMsg) GetSharerAddress() []byte {
+	if x != nil {
+		return x.SharerAddress
+	}
+	return nil
+}
+
+func (x *SocialShareMsg) GetShareMessage() string {
+	if x != nil {
+		return x.ShareMessage
+	}
+	return ""
+}
+
+func (x *SocialShareMsg) GetBsvSignature() []byte {
+	if x != nil {
+		return x.BsvSignature
+	}
+	return nil
+}
+
+func (x *SocialShareMsg) GetTimestamp() uint64 {
+	if x != nil {
+		return x.Timestamp
+	}
+	return 0
+}
+
+func (x *SocialShareMsg) GetPlatforms() []string {
+	if x != nil {
+		return x.Platforms
+	}
+	return nil
+}
+
+func (x *SocialShareMsg) GetViralReward() uint32 {
+	if x != nil {
+		return x.ViralReward
+	}
+	return 0
+}
+
+// SocialNotificationMsg handles engagement notifications
+type SocialNotificationMsg struct {
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	RecipientAddress []byte                 `protobuf:"bytes,1,opt,name=recipient_address,json=recipientAddress,proto3" json:"recipient_address,omitempty"` // BSV address of notification recipient
+	SenderAddress    []byte                 `protobuf:"bytes,2,opt,name=sender_address,json=senderAddress,proto3" json:"sender_address,omitempty"`          // BSV address of notification sender
+	NotificationType string                 `protobuf:"bytes,3,opt,name=notification_type,json=notificationType,proto3" json:"notification_type,omitempty"` // "follow", "comment", "like", "share", "tip"
+	ContentAddress   []byte                 `protobuf:"bytes,4,opt,name=content_address,json=contentAddress,proto3" json:"content_address,omitempty"`       // Related content (optional)
+	Message          string                 `protobuf:"bytes,5,opt,name=message,proto3" json:"message,omitempty"`                                           // Notification message
+	Timestamp        uint64                 `protobuf:"varint,6,opt,name=timestamp,proto3" json:"timestamp,omitempty"`                                      // Unix timestamp
+	IsRead           bool                   `protobuf:"varint,7,opt,name=is_read,json=isRead,proto3" json:"is_read,omitempty"`                              // Read status
+	NerdAmount       uint32                 `protobuf:"varint,8,opt,name=nerd_amount,json=nerdAmount,proto3" json:"nerd_amount,omitempty"`                  // $NERD tokens involved (if any)
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
+}
+
+func (x *SocialNotificationMsg) Reset() {
+	*x = SocialNotificationMsg{}
+	mi := &file_messages_messages_proto_msgTypes[22]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SocialNotificationMsg) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SocialNotificationMsg) ProtoMessage() {}
+
+func (x *SocialNotificationMsg) ProtoReflect() protoreflect.Message {
+	mi := &file_messages_messages_proto_msgTypes[22]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SocialNotificationMsg.ProtoReflect.Descriptor instead.
+func (*SocialNotificationMsg) Descriptor() ([]byte, []int) {
+	return file_messages_messages_proto_rawDescGZIP(), []int{22}
+}
+
+func (x *SocialNotificationMsg) GetRecipientAddress() []byte {
+	if x != nil {
+		return x.RecipientAddress
+	}
+	return nil
+}
+
+func (x *SocialNotificationMsg) GetSenderAddress() []byte {
+	if x != nil {
+		return x.SenderAddress
+	}
+	return nil
+}
+
+func (x *SocialNotificationMsg) GetNotificationType() string {
+	if x != nil {
+		return x.NotificationType
+	}
+	return ""
+}
+
+func (x *SocialNotificationMsg) GetContentAddress() []byte {
+	if x != nil {
+		return x.ContentAddress
+	}
+	return nil
+}
+
+func (x *SocialNotificationMsg) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
+func (x *SocialNotificationMsg) GetTimestamp() uint64 {
+	if x != nil {
+		return x.Timestamp
+	}
+	return 0
+}
+
+func (x *SocialNotificationMsg) GetIsRead() bool {
+	if x != nil {
+		return x.IsRead
+	}
+	return false
+}
+
+func (x *SocialNotificationMsg) GetNerdAmount() uint32 {
+	if x != nil {
+		return x.NerdAmount
+	}
+	return 0
+}
+
+// SocialDirectMsg handles private messaging
+type SocialDirectMsg struct {
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	SenderAddress    []byte                 `protobuf:"bytes,1,opt,name=sender_address,json=senderAddress,proto3" json:"sender_address,omitempty"`          // BSV address of sender
+	RecipientAddress []byte                 `protobuf:"bytes,2,opt,name=recipient_address,json=recipientAddress,proto3" json:"recipient_address,omitempty"` // BSV address of recipient
+	EncryptedMessage []byte                 `protobuf:"bytes,3,opt,name=encrypted_message,json=encryptedMessage,proto3" json:"encrypted_message,omitempty"` // Encrypted message content
+	BsvSignature     []byte                 `protobuf:"bytes,4,opt,name=bsv_signature,json=bsvSignature,proto3" json:"bsv_signature,omitempty"`             // BSV signature proving authenticity
+	Timestamp        uint64                 `protobuf:"varint,5,opt,name=timestamp,proto3" json:"timestamp,omitempty"`                                      // Unix timestamp
+	MessageId        []byte                 `protobuf:"bytes,6,opt,name=message_id,json=messageId,proto3" json:"message_id,omitempty"`                      // Unique message identifier
+	IsGroupMessage   bool                   `protobuf:"varint,7,opt,name=is_group_message,json=isGroupMessage,proto3" json:"is_group_message,omitempty"`    // For future group messaging
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
+}
+
+func (x *SocialDirectMsg) Reset() {
+	*x = SocialDirectMsg{}
+	mi := &file_messages_messages_proto_msgTypes[23]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SocialDirectMsg) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SocialDirectMsg) ProtoMessage() {}
+
+func (x *SocialDirectMsg) ProtoReflect() protoreflect.Message {
+	mi := &file_messages_messages_proto_msgTypes[23]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SocialDirectMsg.ProtoReflect.Descriptor instead.
+func (*SocialDirectMsg) Descriptor() ([]byte, []int) {
+	return file_messages_messages_proto_rawDescGZIP(), []int{23}
+}
+
+func (x *SocialDirectMsg) GetSenderAddress() []byte {
+	if x != nil {
+		return x.SenderAddress
+	}
+	return nil
+}
+
+func (x *SocialDirectMsg) GetRecipientAddress() []byte {
+	if x != nil {
+		return x.RecipientAddress
+	}
+	return nil
+}
+
+func (x *SocialDirectMsg) GetEncryptedMessage() []byte {
+	if x != nil {
+		return x.EncryptedMessage
+	}
+	return nil
+}
+
+func (x *SocialDirectMsg) GetBsvSignature() []byte {
+	if x != nil {
+		return x.BsvSignature
+	}
+	return nil
+}
+
+func (x *SocialDirectMsg) GetTimestamp() uint64 {
+	if x != nil {
+		return x.Timestamp
+	}
+	return 0
+}
+
+func (x *SocialDirectMsg) GetMessageId() []byte {
+	if x != nil {
+		return x.MessageId
+	}
+	return nil
+}
+
+func (x *SocialDirectMsg) GetIsGroupMessage() bool {
+	if x != nil {
+		return x.IsGroupMessage
+	}
+	return false
+}
+
+// SocialProfileMsg handles creator profile updates
+type SocialProfileMsg struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	CreatorAddress []byte                 `protobuf:"bytes,1,opt,name=creator_address,json=creatorAddress,proto3" json:"creator_address,omitempty"` // BSV address of creator
+	DisplayName    string                 `protobuf:"bytes,2,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`          // Public display name
+	Bio            string                 `protobuf:"bytes,3,opt,name=bio,proto3" json:"bio,omitempty"`                                             // Creator bio/description
+	AvatarHash     string                 `protobuf:"bytes,4,opt,name=avatar_hash,json=avatarHash,proto3" json:"avatar_hash,omitempty"`             // IPFS hash of avatar image
+	BannerHash     string                 `protobuf:"bytes,5,opt,name=banner_hash,json=bannerHash,proto3" json:"banner_hash,omitempty"`             // IPFS hash of banner image
+	SocialLinks    []string               `protobuf:"bytes,6,rep,name=social_links,json=socialLinks,proto3" json:"social_links,omitempty"`          // External social media links
+	BsvSignature   []byte                 `protobuf:"bytes,7,opt,name=bsv_signature,json=bsvSignature,proto3" json:"bsv_signature,omitempty"`       // BSV signature proving authenticity
+	Timestamp      uint64                 `protobuf:"varint,8,opt,name=timestamp,proto3" json:"timestamp,omitempty"`                                // Unix timestamp
+	ContentCount   uint32                 `protobuf:"varint,9,opt,name=content_count,json=contentCount,proto3" json:"content_count,omitempty"`      // Number of published content pieces
+	TotalEarnings  uint64                 `protobuf:"varint,10,opt,name=total_earnings,json=totalEarnings,proto3" json:"total_earnings,omitempty"`  // Total BSV earnings (satoshis)
+	FollowerCount  uint32                 `protobuf:"varint,11,opt,name=follower_count,json=followerCount,proto3" json:"follower_count,omitempty"`  // Number of followers
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *SocialProfileMsg) Reset() {
+	*x = SocialProfileMsg{}
+	mi := &file_messages_messages_proto_msgTypes[24]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SocialProfileMsg) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SocialProfileMsg) ProtoMessage() {}
+
+func (x *SocialProfileMsg) ProtoReflect() protoreflect.Message {
+	mi := &file_messages_messages_proto_msgTypes[24]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SocialProfileMsg.ProtoReflect.Descriptor instead.
+func (*SocialProfileMsg) Descriptor() ([]byte, []int) {
+	return file_messages_messages_proto_rawDescGZIP(), []int{24}
+}
+
+func (x *SocialProfileMsg) GetCreatorAddress() []byte {
+	if x != nil {
+		return x.CreatorAddress
+	}
+	return nil
+}
+
+func (x *SocialProfileMsg) GetDisplayName() string {
+	if x != nil {
+		return x.DisplayName
+	}
+	return ""
+}
+
+func (x *SocialProfileMsg) GetBio() string {
+	if x != nil {
+		return x.Bio
+	}
+	return ""
+}
+
+func (x *SocialProfileMsg) GetAvatarHash() string {
+	if x != nil {
+		return x.AvatarHash
+	}
+	return ""
+}
+
+func (x *SocialProfileMsg) GetBannerHash() string {
+	if x != nil {
+		return x.BannerHash
+	}
+	return ""
+}
+
+func (x *SocialProfileMsg) GetSocialLinks() []string {
+	if x != nil {
+		return x.SocialLinks
+	}
+	return nil
+}
+
+func (x *SocialProfileMsg) GetBsvSignature() []byte {
+	if x != nil {
+		return x.BsvSignature
+	}
+	return nil
+}
+
+func (x *SocialProfileMsg) GetTimestamp() uint64 {
+	if x != nil {
+		return x.Timestamp
+	}
+	return 0
+}
+
+func (x *SocialProfileMsg) GetContentCount() uint32 {
+	if x != nil {
+		return x.ContentCount
+	}
+	return 0
+}
+
+func (x *SocialProfileMsg) GetTotalEarnings() uint64 {
+	if x != nil {
+		return x.TotalEarnings
+	}
+	return 0
+}
+
+func (x *SocialProfileMsg) GetFollowerCount() uint32 {
+	if x != nil {
+		return x.FollowerCount
+	}
+	return 0
+}
+
+// SocialStatusMsg handles creator status updates
+type SocialStatusMsg struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	CreatorAddress []byte                 `protobuf:"bytes,1,opt,name=creator_address,json=creatorAddress,proto3" json:"creator_address,omitempty"` // BSV address of creator
+	StatusText     string                 `protobuf:"bytes,2,opt,name=status_text,json=statusText,proto3" json:"status_text,omitempty"`             // Status update text
+	StatusType     string                 `protobuf:"bytes,3,opt,name=status_type,json=statusType,proto3" json:"status_type,omitempty"`             // "announcement", "live", "working", "available"
+	BsvSignature   []byte                 `protobuf:"bytes,4,opt,name=bsv_signature,json=bsvSignature,proto3" json:"bsv_signature,omitempty"`       // BSV signature proving authenticity
+	Timestamp      uint64                 `protobuf:"varint,5,opt,name=timestamp,proto3" json:"timestamp,omitempty"`                                // Unix timestamp
+	ExpiresAt      uint64                 `protobuf:"varint,6,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`               // When status expires (optional)
+	RelatedContent []byte                 `protobuf:"bytes,7,opt,name=related_content,json=relatedContent,proto3" json:"related_content,omitempty"` // Related content address (optional)
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *SocialStatusMsg) Reset() {
+	*x = SocialStatusMsg{}
+	mi := &file_messages_messages_proto_msgTypes[25]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SocialStatusMsg) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SocialStatusMsg) ProtoMessage() {}
+
+func (x *SocialStatusMsg) ProtoReflect() protoreflect.Message {
+	mi := &file_messages_messages_proto_msgTypes[25]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SocialStatusMsg.ProtoReflect.Descriptor instead.
+func (*SocialStatusMsg) Descriptor() ([]byte, []int) {
+	return file_messages_messages_proto_rawDescGZIP(), []int{25}
+}
+
+func (x *SocialStatusMsg) GetCreatorAddress() []byte {
+	if x != nil {
+		return x.CreatorAddress
+	}
+	return nil
+}
+
+func (x *SocialStatusMsg) GetStatusText() string {
+	if x != nil {
+		return x.StatusText
+	}
+	return ""
+}
+
+func (x *SocialStatusMsg) GetStatusType() string {
+	if x != nil {
+		return x.StatusType
+	}
+	return ""
+}
+
+func (x *SocialStatusMsg) GetBsvSignature() []byte {
+	if x != nil {
+		return x.BsvSignature
+	}
+	return nil
+}
+
+func (x *SocialStatusMsg) GetTimestamp() uint64 {
+	if x != nil {
+		return x.Timestamp
+	}
+	return 0
+}
+
+func (x *SocialStatusMsg) GetExpiresAt() uint64 {
+	if x != nil {
+		return x.ExpiresAt
+	}
+	return 0
+}
+
+func (x *SocialStatusMsg) GetRelatedContent() []byte {
+	if x != nil {
+		return x.RelatedContent
+	}
+	return nil
+}
+
+// SocialDiscoveryMsg handles content recommendations
+type SocialDiscoveryMsg struct {
+	state                 protoimpl.MessageState `protogen:"open.v1"`
+	RequesterAddress      []byte                 `protobuf:"bytes,1,opt,name=requester_address,json=requesterAddress,proto3" json:"requester_address,omitempty"`                // BSV address requesting recommendations
+	ContentAddresses      [][]byte               `protobuf:"bytes,2,rep,name=content_addresses,json=contentAddresses,proto3" json:"content_addresses,omitempty"`                // Recommended content addresses
+	RecommendationReasons []string               `protobuf:"bytes,3,rep,name=recommendation_reasons,json=recommendationReasons,proto3" json:"recommendation_reasons,omitempty"` // Why each is recommended
+	SocialScores          []uint32               `protobuf:"varint,4,rep,packed,name=social_scores,json=socialScores,proto3" json:"social_scores,omitempty"`                    // Social engagement scores
+	QualityScores         []uint32               `protobuf:"varint,5,rep,packed,name=quality_scores,json=qualityScores,proto3" json:"quality_scores,omitempty"`                 // Content quality scores
+	Timestamp             uint64                 `protobuf:"varint,6,opt,name=timestamp,proto3" json:"timestamp,omitempty"`                                                     // Unix timestamp
+	DiscoveryType         string                 `protobuf:"bytes,7,opt,name=discovery_type,json=discoveryType,proto3" json:"discovery_type,omitempty"`                         // "trending", "following", "similar", "geographic"
+	unknownFields         protoimpl.UnknownFields
+	sizeCache             protoimpl.SizeCache
+}
+
+func (x *SocialDiscoveryMsg) Reset() {
+	*x = SocialDiscoveryMsg{}
+	mi := &file_messages_messages_proto_msgTypes[26]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SocialDiscoveryMsg) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SocialDiscoveryMsg) ProtoMessage() {}
+
+func (x *SocialDiscoveryMsg) ProtoReflect() protoreflect.Message {
+	mi := &file_messages_messages_proto_msgTypes[26]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SocialDiscoveryMsg.ProtoReflect.Descriptor instead.
+func (*SocialDiscoveryMsg) Descriptor() ([]byte, []int) {
+	return file_messages_messages_proto_rawDescGZIP(), []int{26}
+}
+
+func (x *SocialDiscoveryMsg) GetRequesterAddress() []byte {
+	if x != nil {
+		return x.RequesterAddress
+	}
+	return nil
+}
+
+func (x *SocialDiscoveryMsg) GetContentAddresses() [][]byte {
+	if x != nil {
+		return x.ContentAddresses
+	}
+	return nil
+}
+
+func (x *SocialDiscoveryMsg) GetRecommendationReasons() []string {
+	if x != nil {
+		return x.RecommendationReasons
+	}
+	return nil
+}
+
+func (x *SocialDiscoveryMsg) GetSocialScores() []uint32 {
+	if x != nil {
+		return x.SocialScores
+	}
+	return nil
+}
+
+func (x *SocialDiscoveryMsg) GetQualityScores() []uint32 {
+	if x != nil {
+		return x.QualityScores
+	}
+	return nil
+}
+
+func (x *SocialDiscoveryMsg) GetTimestamp() uint64 {
+	if x != nil {
+		return x.Timestamp
+	}
+	return 0
+}
+
+func (x *SocialDiscoveryMsg) GetDiscoveryType() string {
+	if x != nil {
+		return x.DiscoveryType
+	}
+	return ""
+}
+
+var File_messages_messages_proto protoreflect.FileDescriptor
+
+const file_messages_messages_proto_rawDesc = "" +
 	"\n" +
-	"\x0emessages.proto\x12\x04nerd\"Z\n" +
+	"\x17messages/messages.proto\x12\x04nerd\"Z\n" +
 	"\aMessage\x12\x16\n" +
 	"\x06length\x18\x01 \x01(\rR\x06length\x12\x1d\n" +
 	"\n" +
@@ -1091,42 +1960,137 @@ const file_messages_proto_rawDesc = "" +
 	"\x04city\x18\x02 \x01(\tR\x04city\x12\x1a\n" +
 	"\blatitude\x18\x03 \x01(\x02R\blatitude\x12\x1c\n" +
 	"\tlongitude\x18\x04 \x01(\x02R\tlongitude\x12\x1b\n" +
-	"\tas_number\x18\x05 \x01(\rR\basNumberB!Z\x1fgithub.com/nerd-daemon/messagesb\x06proto3"
+	"\tas_number\x18\x05 \x01(\rR\basNumber\"\xec\x01\n" +
+	"\x0fSocialFollowMsg\x12'\n" +
+	"\x0fcreator_address\x18\x01 \x01(\fR\x0ecreatorAddress\x12)\n" +
+	"\x10follower_address\x18\x02 \x01(\fR\x0ffollowerAddress\x12\x1b\n" +
+	"\tis_follow\x18\x03 \x01(\bR\bisFollow\x12#\n" +
+	"\rbsv_signature\x18\x04 \x01(\fR\fbsvSignature\x12\x1c\n" +
+	"\ttimestamp\x18\x05 \x01(\x04R\ttimestamp\x12%\n" +
+	"\x0etransaction_id\x18\x06 \x01(\fR\rtransactionId\"\x95\x02\n" +
+	"\x10SocialCommentMsg\x12'\n" +
+	"\x0fcontent_address\x18\x01 \x01(\fR\x0econtentAddress\x12+\n" +
+	"\x11commenter_address\x18\x02 \x01(\fR\x10commenterAddress\x12!\n" +
+	"\fcomment_text\x18\x03 \x01(\tR\vcommentText\x12#\n" +
+	"\rbsv_signature\x18\x04 \x01(\fR\fbsvSignature\x12\x1c\n" +
+	"\ttimestamp\x18\x05 \x01(\x04R\ttimestamp\x12*\n" +
+	"\x11parent_comment_id\x18\x06 \x01(\fR\x0fparentCommentId\x12\x19\n" +
+	"\bnerd_tip\x18\a \x01(\rR\anerdTip\"\x8d\x02\n" +
+	"\x11SocialReactionMsg\x12'\n" +
+	"\x0fcontent_address\x18\x01 \x01(\fR\x0econtentAddress\x12'\n" +
+	"\x0freactor_address\x18\x02 \x01(\fR\x0ereactorAddress\x12#\n" +
+	"\rreaction_type\x18\x03 \x01(\tR\freactionType\x12#\n" +
+	"\rbsv_signature\x18\x04 \x01(\fR\fbsvSignature\x12\x1c\n" +
+	"\ttimestamp\x18\x05 \x01(\x04R\ttimestamp\x12\x1f\n" +
+	"\vnerd_reward\x18\x06 \x01(\rR\n" +
+	"nerdReward\x12\x1d\n" +
+	"\n" +
+	"is_removal\x18\a \x01(\bR\tisRemoval\"\x89\x02\n" +
+	"\x0eSocialShareMsg\x12'\n" +
+	"\x0fcontent_address\x18\x01 \x01(\fR\x0econtentAddress\x12%\n" +
+	"\x0esharer_address\x18\x02 \x01(\fR\rsharerAddress\x12#\n" +
+	"\rshare_message\x18\x03 \x01(\tR\fshareMessage\x12#\n" +
+	"\rbsv_signature\x18\x04 \x01(\fR\fbsvSignature\x12\x1c\n" +
+	"\ttimestamp\x18\x05 \x01(\x04R\ttimestamp\x12\x1c\n" +
+	"\tplatforms\x18\x06 \x03(\tR\tplatforms\x12!\n" +
+	"\fviral_reward\x18\a \x01(\rR\vviralReward\"\xb3\x02\n" +
+	"\x15SocialNotificationMsg\x12+\n" +
+	"\x11recipient_address\x18\x01 \x01(\fR\x10recipientAddress\x12%\n" +
+	"\x0esender_address\x18\x02 \x01(\fR\rsenderAddress\x12+\n" +
+	"\x11notification_type\x18\x03 \x01(\tR\x10notificationType\x12'\n" +
+	"\x0fcontent_address\x18\x04 \x01(\fR\x0econtentAddress\x12\x18\n" +
+	"\amessage\x18\x05 \x01(\tR\amessage\x12\x1c\n" +
+	"\ttimestamp\x18\x06 \x01(\x04R\ttimestamp\x12\x17\n" +
+	"\ais_read\x18\a \x01(\bR\x06isRead\x12\x1f\n" +
+	"\vnerd_amount\x18\b \x01(\rR\n" +
+	"nerdAmount\"\x9e\x02\n" +
+	"\x0fSocialDirectMsg\x12%\n" +
+	"\x0esender_address\x18\x01 \x01(\fR\rsenderAddress\x12+\n" +
+	"\x11recipient_address\x18\x02 \x01(\fR\x10recipientAddress\x12+\n" +
+	"\x11encrypted_message\x18\x03 \x01(\fR\x10encryptedMessage\x12#\n" +
+	"\rbsv_signature\x18\x04 \x01(\fR\fbsvSignature\x12\x1c\n" +
+	"\ttimestamp\x18\x05 \x01(\x04R\ttimestamp\x12\x1d\n" +
+	"\n" +
+	"message_id\x18\x06 \x01(\fR\tmessageId\x12(\n" +
+	"\x10is_group_message\x18\a \x01(\bR\x0eisGroupMessage\"\x8b\x03\n" +
+	"\x10SocialProfileMsg\x12'\n" +
+	"\x0fcreator_address\x18\x01 \x01(\fR\x0ecreatorAddress\x12!\n" +
+	"\fdisplay_name\x18\x02 \x01(\tR\vdisplayName\x12\x10\n" +
+	"\x03bio\x18\x03 \x01(\tR\x03bio\x12\x1f\n" +
+	"\vavatar_hash\x18\x04 \x01(\tR\n" +
+	"avatarHash\x12\x1f\n" +
+	"\vbanner_hash\x18\x05 \x01(\tR\n" +
+	"bannerHash\x12!\n" +
+	"\fsocial_links\x18\x06 \x03(\tR\vsocialLinks\x12#\n" +
+	"\rbsv_signature\x18\a \x01(\fR\fbsvSignature\x12\x1c\n" +
+	"\ttimestamp\x18\b \x01(\x04R\ttimestamp\x12#\n" +
+	"\rcontent_count\x18\t \x01(\rR\fcontentCount\x12%\n" +
+	"\x0etotal_earnings\x18\n" +
+	" \x01(\x04R\rtotalEarnings\x12%\n" +
+	"\x0efollower_count\x18\v \x01(\rR\rfollowerCount\"\x87\x02\n" +
+	"\x0fSocialStatusMsg\x12'\n" +
+	"\x0fcreator_address\x18\x01 \x01(\fR\x0ecreatorAddress\x12\x1f\n" +
+	"\vstatus_text\x18\x02 \x01(\tR\n" +
+	"statusText\x12\x1f\n" +
+	"\vstatus_type\x18\x03 \x01(\tR\n" +
+	"statusType\x12#\n" +
+	"\rbsv_signature\x18\x04 \x01(\fR\fbsvSignature\x12\x1c\n" +
+	"\ttimestamp\x18\x05 \x01(\x04R\ttimestamp\x12\x1d\n" +
+	"\n" +
+	"expires_at\x18\x06 \x01(\x04R\texpiresAt\x12'\n" +
+	"\x0frelated_content\x18\a \x01(\fR\x0erelatedContent\"\xb6\x02\n" +
+	"\x12SocialDiscoveryMsg\x12+\n" +
+	"\x11requester_address\x18\x01 \x01(\fR\x10requesterAddress\x12+\n" +
+	"\x11content_addresses\x18\x02 \x03(\fR\x10contentAddresses\x125\n" +
+	"\x16recommendation_reasons\x18\x03 \x03(\tR\x15recommendationReasons\x12#\n" +
+	"\rsocial_scores\x18\x04 \x03(\rR\fsocialScores\x12%\n" +
+	"\x0equality_scores\x18\x05 \x03(\rR\rqualityScores\x12\x1c\n" +
+	"\ttimestamp\x18\x06 \x01(\x04R\ttimestamp\x12%\n" +
+	"\x0ediscovery_type\x18\a \x01(\tR\rdiscoveryTypeB!Z\x1fgithub.com/nerd-daemon/messagesb\x06proto3"
 
 var (
-	file_messages_proto_rawDescOnce sync.Once
-	file_messages_proto_rawDescData []byte
+	file_messages_messages_proto_rawDescOnce sync.Once
+	file_messages_messages_proto_rawDescData []byte
 )
 
-func file_messages_proto_rawDescGZIP() []byte {
-	file_messages_proto_rawDescOnce.Do(func() {
-		file_messages_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_messages_proto_rawDesc), len(file_messages_proto_rawDesc)))
+func file_messages_messages_proto_rawDescGZIP() []byte {
+	file_messages_messages_proto_rawDescOnce.Do(func() {
+		file_messages_messages_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_messages_messages_proto_rawDesc), len(file_messages_messages_proto_rawDesc)))
 	})
-	return file_messages_proto_rawDescData
+	return file_messages_messages_proto_rawDescData
 }
 
-var file_messages_proto_msgTypes = make([]protoimpl.MessageInfo, 18)
-var file_messages_proto_goTypes = []any{
-	(*Message)(nil),           // 0: nerd.Message
-	(*HandshakeMsg)(nil),      // 1: nerd.HandshakeMsg
-	(*KeepAliveMsg)(nil),      // 2: nerd.KeepAliveMsg
-	(*ChokeMsg)(nil),          // 3: nerd.ChokeMsg
-	(*UnchokeMsg)(nil),        // 4: nerd.UnchokeMsg
-	(*InterestedMsg)(nil),     // 5: nerd.InterestedMsg
-	(*NotInterestedMsg)(nil),  // 6: nerd.NotInterestedMsg
-	(*HaveMsg)(nil),           // 7: nerd.HaveMsg
-	(*BitfieldMsg)(nil),       // 8: nerd.BitfieldMsg
-	(*RequestMsg)(nil),        // 9: nerd.RequestMsg
-	(*PieceMsg)(nil),          // 10: nerd.PieceMsg
-	(*CancelMsg)(nil),         // 11: nerd.CancelMsg
-	(*PortMsg)(nil),           // 12: nerd.PortMsg
-	(*PaymentRequestMsg)(nil), // 13: nerd.PaymentRequestMsg
-	(*PaymentProofMsg)(nil),   // 14: nerd.PaymentProofMsg
-	(*TokenBalanceMsg)(nil),   // 15: nerd.TokenBalanceMsg
-	(*QualityMetricsMsg)(nil), // 16: nerd.QualityMetricsMsg
-	(*GeographicHintMsg)(nil), // 17: nerd.GeographicHintMsg
+var file_messages_messages_proto_msgTypes = make([]protoimpl.MessageInfo, 27)
+var file_messages_messages_proto_goTypes = []any{
+	(*Message)(nil),               // 0: nerd.Message
+	(*HandshakeMsg)(nil),          // 1: nerd.HandshakeMsg
+	(*KeepAliveMsg)(nil),          // 2: nerd.KeepAliveMsg
+	(*ChokeMsg)(nil),              // 3: nerd.ChokeMsg
+	(*UnchokeMsg)(nil),            // 4: nerd.UnchokeMsg
+	(*InterestedMsg)(nil),         // 5: nerd.InterestedMsg
+	(*NotInterestedMsg)(nil),      // 6: nerd.NotInterestedMsg
+	(*HaveMsg)(nil),               // 7: nerd.HaveMsg
+	(*BitfieldMsg)(nil),           // 8: nerd.BitfieldMsg
+	(*RequestMsg)(nil),            // 9: nerd.RequestMsg
+	(*PieceMsg)(nil),              // 10: nerd.PieceMsg
+	(*CancelMsg)(nil),             // 11: nerd.CancelMsg
+	(*PortMsg)(nil),               // 12: nerd.PortMsg
+	(*PaymentRequestMsg)(nil),     // 13: nerd.PaymentRequestMsg
+	(*PaymentProofMsg)(nil),       // 14: nerd.PaymentProofMsg
+	(*TokenBalanceMsg)(nil),       // 15: nerd.TokenBalanceMsg
+	(*QualityMetricsMsg)(nil),     // 16: nerd.QualityMetricsMsg
+	(*GeographicHintMsg)(nil),     // 17: nerd.GeographicHintMsg
+	(*SocialFollowMsg)(nil),       // 18: nerd.SocialFollowMsg
+	(*SocialCommentMsg)(nil),      // 19: nerd.SocialCommentMsg
+	(*SocialReactionMsg)(nil),     // 20: nerd.SocialReactionMsg
+	(*SocialShareMsg)(nil),        // 21: nerd.SocialShareMsg
+	(*SocialNotificationMsg)(nil), // 22: nerd.SocialNotificationMsg
+	(*SocialDirectMsg)(nil),       // 23: nerd.SocialDirectMsg
+	(*SocialProfileMsg)(nil),      // 24: nerd.SocialProfileMsg
+	(*SocialStatusMsg)(nil),       // 25: nerd.SocialStatusMsg
+	(*SocialDiscoveryMsg)(nil),    // 26: nerd.SocialDiscoveryMsg
 }
-var file_messages_proto_depIdxs = []int32{
+var file_messages_messages_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type
 	0, // [0:0] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
@@ -1134,26 +2098,26 @@ var file_messages_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for field type_name
 }
 
-func init() { file_messages_proto_init() }
-func file_messages_proto_init() {
-	if File_messages_proto != nil {
+func init() { file_messages_messages_proto_init() }
+func file_messages_messages_proto_init() {
+	if File_messages_messages_proto != nil {
 		return
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_messages_proto_rawDesc), len(file_messages_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_messages_messages_proto_rawDesc), len(file_messages_messages_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   18,
+			NumMessages:   27,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
-		GoTypes:           file_messages_proto_goTypes,
-		DependencyIndexes: file_messages_proto_depIdxs,
-		MessageInfos:      file_messages_proto_msgTypes,
+		GoTypes:           file_messages_messages_proto_goTypes,
+		DependencyIndexes: file_messages_messages_proto_depIdxs,
+		MessageInfos:      file_messages_messages_proto_msgTypes,
 	}.Build()
-	File_messages_proto = out.File
-	file_messages_proto_goTypes = nil
-	file_messages_proto_depIdxs = nil
+	File_messages_messages_proto = out.File
+	file_messages_messages_proto_goTypes = nil
+	file_messages_messages_proto_depIdxs = nil
 }

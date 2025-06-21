@@ -10,6 +10,7 @@ import (
 	"log"
 	"math"
 	"net/http"
+	"strings" // Added for strings.ToLower
 	"sync"
 	"time"
 
@@ -27,10 +28,10 @@ type BSVPaymentConfig struct {
 	MaxPaymentSatoshis   int64   // Maximum payment amount
 	ChannelTimeoutBlocks int     // Timeout for payment channels in blocks
 	FeeRate              float64 // Satoshis per byte for transaction fees (e.g., 0.05)
-	NetworkType          string  // "mainnet" or "testnet"
+	NetworkType          string  // "mainnet" or "testnet", used for constructing API URLs
 	BroadcastURL         string  // URL for broadcasting transactions (e.g., Whatsonchain API for testnet: https://api.whatsonchain.com/v1/bsv/test/tx/raw)
-	// UTXOFetchURL can be added if different from BroadcastURL or if a specific API is needed for fetching UTXOs (e.g. https://api.whatsonchain.com/v1/bsv/test/address/%s/unspent)
-	// UTXOFetchAPIKey      string  // API key if UTXO fetching service requires it
+	UTXOFetchURLFormat   string  // URL format for fetching UTXOs, e.g., "https://api.whatsonchain.com/v1/bsv/%s/address/%s/unspent" (%s for network, %s for address)
+	// UTXOFetchAPIKey      string  // API key if UTXO fetching service requires it (not used by Whatsonchain public)
 }
 
 // UTXO represents an Unspent Transaction Output.
@@ -94,24 +95,44 @@ type PaymentRequest struct {
 	ExpiresAt  time.Time
 }
 
+// WhatsonchainUTXO represents the structure of a UTXO object from the Whatsonchain API
+type WhatsonchainUTXO struct {
+	Height int64  `json:"height"`  // Block height, 0 or -1 if unconfirmed
+	TxPos  uint32 `json:"tx_pos"`  // Output index (vout)
+	TxHash string `json:"tx_hash"` // Transaction hash (ID)
+	Value  int64  `json:"value"`   // Value in satoshis
+	Script string `json:"script"`  // ScriptPubKey in hex (this is what WOC returns as "script")
+}
+
 // NewBSVPaymentSystem creates a new BSV payment system
 func NewBSVPaymentSystem(config *BSVPaymentConfig) (*BSVPaymentSystem, error) {
-	// Parse the private key from WIF format
-	privateKey, err := primitives.PrivateKeyFromWif(config.PrivateKeyWIF)
-	if err != nil {
-		return nil, fmt.Errorf("failed to parse private key: %v", err)
+	if config.PrivateKeyWIF == "" {
+		return nil, fmt.Errorf("private key WIF must be provided in config")
+	}
+	if config.BroadcastURL == "" {
+		return nil, fmt.Errorf("broadcast URL must be provided in config")
+	}
+	if config.UTXOFetchURLFormat == "" {
+		return nil, fmt.Errorf("UTXO fetch URL format must be provided in config")
 	}
 
-	system := &BSVPaymentSystem{
+	privKey, err := primitives.PrivateKeyFromWif(config.PrivateKeyWIF)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse private key WIF: %v", err)
+	}
+
+	isTest := false
+	if strings.ToLower(config.NetworkType) == "testnet" || strings.ToLower(config.NetworkType) == "test" {
+		isTest = true
+	}
+
+	return &BSVPaymentSystem{
 		config:          config,
-		privateKey:      privateKey,
+		privateKey:      privKey,
 		paymentChannels: make(map[string]*PaymentChannel),
 		pendingPayments: make(map[string]*PendingPayment),
-		walletBalance:   0,                               // Will be updated when we check the blockchain
-		isTestnet:       config.NetworkType == "testnet", // Set based on config
-	}
-
-	return system, nil
+		isTestnet:       isTest,
+	}, nil
 }
 
 // Start initializes the BSV payment system
@@ -236,44 +257,85 @@ func (bps *BSVPaymentSystem) ProcessPaymentRequest(request *PaymentRequest) (*Pe
 	return payment, nil
 }
 
-// fetchUTXOs is a placeholder for fetching UTXOs for the given address.
-// In a real implementation, this function would query a blockchain explorer API
-// such as Whatsonchain: GET https://api.whatsonchain.com/v1/bsv/<network>/address/<address>/unspent
-// It should return enough UTXOs to cover the requiredAmount.
+// fetchUTXOs fetches unspent transaction outputs for a given address from a blockchain explorer.
 func (bps *BSVPaymentSystem) fetchUTXOs(address string, requiredAmount int64) ([]UTXO, int64, error) {
-	log.Printf("[BSV] Fetching UTXOs for address %s, requiring %d satoshis", address, requiredAmount)
-
-	// --- Placeholder Implementation ---
-	// This is a DUMMY UTXO. Replace with actual API call to Whatsonchain or similar.
-	// Ensure this UTXO is actually spendable on the chosen network (mainnet/testnet)
-	// and owned by the PrivateKeyWIF configured.
-	// For testing, you would need to manually create such a UTXO by sending funds to `address`
-	// on the testnet and then finding its TxID, Vout, ScriptPubKey, and Satoshis value.
-
+	// Determine network string for URL ("main" or "test")
+	networkStr := "main"
 	if bps.isTestnet {
-		// Example: A testnet UTXO (replace with a real one you control and can spend from)
-		// You would get this from a testnet faucet or by sending test BSV to your address.
-		// The ScriptPubKey for a P2PKH address can be constructed as: "76a914" + HASH160_OF_PUBKEY + "88ac"
-		// The HASH160_OF_PUBKEY can be derived from the address itself, but it's better to get it from the UTXO source.
-		log.Println("[BSV] WARNING: Using hardcoded DUMMY Testnet UTXO for fetchUTXOs. Replace with actual UTXO fetching logic from a blockchain explorer.")
-
-		// TODO: Replace these with actual spendable testnet UTXO details for your private key.
-		dummyUTXO := UTXO{
-			TxID:         "0000000000000000000000000000000000000000000000000000000000000001", // Replace with a REAL spendable testnet TXID
-			Vout:         0,                                                                  // Replace with the correct Vout
-			ScriptPubKey: "76a914caf5ef0c1592795f9362500c52c0bd139358691f88ac",               // Replace with the actual ScriptPubKey of the UTXO
-			Satoshis:     100000,                                                             // Example: 100,000 satoshis, ensure it covers payment + fee
-		}
-		if dummyUTXO.Satoshis >= requiredAmount {
-			return []UTXO{dummyUTXO}, dummyUTXO.Satoshis, nil
-		}
-		return nil, 0, fmt.Errorf("dummy UTXO has insufficient funds (%d) for required amount (%d)", dummyUTXO.Satoshis, requiredAmount)
-
-	} else {
-		log.Println("[BSV] CRITICAL ERROR: fetchUTXOs not implemented for mainnet without actual API calls. Hardcoding mainnet UTXOs is extremely unsafe and has been prevented.")
-		return nil, 0, fmt.Errorf("fetchUTXOs for mainnet requires a live API integration to prevent accidental use of hardcoded values")
+		networkStr = "test"
 	}
-	// --- End Placeholder Implementation ---
+
+	// Construct the URL
+	// Example: "https://api.whatsonchain.com/v1/bsv/%s/address/%s/unspent"
+	// First %s is network (test/main), second %s is address
+	fetchURL := fmt.Sprintf(bps.config.UTXOFetchURLFormat, networkStr, address)
+	log.Printf("[BSV] Fetching UTXOs for address %s from %s", address, fetchURL)
+
+	client := &http.Client{Timeout: 15 * time.Second}
+	req, err := http.NewRequest("GET", fetchURL, nil)
+	if err != nil {
+		return nil, 0, fmt.Errorf("failed to create UTXO fetch request: %v", err)
+	}
+	// Whatsonchain API typically doesn't require special headers for public GET requests
+	// req.Header.Set("User-Agent", "nerd-daemon") // Optional: Good practice to set a User-Agent
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, 0, fmt.Errorf("failed to execute UTXO fetch request to %s: %v", fetchURL, err)
+	}
+	defer resp.Body.Close()
+
+	bodyBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, 0, fmt.Errorf("failed to read UTXO fetch response body from %s: %v", fetchURL, err)
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, 0, fmt.Errorf("UTXO fetch from %s failed with status %s: %s", fetchURL, resp.Status, string(bodyBytes))
+	}
+
+	var wocUtxos []WhatsonchainUTXO
+	if err := json.Unmarshal(bodyBytes, &wocUtxos); err != nil {
+		// If unmarshal fails, it might be an empty array "[]" which is valid, or an error message from the API not in expected UTXO format.
+		// Check if the body is "[]" for an empty list of UTXOs.
+		if strings.TrimSpace(string(bodyBytes)) == "[]" {
+			log.Printf("[BSV] No UTXOs found for address %s (empty array response)", address)
+			return []UTXO{}, 0, nil // No UTXOs found is not an error, just an empty list.
+		}
+		return nil, 0, fmt.Errorf("failed to unmarshal UTXO response from %s (body: %s): %v", fetchURL, string(bodyBytes), err)
+	}
+
+	var utxos []UTXO
+	var totalSatoshis int64
+	foundSufficient := false
+
+	for _, wocUtxo := range wocUtxos {
+		utxo := UTXO{
+			TxID:         wocUtxo.TxHash,
+			Vout:         wocUtxo.TxPos,
+			ScriptPubKey: wocUtxo.Script, // Assuming Whatsonchain 'script' field is the scriptPubKeyHex
+			Satoshis:     wocUtxo.Value,
+		}
+		utxos = append(utxos, utxo)
+		totalSatoshis += utxo.Satoshis
+		log.Printf("[BSV] Fetched UTXO: %s:%d, Value: %d, Script: %.30s...", utxo.TxID, utxo.Vout, utxo.Satoshis, utxo.ScriptPubKey)
+
+		// If requiredAmount is > 0, we can stop fetching if we have enough.
+		// If requiredAmount is <= 0, it means fetch all available UTXOs.
+		if requiredAmount > 0 && totalSatoshis >= requiredAmount {
+			foundSufficient = true
+			log.Printf("[BSV] Found sufficient UTXOs (%d sats) for required amount (%d sats).", totalSatoshis, requiredAmount)
+			break // Stop if we've gathered enough for the requiredAmount
+		}
+	}
+
+	if requiredAmount > 0 && !foundSufficient && totalSatoshis < requiredAmount {
+		log.Printf("[BSV] Insufficient UTXOs: fetched %d satoshis, but required %d satoshis for address %s.", totalSatoshis, requiredAmount, address)
+		// This is not an error in fetchUTXOs itself, but the caller (createPaymentTransaction) will handle it.
+	}
+
+	log.Printf("[BSV] Fetched %d UTXOs for address %s, total satoshis: %d", len(utxos), address, totalSatoshis)
+	return utxos, totalSatoshis, nil
 }
 
 // broadcastTransaction broadcasts the raw transaction hex to the network.

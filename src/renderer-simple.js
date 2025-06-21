@@ -98,13 +98,23 @@ class BACDSClient {
             dropZone.addEventListener('drop', (e) => this.handleFileDrop(e));
         }
         
-        // Add listener for the Start NERD button
+        // Add listeners for the NERD daemon buttons
         const startNerdButton = document.getElementById('startNerdButton');
+        const stopNerdButton = document.getElementById('stopNerdButton');
         if (startNerdButton) {
             startNerdButton.addEventListener('click', () => this.startNerdProcess());
         }
+        if (stopNerdButton) {
+            stopNerdButton.addEventListener('click', () => this.stopNerdProcess());
+        }
         
         this.loadWalletStatus();
+        
+        // Initialize daemon status monitoring immediately
+        this.startDaemonStatusMonitoring();
+        
+        // Get daemon status right away
+        this.checkDaemonStatusNow();
         
         // Initialize empty states for all sections (RESTORED)
         this.updateAddressList();
@@ -121,10 +131,23 @@ class BACDSClient {
         
         // Initialize token data
         this.initializeTokenData();
+        
+        // Initialize social network features
+        this.initializeSocialFeatures();
+        
+        // Initialize market features
+        this.initializeMarketFeatures();
+        
+        // Initialize mint features
+        this.initializeMintFeatures();
     }
 
     async loadWalletStatus() {
         const statusDiv = document.getElementById('walletStatus');
+        
+        console.log('🚀 loadWalletStatus called');
+        console.log('🔍 electronAPI available:', !!window.electronAPI);
+        console.log('🔍 getWalletStatus function:', typeof window.electronAPI?.getWalletStatus);
         
         // Check if electronAPI is available
         if (!window.electronAPI) {
@@ -138,27 +161,63 @@ class BACDSClient {
             return;
         }
         
+        if (!window.electronAPI.getWalletStatus) {
+            console.error('❌ getWalletStatus function not available');
+            statusDiv.innerHTML = `
+                <div class="error">
+                    ❌ Wallet service not available<br>
+                    <small>IPC function missing</small>
+                </div>
+            `;
+            return;
+        }
+        
         try {
-            console.log('🔄 Starting wallet status load...');
+            console.log('🔄 Getting wallet status...');
             
-            // Add timeout to prevent infinite hanging
-            const timeoutPromise = new Promise((_, reject) => 
-                setTimeout(() => reject(new Error('Timeout after 5 seconds')), 5000)
-            );
-            
-            const statusPromise = window.electronAPI.getWalletStatus();
-            
-            this.walletStatus = await Promise.race([statusPromise, timeoutPromise]);
+            // Get status immediately 
+            this.walletStatus = await window.electronAPI.getWalletStatus();
             console.log('📊 Wallet status received:', this.walletStatus);
             
-            this.updateWalletDisplay();
-            console.log('✅ Wallet status loaded successfully');
+            if (this.walletStatus) {
+                this.updateWalletDisplay();
+                console.log('✅ Wallet status loaded successfully');
+                
+                // If wallet is still loading, periodically refresh
+                if (this.walletStatus.isLoading) {
+                    console.log('💤 Wallet still loading, will refresh in 3 seconds...');
+                    setTimeout(() => this.loadWalletStatus(), 3000);
+                }
+            } else {
+                console.error('❌ No wallet status returned');
+                statusDiv.innerHTML = `
+                    <div class="wallet-info">
+                        <div class="status-item status-offline">
+                            <span class="icon">❌</span>
+                            <span>Wallet service unavailable</span>
+                        </div>
+                        <div class="wallet-actions" style="margin-top: 15px;">
+                            <button class="btn primary" onclick="bacdsClient.loadWalletStatus()">Retry</button>
+                        </div>
+                    </div>
+                `;
+            }
         } catch (error) {
             console.error('❌ Failed to load wallet status:', error);
             statusDiv.innerHTML = `
-                <div class="error">
-                    ❌ Unable to connect to wallet service<br>
-                    <small>Error: ${error.message}</small>
+                <div class="wallet-info">
+                    <div class="status-item status-offline">
+                        <span class="icon">💤</span>
+                        <span>Ready for HD wallet creation</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="icon">ℹ️</span>
+                        <span>Create a new BIP44 HD wallet to get started</span>
+                    </div>
+                    <div class="wallet-actions" style="margin-top: 15px;">
+                        <button class="btn primary" onclick="bacdsClient.generateWallet()">Create HD Wallet</button>
+                        <button class="btn secondary" onclick="bacdsClient.loadWalletStatus()">Check Again</button>
+                    </div>
                 </div>
             `;
         }
@@ -166,7 +225,27 @@ class BACDSClient {
 
     updateWalletDisplay() {
         const statusDiv = document.getElementById('walletStatus');
-        if (this.walletStatus.hasMasterSeed) {
+        
+        console.log('🔄 updateWalletDisplay called with status:', this.walletStatus);
+        
+        // Handle loading states for lazy-loaded HD wallet
+        if (this.walletStatus?.isLoading) {
+            statusDiv.innerHTML = `
+                <div class="wallet-loading">
+                    <div class="status-item">
+                        <span class="icon">🔄</span>
+                        <span>Loading HD wallet in background...</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="icon">ℹ️</span>
+                        <span>You can use other features while loading</span>
+                    </div>
+                </div>
+            `;
+            return;
+        }
+
+        if (this.walletStatus?.hasWallet && this.walletStatus?.isLoaded) {
             const createdDate = this.walletStatus.created ? 
                 new Date(this.walletStatus.created).toLocaleString() : 'Unknown';
             
@@ -186,7 +265,11 @@ class BACDSClient {
                     </div>
                     <div class="status-item">
                         <span class="icon">📍</span>
-                        <span>Address Index: ${this.walletStatus.addressIndex}</span>
+                        <span>Addresses: ${this.walletStatus.totalAddressesGenerated || 0} generated</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="icon">🌳</span>
+                        <span>Type: ${this.walletStatus.walletType || 'HD Wallet'}</span>
                     </div>
                     <div class="status-item">
                         <span class="icon">🔒</span>
@@ -213,20 +296,46 @@ class BACDSClient {
             document.getElementById('revealSeed').addEventListener('click', () => {
                 this.toggleSeedVisibility();
             });
+        } else if (this.walletStatus?.needsLoading) {
+            // Wallet file exists but not loaded yet
+            statusDiv.innerHTML = `
+                <div class="wallet-info">
+                    <div class="status-item status-warning">
+                        <span class="icon">📂</span>
+                        <span>Wallet file found but not loaded</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="icon">💡</span>
+                        <span>Click "Load Wallet" to initialize your existing wallet</span>
+                    </div>
+                    <div class="wallet-actions" style="margin-top: 15px;">
+                        <button class="btn primary" onclick="bacdsClient.loadWallet()">Load Existing Wallet</button>
+                        <button class="btn secondary" onclick="bacdsClient.generateWallet()">Create New Wallet</button>
+                    </div>
+                </div>
+            `;
         } else {
+            // No wallet exists - check if we need to handle file exists case
+            console.log('📂 No wallet loaded, checking file system...');
+            const hasFile = this.walletStatus?.walletFile && this.walletStatus?.dataDir;
+            
             statusDiv.innerHTML = `
                 <div class="wallet-info">
                     <div class="status-item status-offline">
-                        <span class="icon">❌</span>
-                        <span>No wallet found</span>
+                        <span class="icon">💤</span>
+                        <span>Ready for HD wallet creation</span>
                     </div>
                     <div class="status-item">
                         <span class="icon">ℹ️</span>
-                        <span>Create a new wallet to get started</span>
+                        <span>Create a new BIP44 HD wallet to get started</span>
                     </div>
                     <div class="status-item status-online">
                         <span class="icon">🔒</span>
-                        <span>Private keys stored securely</span>
+                        <span>Private keys stored securely with mnemonic</span>
+                    </div>
+                    <div class="wallet-actions" style="margin-top: 15px;">
+                        <button class="btn primary" onclick="bacdsClient.generateWallet()">Create HD Wallet</button>
+                        ${hasFile ? '<button class="btn secondary" onclick="bacdsClient.loadWallet()">Load Existing</button>' : ''}
                     </div>
                 </div>
             `;
@@ -340,7 +449,13 @@ class BACDSClient {
 
     async loadWallet() {
         try {
-            this.showMessage('🔓 Loading wallet...', 'info');
+            this.showMessage('🔓 Initializing wallet...', 'info');
+            
+            // First initialize the wallet async
+            const initResult = await window.electronAPI.initializeWalletAsync();
+            console.log('🔄 Wallet initialization result:', initResult);
+            
+            // Then refresh the status display
             await this.loadWalletStatus();
             this.showMessage('✅ Wallet loaded successfully!', 'success');
         } catch (error) {
@@ -2258,11 +2373,1132 @@ class BACDSClient {
     }
 
     async startNerdProcess() {
-        console.log('Attempting to start NERD daemon...');
-        // TODO: Implement actual command execution here once the NERD daemon is built.
-        this.showMessage('⚠️ NERD daemon not yet built. Cannot start.', 'warning');
+        console.log('🚀 Attempting to start NERD daemon...');
+        
+        try {
+            // Check daemon status first
+            const statusResult = await window.electronAPI.getNerdDaemonStatus();
+            
+            if (statusResult.running) {
+                this.showMessage(`✅ NERD daemon is already running (PID: ${statusResult.pid})`, 'success');
+                return;
+            }
+            
+            this.showMessage('🔄 Starting NERD daemon...', 'info');
+            
+            // Start the daemon
+            const result = await window.electronAPI.startNerdDaemon();
+            
+            if (result.success) {
+                this.showMessage(`✅ ${result.message} (PID: ${result.pid})`, 'success');
+                console.log('✅ NERD daemon started successfully');
+                
+                // Update daemon status periodically
+                this.startDaemonStatusMonitoring();
+            } else {
+                this.showMessage(`❌ Failed to start NERD daemon: ${result.error}`, 'error');
+                console.error('❌ Failed to start NERD daemon:', result.error);
+                
+                // If executable not found, show helpful message
+                if (result.error.includes('not found')) {
+                    this.showMessage('💡 Tip: Build the daemon first by running "go build" in the nerd-daemon directory', 'info');
+                }
+            }
+            
+        } catch (error) {
+            this.showMessage(`❌ Error starting NERD daemon: ${error.message}`, 'error');
+            console.error('❌ Error starting NERD daemon:', error);
+        }
+    }
+
+    async stopNerdProcess() {
+        console.log('🛑 Attempting to stop NERD daemon...');
+        
+        try {
+            const statusResult = await window.electronAPI.getNerdDaemonStatus();
+            
+            if (!statusResult.running) {
+                this.showMessage('⚠️ NERD daemon is not running', 'warning');
+                return;
+            }
+            
+            this.showMessage('🔄 Stopping NERD daemon...', 'info');
+            
+            const result = await window.electronAPI.stopNerdDaemon();
+            
+            if (result.success) {
+                this.showMessage(`✅ ${result.message}`, 'success');
+                console.log('✅ NERD daemon stopped successfully');
+                this.stopDaemonStatusMonitoring();
+            } else {
+                this.showMessage(`❌ Failed to stop NERD daemon: ${result.error}`, 'error');
+                console.error('❌ Failed to stop NERD daemon:', result.error);
+            }
+            
+        } catch (error) {
+            this.showMessage(`❌ Error stopping NERD daemon: ${error.message}`, 'error');
+            console.error('❌ Error stopping NERD daemon:', error);
+        }
+    }
+
+    async checkDaemonStatusNow() {
+        try {
+            const status = await window.electronAPI.getNerdDaemonStatus();
+            this.updateDaemonStatusDisplay(status);
+            console.log('📊 Initial daemon status:', status);
+        } catch (error) {
+            console.error('Error checking initial daemon status:', error);
+        }
+    }
+
+    startDaemonStatusMonitoring() {
+        if (this.daemonStatusInterval) {
+            clearInterval(this.daemonStatusInterval);
+        }
+        
+        this.daemonStatusInterval = setInterval(async () => {
+            try {
+                const status = await window.electronAPI.getNerdDaemonStatus();
+                this.updateDaemonStatusDisplay(status);
+            } catch (error) {
+                console.error('Error checking daemon status:', error);
+            }
+        }, 5000); // Check every 5 seconds
+    }
+
+    stopDaemonStatusMonitoring() {
+        if (this.daemonStatusInterval) {
+            clearInterval(this.daemonStatusInterval);
+            this.daemonStatusInterval = null;
+        }
+    }
+
+    updateDaemonStatusDisplay(status) {
+        console.log('🔄 Updating daemon status display:', status);
+        
+        // Update UI elements that show daemon status
+        const statusElements = document.querySelectorAll('[data-daemon-status]');
+        console.log('📍 Found daemon status elements:', statusElements.length);
+        
+        statusElements.forEach(element => {
+            const statusText = status.running ? `Running (PID: ${status.pid})` : 'Stopped';
+            const statusClass = status.running ? 'daemon-running' : 'daemon-stopped';
+            
+            console.log('🔄 Setting status element to:', statusText);
+            element.textContent = statusText;
+            element.className = `daemon-status ${statusClass}`;
+        });
+    }
+
+    // === Social Network Functions ===
+    
+    initializeSocialFeatures() {
+        console.log('🤝 Initializing social network features...');
+        
+        // Social tab switching
+        this.initializeSocialTabs();
+        
+        // Post composer
+        document.getElementById('publishPost').addEventListener('click', () => this.publishPost());
+        document.getElementById('exploreCreators').addEventListener('click', () => this.switchSocialTab('social-discover'));
+        
+        // Discover features
+        document.getElementById('searchCreators').addEventListener('click', () => this.searchCreators());
+        document.getElementById('creatorSearch').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') this.searchCreators();
+        });
+        
+        // Category filtering
+        document.querySelectorAll('.category-tag').forEach(tag => {
+            tag.addEventListener('click', (e) => this.filterByCategory(e.target.dataset.category));
+        });
+        
+        // Profile management
+        document.getElementById('saveProfile').addEventListener('click', () => this.saveProfile());
+        document.getElementById('previewProfile').addEventListener('click', () => this.previewProfile());
+        document.getElementById('uploadAvatar').addEventListener('click', () => this.uploadAvatar());
+        
+        // Notification management
+        document.getElementById('markAllRead').addEventListener('click', () => this.markAllNotificationsRead());
+        document.getElementById('notificationSettings').addEventListener('click', () => this.openNotificationSettings());
+        
+        // Notification filters
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => this.filterNotifications(e.target.dataset.filter));
+        });
+        
+        // Load initial social data
+        this.loadSocialData();
+        
+        console.log('✅ BSV Social Protocol features initialized');
+    }
+    
+    initializeSocialTabs() {
+        const tabs = document.querySelectorAll('.social-tab');
+        const contents = document.querySelectorAll('.social-tab-content');
+        
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const target = tab.dataset.tab;
+                this.switchSocialTab(target);
+            });
+        });
+    }
+    
+    switchSocialTab(target) {
+        // Update tab active states
+        document.querySelectorAll('.social-tab').forEach(tab => {
+            tab.classList.remove('active');
+            if (tab.dataset.tab === target) {
+                tab.classList.add('active');
+            }
+        });
+        
+        // Update content active states
+        document.querySelectorAll('.social-tab-content').forEach(content => {
+            content.classList.remove('active');
+            if (content.id === target) {
+                content.classList.add('active');
+            }
+        });
+        
+        // Load tab-specific data
+        switch (target) {
+            case 'social-feed':
+                this.loadSocialFeed();
+                break;
+            case 'social-discover':
+                this.loadCreatorDiscovery();
+                break;
+            case 'social-profile':
+                this.loadProfileData();
+                break;
+            case 'social-notifications':
+                this.loadNotifications();
+                break;
+        }
+    }
+    
+    async loadSocialData() {
+        // Load social stats
+        this.updateSocialStats({
+            followers: 234,
+            following: 156,
+            socialEarnings: 1520
+        });
+        
+        // Load initial feed if on feed tab
+        if (document.querySelector('.social-tab[data-tab="social-feed"]').classList.contains('active')) {
+            this.loadSocialFeed();
+        }
+    }
+    
+    updateSocialStats(stats) {
+        document.getElementById('followersCount').textContent = stats.followers || 0;
+        document.getElementById('followingCount').textContent = stats.following || 0;
+        document.getElementById('socialEarnings').textContent = `${stats.socialEarnings || 0} $NERD`;
+    }
+    
+    async publishPost() {
+        const content = document.getElementById('postContent').value.trim();
+        if (!content) {
+            this.showMessage('Please enter some content for your post', 'warning');
+            return;
+        }
+        
+        try {
+            // Simulate posting (in real implementation, this would connect to BSV Social Protocol)
+            console.log('📝 Publishing post to BSV Social Protocol:', content);
+            
+            // Add post to feed
+            this.addPostToFeed({
+                id: Date.now().toString(),
+                author: {
+                    name: 'You',
+                    avatar: '👤',
+                    time: 'now'
+                },
+                content: content,
+                engagement: {
+                    likes: 0,
+                    comments: 0,
+                    shares: 0
+                }
+            });
+            
+            // Clear composer
+            document.getElementById('postContent').value = '';
+            
+            this.showMessage('Post published successfully! 🎉', 'success');
+            
+        } catch (error) {
+            console.error('Failed to publish post:', error);
+            this.showMessage('Failed to publish post', 'error');
+        }
+    }
+    
+    loadSocialFeed() {
+        const feedContainer = document.getElementById('socialFeedContainer');
+        
+        // Sample posts for demonstration
+        const samplePosts = [
+            {
+                id: '1',
+                author: {
+                    name: 'Alex Chen',
+                    avatar: '🚀',
+                    time: '2h ago'
+                },
+                content: 'Just published my latest article about BSV Social Protocol and how it\'s changing content monetization. The micropayment system is revolutionary!',
+                engagement: {
+                    likes: 34,
+                    comments: 8,
+                    shares: 12
+                }
+            },
+            {
+                id: '2',
+                author: {
+                    name: 'Sarah Miller',
+                    avatar: '🎨',
+                    time: '4h ago'
+                },
+                content: 'Loving the new creator tools in BACDS! Being able to earn $NERD tokens for social engagement is a game-changer for content creators like me.',
+                engagement: {
+                    likes: 67,
+                    comments: 15,
+                    shares: 23
+                }
+            },
+            {
+                id: '3',
+                author: {
+                    name: 'David Wang',
+                    avatar: '💻',
+                    time: '6h ago'
+                },
+                content: 'The BSV Social Protocol implementation in NERD is impressive. Decentralized social networking with built-in payments is the future.',
+                engagement: {
+                    likes: 89,
+                    comments: 22,
+                    shares: 31
+                }
+            }
+        ];
+        
+        if (samplePosts.length === 0) {
+            feedContainer.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">👋</div>
+                    <h4>Welcome to BSV Social!</h4>
+                    <p>Follow creators and engage with content to see posts here</p>
+                    <button class="btn secondary" id="exploreCreators">Explore Creators</button>
+                </div>
+            `;
+            return;
+        }
+        
+        feedContainer.innerHTML = samplePosts.map(post => this.createPostHTML(post)).join('');
+        
+        // Add event listeners for engagement buttons
+        this.attachPostEventListeners();
+    }
+    
+    createPostHTML(post) {
+        return `
+            <div class="social-post fade-in" data-post-id="${post.id}">
+                <div class="post-header">
+                    <div class="post-author">
+                        <div class="author-avatar">${post.author.avatar}</div>
+                        <div class="author-info">
+                            <h5>${post.author.name}</h5>
+                            <span class="post-time">${post.author.time}</span>
+                        </div>
+                    </div>
+                    <button class="engagement-btn" onclick="bacdsClient.showPostOptions('${post.id}')">⋯</button>
+                </div>
+                <div class="post-content">${post.content}</div>
+                <div class="post-actions">
+                    <div class="post-engagement">
+                        <button class="engagement-btn" onclick="bacdsClient.likePost('${post.id}')">
+                            ❤️ ${post.engagement.likes}
+                        </button>
+                        <button class="engagement-btn" onclick="bacdsClient.commentOnPost('${post.id}')">
+                            💬 ${post.engagement.comments}
+                        </button>
+                        <button class="engagement-btn" onclick="bacdsClient.sharePost('${post.id}')">
+                            🔄 ${post.engagement.shares}
+                        </button>
+                    </div>
+                    <button class="engagement-btn" onclick="bacdsClient.tipPost('${post.id}')">
+                        💰 Tip $NERD
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+    
+    addPostToFeed(post) {
+        const feedContainer = document.getElementById('socialFeedContainer');
+        const postHTML = this.createPostHTML(post);
+        feedContainer.insertAdjacentHTML('afterbegin', postHTML);
+        this.attachPostEventListeners();
+    }
+    
+    attachPostEventListeners() {
+        // Post event listeners are handled by onclick attributes in the HTML
+        // This method can be used for additional event listeners if needed
+    }
+    
+    async likePost(postId) {
+        console.log('❤️ Liking post:', postId);
+        // In real implementation, this would interact with BSV Social Protocol
+        this.showMessage('Post liked! +1 $NERD token earned', 'success');
+    }
+    
+    async commentOnPost(postId) {
+        console.log('💬 Commenting on post:', postId);
+        const comment = await this.showCustomInput('Enter your comment:', 'Comment on Post');
+        if (comment) {
+            console.log('Comment:', comment);
+            this.showMessage('Comment posted! +5 $NERD tokens earned', 'success');
+        }
+    }
+    
+    async sharePost(postId) {
+        console.log('🔄 Sharing post:', postId);
+        this.showMessage('Post shared! +15 $NERD tokens earned', 'success');
+    }
+    
+    async tipPost(postId) {
+        console.log('💰 Tipping post:', postId);
+        const amount = await this.showCustomInput('Enter tip amount (NERD tokens):', 'Tip Creator', '10');
+        if (amount && !isNaN(amount) && parseFloat(amount) > 0) {
+            this.showMessage(`Tipped ${amount} $NERD tokens to creator!`, 'success');
+        }
+    }
+    
+    showPostOptions(postId) {
+        console.log('⋯ Post options for:', postId);
+        // Could show a dropdown menu with options like: Report, Block, Copy Link, etc.
+    }
+    
+    async searchCreators() {
+        const query = document.getElementById('creatorSearch').value.trim();
+        console.log('🔍 Searching creators:', query);
+        
+        if (!query) {
+            this.showMessage('Please enter a search term', 'warning');
+            return;
+        }
+        
+        // Simulate search results
+        this.loadCreatorDiscovery(query);
+    }
+    
+    filterByCategory(category) {
+        console.log('🏷️ Filtering by category:', category);
+        
+        // Update active category
+        document.querySelectorAll('.category-tag').forEach(tag => {
+            tag.classList.remove('active');
+            if (tag.dataset.category === category) {
+                tag.classList.add('active');
+            }
+        });
+        
+        this.loadCreatorDiscovery(null, category);
+    }
+    
+    loadCreatorDiscovery(searchQuery = null, category = 'all') {
+        const container = document.getElementById('suggestedCreators');
+        
+        // Sample creators for demonstration
+        const sampleCreators = [
+            {
+                id: '1',
+                name: 'Alex Johnson',
+                avatar: '🚀',
+                bio: 'BSV developer building the future of social networks',
+                followers: 1245,
+                following: 235,
+                category: 'developers'
+            },
+            {
+                id: '2',
+                name: 'Sarah Miller',
+                avatar: '🎨',
+                bio: 'Digital artist creating NFTs on BSV blockchain',
+                followers: 2341,
+                following: 156,
+                category: 'artists'
+            },
+            {
+                id: '3',
+                name: 'Mike Chen',
+                avatar: '🎵',
+                bio: 'Musician distributing music through BACDS',
+                followers: 892,
+                following: 347,
+                category: 'musicians'
+            },
+            {
+                id: '4',
+                name: 'Emma Davis',
+                avatar: '✍️',
+                bio: 'Writer sharing stories and articles on BSV Social',
+                followers: 1567,
+                following: 289,
+                category: 'writers'
+            }
+        ];
+        
+        let filteredCreators = sampleCreators;
+        
+        // Filter by category
+        if (category !== 'all') {
+            filteredCreators = sampleCreators.filter(creator => creator.category === category);
+        }
+        
+        // Filter by search query
+        if (searchQuery) {
+            filteredCreators = filteredCreators.filter(creator => 
+                creator.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                creator.bio.toLowerCase().includes(searchQuery.toLowerCase())
+            );
+        }
+        
+        if (filteredCreators.length === 0) {
+            container.innerHTML = '<div class="empty-state">No creators found matching your criteria</div>';
+            return;
+        }
+        
+        container.innerHTML = filteredCreators.map(creator => `
+            <div class="creator-card fade-in">
+                <div class="creator-info">
+                    <div class="creator-avatar">${creator.avatar}</div>
+                    <div class="creator-details">
+                        <h5>${creator.name}</h5>
+                        <p class="creator-bio">${creator.bio}</p>
+                        <div class="creator-stats">
+                            <span>${creator.followers} followers</span>
+                            <span>${creator.following} following</span>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn secondary" onclick="bacdsClient.followCreator('${creator.id}')">
+                    Follow
+                </button>
+            </div>
+        `).join('');
+    }
+    
+    async followCreator(creatorId) {
+        console.log('👥 Following creator:', creatorId);
+        this.showMessage('Now following creator! +10 $NERD tokens earned', 'success');
+        
+        // Update stats
+        const currentFollowing = parseInt(document.getElementById('followingCount').textContent) || 0;
+        document.getElementById('followingCount').textContent = currentFollowing + 1;
+    }
+    
+    loadProfileData() {
+        // Load user's profile data (in real implementation, this would come from BSV Social Protocol)
+        console.log('👤 Loading profile data...');
+        
+        // Update analytics
+        document.getElementById('profileViews').textContent = '1,234';
+        document.getElementById('contentInteractions').textContent = '5,678';
+        document.getElementById('socialTips').textContent = '890 $NERD';
+    }
+    
+    async saveProfile() {
+        const displayName = document.getElementById('displayName').value.trim();
+        const bio = document.getElementById('profileBio').value.trim();
+        const website = document.getElementById('profileWebsite').value.trim();
+        const category = document.getElementById('profileCategory').value;
+        
+        if (!displayName) {
+            this.showMessage('Please enter a display name', 'warning');
+            return;
+        }
+        
+        console.log('💾 Saving profile:', { displayName, bio, website, category });
+        
+        // In real implementation, this would save to BSV Social Protocol
+        this.showMessage('Profile saved successfully!', 'success');
+    }
+    
+    async previewProfile() {
+        console.log('👀 Previewing profile...');
+        this.showMessage('Profile preview feature coming soon!', 'info');
+    }
+    
+    async uploadAvatar() {
+        console.log('📸 Uploading avatar...');
+        this.showMessage('Avatar upload feature coming soon!', 'info');
+    }
+    
+    loadNotifications() {
+        const container = document.getElementById('notificationsList');
+        
+        // Sample notifications for demonstration
+        const sampleNotifications = [
+            {
+                id: '1',
+                type: 'like',
+                user: { name: 'Alex Chen', avatar: '🚀' },
+                text: 'liked your post about BSV Social Protocol',
+                time: '5 minutes ago',
+                unread: true
+            },
+            {
+                id: '2',
+                type: 'comment',
+                user: { name: 'Sarah Miller', avatar: '🎨' },
+                text: 'commented on your post',
+                time: '1 hour ago',
+                unread: true
+            },
+            {
+                id: '3',
+                type: 'follow',
+                user: { name: 'Mike Chen', avatar: '🎵' },
+                text: 'started following you',
+                time: '2 hours ago',
+                unread: false
+            },
+            {
+                id: '4',
+                type: 'tip',
+                user: { name: 'Emma Davis', avatar: '✍️' },
+                text: 'tipped you 25 $NERD tokens',
+                time: '1 day ago',
+                unread: false
+            }
+        ];
+        
+        if (sampleNotifications.length === 0) {
+            container.innerHTML = '<div class="empty-state">No notifications yet</div>';
+            return;
+        }
+        
+        // Update notification badge
+        const unreadCount = sampleNotifications.filter(n => n.unread).length;
+        const badge = document.getElementById('notificationBadge');
+        if (unreadCount > 0) {
+            badge.textContent = unreadCount;
+            badge.style.display = 'inline';
+        } else {
+            badge.style.display = 'none';
+        }
+        
+        container.innerHTML = sampleNotifications.map(notification => `
+            <div class="notification-item ${notification.unread ? 'unread' : ''}" data-notification-id="${notification.id}">
+                <div class="notification-avatar">${notification.user.avatar}</div>
+                <div class="notification-content">
+                    <div class="notification-text">
+                        <strong>${notification.user.name}</strong> ${notification.text}
+                    </div>
+                    <div class="notification-time">${notification.time}</div>
+                </div>
+                <div class="notification-icon ${notification.type}">
+                    ${this.getNotificationIcon(notification.type)}
+                </div>
+            </div>
+        `).join('');
+    }
+    
+    getNotificationIcon(type) {
+        const icons = {
+            like: '❤️',
+            comment: '💬',
+            follow: '👥',
+            tip: '💰'
+        };
+        return icons[type] || '🔔';
+    }
+    
+    filterNotifications(filter) {
+        console.log('🔍 Filtering notifications by:', filter);
+        
+        // Update active filter
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.dataset.filter === filter) {
+                btn.classList.add('active');
+            }
+        });
+        
+        // In real implementation, this would filter the notifications
+        this.loadNotifications();
+    }
+    
+    markAllNotificationsRead() {
+        console.log('✅ Marking all notifications as read');
+        
+        // Remove unread styles
+        document.querySelectorAll('.notification-item.unread').forEach(item => {
+            item.classList.remove('unread');
+        });
+        
+        // Hide notification badge
+        document.getElementById('notificationBadge').style.display = 'none';
+        
+        this.showMessage('All notifications marked as read', 'success');
+    }
+    
+    openNotificationSettings() {
+        console.log('⚙️ Opening notification settings');
+        this.showMessage('Notification settings coming soon!', 'info');
+    }
+
+    // === Market Features ===
+    
+    initializeMarketFeatures() {
+        console.log('💰 Initializing market features...');
+        
+        try {
+            // Market tab functionality
+            document.getElementById('refreshPrices')?.addEventListener('click', () => this.refreshMarketPrices());
+            document.getElementById('exportPortfolio')?.addEventListener('click', () => this.exportPortfolio());
+            document.getElementById('browseContent')?.addEventListener('click', () => this.switchSocialTab('social-discover'));
+            document.getElementById('becomeDistributor')?.addEventListener('click', () => this.showDistributorInfo());
+            
+            // Initialize portfolio data
+            this.loadPortfolioData();
+            
+            console.log('Market features initialized successfully');
+        } catch (error) {
+            console.error('Error initializing market features:', error);
+        }
+    }
+    
+    async refreshMarketPrices() {
+        console.log('🔄 Refreshing market prices...');
+        
+        try {
+            // Simulate price refresh
+            const refreshBtn = document.getElementById('refreshPrices');
+            const originalText = refreshBtn.textContent;
+            refreshBtn.textContent = '🔄 Refreshing...';
+            refreshBtn.disabled = true;
+            
+            // Simulate API call delay
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            
+            // Update mock prices
+            document.getElementById('nerdPrice').textContent = '$0.0042';
+            document.getElementById('nerdChange').textContent = '+2.34%';
+            document.getElementById('nerdChange').className = 'token-change positive';
+            
+            // Update portfolio value
+            document.getElementById('totalPortfolioValue').textContent = '$126.84';
+            document.getElementById('portfolioChange').textContent = '+$2.96 (+2.39%)';
+            
+            refreshBtn.textContent = originalText;
+            refreshBtn.disabled = false;
+            
+            this.showMessage('Market prices refreshed successfully', 'success');
+        } catch (error) {
+            console.error('Error refreshing prices:', error);
+            this.showMessage('Failed to refresh prices', 'error');
+        }
+    }
+    
+    exportPortfolio() {
+        console.log('📊 Exporting portfolio data...');
+        
+        try {
+            const portfolioData = {
+                timestamp: new Date().toISOString(),
+                totalValue: '$126.84',
+                tokens: {
+                    platform: [
+                        { symbol: '$NERD', holdings: '30,000', value: '$126.84' }
+                    ],
+                    content: [],
+                    distributor: []
+                }
+            };
+            
+            const dataStr = JSON.stringify(portfolioData, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `portfolio-${Date.now()}.json`;
+            link.click();
+            
+            URL.revokeObjectURL(url);
+            this.showMessage('Portfolio data exported successfully', 'success');
+        } catch (error) {
+            console.error('Error exporting portfolio:', error);
+            this.showMessage('Failed to export portfolio', 'error');
+        }
+    }
+    
+    loadPortfolioData() {
+        // Load initial portfolio data
+        document.getElementById('nerdHoldings').textContent = '30,000 $NERD';
+        document.getElementById('nerdValue').textContent = '$126.84';
+        document.getElementById('totalPortfolioValue').textContent = '$126.84';
+    }
+    
+    showDistributorInfo() {
+        this.showMessage('Distributor program coming soon! Earn $NERD by running network nodes.', 'info');
+    }
+    
+    // === Mint Features ===
+    
+    initializeMintFeatures() {
+        console.log('🏭 Initializing mint features...');
+        
+        try {
+            // Token type selection
+            const typeOptions = document.querySelectorAll('.token-type-option');
+            typeOptions.forEach(option => {
+                option.addEventListener('click', () => this.selectTokenType(option));
+            });
+            
+            // Template selection
+            const templateItems = document.querySelectorAll('.template-item');
+            templateItems.forEach(item => {
+                item.addEventListener('click', () => this.applyTemplate(item.dataset.template));
+            });
+            
+            // Mint actions
+            document.getElementById('previewToken')?.addEventListener('click', () => this.previewToken());
+            document.getElementById('mintToken')?.addEventListener('click', () => this.mintToken());
+            
+            // Form validation
+            const inputs = ['tokenName', 'tokenSymbol', 'tokenDescription', 'tokenSupply', 'initialPrice'];
+            inputs.forEach(inputId => {
+                const input = document.getElementById(inputId);
+                if (input) {
+                    input.addEventListener('input', () => this.validateTokenForm());
+                }
+            });
+            
+            console.log('Mint features initialized successfully');
+        } catch (error) {
+            console.error('Error initializing mint features:', error);
+        }
+    }
+    
+    selectTokenType(option) {
+        // Update active state
+        document.querySelectorAll('.token-type-option').forEach(opt => opt.classList.remove('active'));
+        option.classList.add('active');
+        
+        const tokenType = option.dataset.type;
+        console.log(`Selected token type: ${tokenType}`);
+        
+        // Update mint cost based on type
+        const mintCostInput = document.getElementById('mintCost');
+        const costs = { content: 100, distributor: 500, utility: 250 };
+        mintCostInput.value = costs[tokenType] || 100;
+        
+        this.validateTokenForm();
+    }
+    
+    applyTemplate(templateType) {
+        console.log(`Applying template: ${templateType}`);
+        
+        const templates = {
+            artwork: {
+                name: 'Digital Artwork Collection',
+                symbol: 'ART',
+                description: 'Unique digital artwork with provable ownership and authenticity.',
+                supply: 1000,
+                price: 0.001
+            },
+            music: {
+                name: 'Music Album Token',
+                symbol: 'MUSIC',
+                description: 'Exclusive access to music content with fan benefits.',
+                supply: 5000,
+                price: 0.0005
+            },
+            video: {
+                name: 'Video Content Series',
+                symbol: 'VIDEO',
+                description: 'Premium video content with subscriber benefits.',
+                supply: 2500,
+                price: 0.002
+            },
+            service: {
+                name: 'Service Access Token',
+                symbol: 'SVC',
+                description: 'Access token for premium services and features.',
+                supply: 10000,
+                price: 0.0001
+            }
+        };
+        
+        const template = templates[templateType];
+        if (template) {
+            document.getElementById('tokenName').value = template.name;
+            document.getElementById('tokenSymbol').value = template.symbol;
+            document.getElementById('tokenDescription').value = template.description;
+            document.getElementById('tokenSupply').value = template.supply;
+            document.getElementById('initialPrice').value = template.price;
+            
+            this.validateTokenForm();
+        }
+    }
+    
+    validateTokenForm() {
+        const name = document.getElementById('tokenName').value.trim();
+        const symbol = document.getElementById('tokenSymbol').value.trim();
+        const description = document.getElementById('tokenDescription').value.trim();
+        const supply = parseInt(document.getElementById('tokenSupply').value);
+        const price = parseFloat(document.getElementById('initialPrice').value);
+        
+        const isValid = name && symbol && description && supply > 0 && price > 0;
+        
+        const mintButton = document.getElementById('mintToken');
+        const previewButton = document.getElementById('previewToken');
+        
+        mintButton.disabled = !isValid;
+        previewButton.disabled = !isValid;
+        
+        return isValid;
+    }
+    
+    previewToken() {
+        if (!this.validateTokenForm()) return;
+        
+        const tokenData = this.getTokenFormData();
+        
+        const preview = `
+Token Preview:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📛 Name: ${tokenData.name}
+🏷️  Symbol: ${tokenData.symbol}
+📄 Description: ${tokenData.description}
+🔢 Total Supply: ${tokenData.supply.toLocaleString()}
+💰 Initial Price: ${tokenData.price} BSV
+💸 Mint Cost: ${tokenData.mintCost} $NERD
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        `;
+        
+        alert(preview);
+    }
+    
+    async mintToken() {
+        if (!this.validateTokenForm()) return;
+        
+        const tokenData = this.getTokenFormData();
+        console.log('🏭 Minting token:', tokenData);
+        
+        try {
+            const mintButton = document.getElementById('mintToken');
+            const originalText = mintButton.textContent;
+            mintButton.textContent = '🏭 Minting...';
+            mintButton.disabled = true;
+            
+            // Simulate minting process
+            await new Promise(resolve => setTimeout(resolve, 3000));
+            
+            // Add to mint history
+            this.addToMintHistory(tokenData);
+            
+            // Clear form
+            this.clearTokenForm();
+            
+            mintButton.textContent = originalText;
+            mintButton.disabled = false;
+            
+            this.showMessage(`Token "${tokenData.symbol}" minted successfully!`, 'success');
+        } catch (error) {
+            console.error('Error minting token:', error);
+            this.showMessage('Failed to mint token', 'error');
+        }
+    }
+    
+    getTokenFormData() {
+        return {
+            name: document.getElementById('tokenName').value.trim(),
+            symbol: document.getElementById('tokenSymbol').value.trim(),
+            description: document.getElementById('tokenDescription').value.trim(),
+            supply: parseInt(document.getElementById('tokenSupply').value),
+            price: parseFloat(document.getElementById('initialPrice').value),
+            mintCost: parseInt(document.getElementById('mintCost').value),
+            type: document.querySelector('.token-type-option.active').dataset.type,
+            timestamp: new Date().toISOString()
+        };
+    }
+    
+    clearTokenForm() {
+        document.getElementById('tokenName').value = '';
+        document.getElementById('tokenSymbol').value = '';
+        document.getElementById('tokenDescription').value = '';
+        document.getElementById('tokenSupply').value = '';
+        document.getElementById('initialPrice').value = '';
+        this.validateTokenForm();
+    }
+    
+    addToMintHistory(tokenData) {
+        const historyContainer = document.getElementById('mintHistory');
+        
+        // Remove empty state if it exists
+        const emptyState = historyContainer.querySelector('.empty-state');
+        if (emptyState) {
+            emptyState.remove();
+        }
+        
+        const historyItem = document.createElement('div');
+        historyItem.className = 'mint-history-item';
+        historyItem.innerHTML = `
+            <div class="history-item-header">
+                <strong>${tokenData.symbol}</strong>
+                <span class="history-date">${new Date(tokenData.timestamp).toLocaleDateString()}</span>
+            </div>
+            <div class="history-item-details">
+                <div>${tokenData.name}</div>
+                <div>Supply: ${tokenData.supply.toLocaleString()}</div>
+            </div>
+        `;
+        
+        historyContainer.insertBefore(historyItem, historyContainer.firstChild);
+    }
+
+    startDaemonStatusMonitoring() {
+        if (this.daemonStatusInterval) {
+            clearInterval(this.daemonStatusInterval);
+        }
+        
+        this.daemonStatusInterval = setInterval(async () => {
+            try {
+                const status = await window.electronAPI.getNerdDaemonStatus();
+                this.updateDaemonStatusDisplay(status);
+            } catch (error) {
+                console.error('Error checking daemon status:', error);
+            }
+        }, 5000); // Check every 5 seconds
     }
 }
+
+// Debug functions for testing IPC
+window.testWalletStatus = async function() {
+    const output = document.getElementById('debugOutput');
+    output.innerHTML = '🔄 Testing wallet status...<br>';
+    
+    try {
+        output.innerHTML += `electronAPI available: ${!!window.electronAPI}<br>`;
+        output.innerHTML += `getWalletStatus function: ${typeof window.electronAPI?.getWalletStatus}<br>`;
+        
+        if (window.electronAPI && window.electronAPI.getWalletStatus) {
+            output.innerHTML += '📞 Calling getWalletStatus...<br>';
+            const result = await window.electronAPI.getWalletStatus();
+            output.innerHTML += `✅ Result: <pre>${JSON.stringify(result, null, 2)}</pre><br>`;
+            
+            // Also update the actual wallet display with this working data
+            output.innerHTML += '🔧 Forcing wallet display update...<br>';
+            if (window.bacdsClient) {
+                window.bacdsClient.walletStatus = result;
+                window.bacdsClient.updateWalletDisplay();
+                output.innerHTML += '✅ Wallet display updated!<br>';
+            } else {
+                output.innerHTML += '❌ bacdsClient not available yet<br>';
+                // Try to update the display directly
+                output.innerHTML += '🔧 Attempting direct DOM update...<br>';
+                const statusDiv = document.getElementById('walletStatus');
+                if (statusDiv) {
+                    statusDiv.innerHTML = `
+                        <div class="wallet-info">
+                            <div class="status-item">
+                                <span class="label">Status:</span>
+                                <span class="value success">✅ Wallet Loaded</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="label">Addresses:</span>
+                                <span class="value">${result.addressIndex} generated</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="label">Data Directory:</span>
+                                <span class="value">${result.dataDir}</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="label">Created:</span>
+                                <span class="value">${new Date(result.created).toLocaleDateString()}</span>
+                            </div>
+                        </div>
+                    `;
+                    output.innerHTML += '✅ Direct DOM update completed!<br>';
+                } else {
+                    output.innerHTML += '❌ Could not find walletStatus element<br>';
+                }
+            }
+        } else {
+            output.innerHTML += '❌ electronAPI or getWalletStatus not available<br>';
+        }
+    } catch (error) {
+        output.innerHTML += `❌ Error: ${error.message}<br>`;
+    }
+};
+
+window.testDaemonStatus = async function() {
+    const output = document.getElementById('debugOutput');
+    output.innerHTML = '🔄 Testing daemon status...<br>';
+    
+    try {
+        if (window.electronAPI && window.electronAPI.getNerdDaemonStatus) {
+            output.innerHTML += '📞 Calling getNerdDaemonStatus...<br>';
+            const result = await window.electronAPI.getNerdDaemonStatus();
+            output.innerHTML += `✅ Result: <pre>${JSON.stringify(result, null, 2)}</pre><br>`;
+        } else {
+            output.innerHTML += '❌ electronAPI or getNerdDaemonStatus not available<br>';
+        }
+    } catch (error) {
+        output.innerHTML += `❌ Error: ${error.message}<br>`;
+    }
+};
+
+window.testStartDaemon = async function() {
+    const output = document.getElementById('debugOutput');
+    output.innerHTML = '🔄 Starting daemon...<br>';
+    
+    try {
+        if (window.electronAPI && window.electronAPI.startNerdDaemon) {
+            output.innerHTML += '📞 Calling startNerdDaemon...<br>';
+            const result = await window.electronAPI.startNerdDaemon();
+            output.innerHTML += `✅ Result: <pre>${JSON.stringify(result, null, 2)}</pre><br>`;
+            
+            // Update daemon status display
+            if (result.success) {
+                output.innerHTML += '🔄 Checking daemon status after start...<br>';
+                setTimeout(async () => {
+                    const status = await window.electronAPI.getNerdDaemonStatus();
+                    output.innerHTML += `📊 New status: <pre>${JSON.stringify(status, null, 2)}</pre><br>`;
+                }, 3000);
+            }
+        } else {
+            output.innerHTML += '❌ electronAPI or startNerdDaemon not available<br>';
+        }
+    } catch (error) {
+        output.innerHTML += `❌ Error: ${error.message}<br>`;
+    }
+};
+
+window.testStopDaemon = async function() {
+    const output = document.getElementById('debugOutput');
+    output.innerHTML = '🔄 Stopping daemon...<br>';
+    
+    try {
+        if (window.electronAPI && window.electronAPI.stopNerdDaemon) {
+            output.innerHTML += '📞 Calling stopNerdDaemon...<br>';
+            const result = await window.electronAPI.stopNerdDaemon();
+            output.innerHTML += `✅ Result: <pre>${JSON.stringify(result, null, 2)}</pre><br>`;
+        } else {
+            output.innerHTML += '❌ electronAPI or stopNerdDaemon not available<br>';
+        }
+    } catch (error) {
+        output.innerHTML += `❌ Error: ${error.message}<br>`;
+    }
+};
 
 // Global function for copying to clipboard
 function copyToClipboard(text) {
